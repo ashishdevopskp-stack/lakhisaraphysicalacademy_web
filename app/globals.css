@@ -1,80 +1,116 @@
 @import "tailwindcss";
 
-/* =========================================================
-   LAKHISARAI PHYSICAL ACADEMY — DESIGN TOKENS
-   "Night Training Ground": bunker-charcoal base, chalk-white
-   text, one signal-orange accent (whistle / stopwatch), one
-   olive-drab secondary (uniform). Flat surfaces, no blur,
-   no translucency — Tailwind v4 CSS-first theme.
-   ========================================================= */
 @theme {
-  /* Surfaces */
-  --color-bg: #121309;
-  --color-bg-raised: #1a1c11;
-  --color-bg-raised-2: #232517;
-  --color-line: #34371f;
-  --color-line-strong: #4a4d2b;
+  /* Surface */
+  --color-bg: #0a0e16;
+  --color-bg-raised: rgba(255, 255, 255, 0.045);
+  --color-bg-raised-2: rgba(255, 255, 255, 0.07);
+  --color-bg-raised-3: rgba(255, 255, 255, 0.1);
+  --color-line: rgba(255, 255, 255, 0.1);
+  --color-line-strong: rgba(255, 255, 255, 0.2);
 
   /* Text */
-  --color-text: #f4f1e4;
-  --color-text-muted: #b6b8a2;
-  --color-text-faint: #7c8068;
+  --color-text: #f3f5f8;
+  --color-text-muted: #a7b0c0;
+  --color-text-faint: #6b7688;
+  --color-text-on-dark: #ffffff;
+  --color-text-on-dark-muted: #cbd5e1;
 
-  /* Signal orange — primary accent */
-  --color-signal: #e8632b;
-  --color-signal-strong: #ff7a3d;
-  --color-signal-dim: #7a3417;
-  --color-on-signal: #191002;
+  /* Signal — trust / force */
+  --color-signal: #3b82f6;
+  --color-signal-strong: #60a5fa;
+  --color-signal-dim: rgba(59, 130, 246, 0.16);
+  --color-on-signal: #ffffff;
 
-  /* Olive drab — secondary accent */
-  --color-olive: #7c8c4f;
-  --color-olive-strong: #93a462;
-  --color-on-olive: #14180b;
+  /* Accent — achievement / medal */
+  --color-accent: #f5a623;
+  --color-accent-strong: #fbbf24;
+  --color-on-accent: #241902;
 
-  /* Reserved for results / achievement */
-  --color-gold: #c9a227;
-  --color-success: #6ea45a;
-  --color-danger: #d6543a;
+  /* Service / camo */
+  --color-olive: #6b7a3d;
+  --color-olive-strong: #86974f;
 
-  /* Type */
-  --font-display: var(--font-oswald), "Arial Narrow", sans-serif;
-  --font-body: var(--font-inter), system-ui, sans-serif;
-  --font-mono: var(--font-mono-utility), "Courier New", monospace;
+  --color-navy: #05070c;
+  --color-navy-2: #0f1522;
 
-  /* Rhythm */
-  --radius-sm: 2px;
+  --color-gold: #facc15;
+  --color-orange: #f97316;
+  --color-pink: #ec4899;
+  --color-teal: #14b8a6;
+  --color-success: #22c55e;
+  --color-danger: #ef4444;
+
+  --font-display: var(--font-barlow), "Arial Narrow", sans-serif;
+  --font-body: var(--font-inter), -apple-system, BlinkMacSystemFont,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, "SF Mono", Menlo,
+    monospace;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 999px;
   --container-app: 1180px;
+
+  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  --shadow-card-hover: 0 12px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+@property --blob1-x { syntax: '<percentage>'; inherits: false; initial-value: 12%; }
+@property --blob1-y { syntax: '<percentage>'; inherits: false; initial-value: -4%; }
+@property --blob2-x { syntax: '<percentage>'; inherits: false; initial-value: 92%; }
+@property --blob2-y { syntax: '<percentage>'; inherits: false; initial-value: 12%; }
+@property --blob3-x { syntax: '<percentage>'; inherits: false; initial-value: 46%; }
+@property --blob3-y { syntax: '<percentage>'; inherits: false; initial-value: 104%; }
+
+@keyframes liquidDrift {
+  0%   { --blob1-x: 12%; --blob1-y: -4%;  --blob2-x: 92%; --blob2-y: 12%;  --blob3-x: 46%; --blob3-y: 104%; }
+  33%  { --blob1-x: 22%; --blob1-y: 6%;   --blob2-x: 80%; --blob2-y: 26%;  --blob3-x: 58%; --blob3-y: 92%; }
+  66%  { --blob1-x: 6%;  --blob1-y: 14%;  --blob2-x: 88%; --blob2-y: 4%;   --blob3-x: 38%; --blob3-y: 98%; }
+  100% { --blob1-x: 12%; --blob1-y: -4%;  --blob2-x: 92%; --blob2-y: 12%;  --blob3-x: 46%; --blob3-y: 104%; }
 }
 
 @layer base {
   html {
     scroll-behavior: smooth;
+    color-scheme: dark;
   }
 
   body {
     background-color: var(--color-bg);
+    background-image:
+      radial-gradient(620px 420px at var(--blob1-x) var(--blob1-y), rgba(59, 130, 246, 0.20), transparent 62%),
+      radial-gradient(680px 460px at var(--blob2-x) var(--blob2-y), rgba(245, 166, 35, 0.13), transparent 58%),
+      radial-gradient(560px 420px at var(--blob3-x) var(--blob3-y), rgba(20, 184, 166, 0.13), transparent 62%);
+    background-attachment: fixed;
+    animation: liquidDrift 28s ease-in-out infinite;
     color: var(--color-text);
     font-family: var(--font-body);
     -webkit-font-smoothing: antialiased;
-    /* Faint lane-line texture — a running track marked out in the dark */
-    background-image: repeating-linear-gradient(
-      90deg,
-      rgba(244, 241, 228, 0.028) 0px,
-      rgba(244, 241, 228, 0.028) 1px,
-      transparent 1px,
-      transparent 96px
-    );
+    font-feature-settings: "cv11", "ss01";
   }
 
-  h1,
-  h2,
-  h3,
-  h4 {
+  
+  h1 {
     font-family: var(--font-display);
     font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.01em;
-    line-height: 1.05;
+    letter-spacing: -0.02em;
+    line-height: 1.12;
+    color: var(--color-text);
+  }
+  h2 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.016em;
+    line-height: 1.18;
+    color: var(--color-text);
+  }
+  h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.012em;
+    line-height: 1.25;
     color: var(--color-text);
   }
 
@@ -85,10 +121,196 @@
   }
 }
 
+@layer components {
+  /* Base liquid-glass surface, reused by cards, badges, panels */
+  .glass {
+    background: linear-gradient(155deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.015));
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid var(--color-line-strong);
+  }
+
+  .glass-sheen {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .glass-sheen::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.28) 45%, transparent 60%);
+    transform: translateX(-140%);
+    transition: transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1);
+    pointer-events: none;
+  }
+  .glass-sheen:hover::after,
+  .glass-sheen.sheen-run::after {
+    transform: translateX(140%);
+  }
+
+  .btn {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: var(--radius-full);
+    padding: 0.8rem 1.6rem;
+    font-size: 14.5px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    backdrop-filter: blur(14px) saturate(160%);
+    -webkit-backdrop-filter: blur(14px) saturate(160%);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease,
+      background-color 0.15s ease;
+  }
+  .btn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.32), transparent 55%);
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  .btn:active {
+    transform: translateY(1px) scale(0.99);
+  }
+
+  .btn-primary {
+    background: linear-gradient(160deg, rgba(96, 165, 250, 0.9), rgba(29, 78, 216, 0.88));
+    color: var(--color-on-signal);
+    border: 1px solid rgba(147, 197, 253, 0.45);
+    box-shadow: 0 6px 22px rgba(37, 99, 235, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+  .btn-primary:hover {
+    box-shadow: 0 8px 28px rgba(37, 99, 235, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    border-color: rgba(191, 219, 254, 0.6);
+  }
+
+  .btn-accent {
+    background: linear-gradient(160deg, rgba(251, 191, 36, 0.95), rgba(217, 119, 6, 0.88));
+    color: var(--color-on-accent);
+    border: 1px solid rgba(253, 224, 155, 0.55);
+    box-shadow: 0 6px 22px rgba(245, 166, 35, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  }
+  .btn-accent:hover {
+    box-shadow: 0 8px 28px rgba(245, 166, 35, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  }
+
+  .btn-whatsapp {
+    background: linear-gradient(160deg, rgba(52, 211, 153, 0.85), rgba(5, 150, 105, 0.82));
+    color: #ffffff;
+    border: 1px solid rgba(167, 243, 208, 0.4);
+    box-shadow: 0 6px 22px rgba(5, 150, 105, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+  .btn-whatsapp:hover {
+    box-shadow: 0 8px 28px rgba(5, 150, 105, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  }
+
+  .btn-secondary {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--color-text);
+    border: 1px solid var(--color-line-strong);
+  }
+  .btn-secondary:hover {
+    border-color: var(--color-signal-strong);
+    background: rgba(59, 130, 246, 0.12);
+    color: var(--color-text-on-dark);
+  }
+
+  .btn-ghost {
+    background-color: transparent;
+    color: var(--color-text-muted);
+    border: 1px solid transparent;
+  }
+  .btn-ghost:hover {
+    background-color: var(--color-bg-raised-2);
+    color: var(--color-text);
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    border-radius: var(--radius-full);
+    padding: 0.45rem 1rem;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.005em;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background-color: var(--color-signal-dim);
+    color: var(--color-signal-strong);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease,
+      border-color 0.15s ease;
+  }
+  .pill:hover {
+    transform: translateY(-1px);
+    border-color: rgba(255, 255, 255, 0.18);
+  }
+  .pill-active {
+    background-color: var(--color-signal);
+    color: var(--color-on-signal);
+  }
+
+  .card-flat {
+    background: linear-gradient(155deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.015));
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid var(--color-line-strong);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+  }
+  .card-flat:hover {
+    box-shadow: var(--shadow-card-hover);
+  }
+
+  .surface-navy {
+    background-color: var(--color-navy);
+    color: var(--color-text-on-dark);
+  }
+  .surface-navy-muted {
+    color: var(--color-text-on-dark-muted);
+  }
+
+  .text-gradient-brand {
+    background-image: linear-gradient(
+      90deg,
+      var(--color-signal-strong) 0%,
+      var(--color-teal) 55%,
+      var(--color-accent-strong) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .pill-color-1 { background-color: rgba(59, 130, 246, 0.16); color: var(--color-signal-strong); }
+  .pill-color-2 { background-color: rgba(34, 197, 94, 0.14); color: #4ade80; }
+  .pill-color-3 { background-color: rgba(236, 72, 153, 0.14); color: #f472b6; }
+  .pill-color-4 { background-color: rgba(245, 166, 35, 0.16); color: var(--color-accent-strong); }
+  .pill-color-5 { background-color: rgba(20, 184, 166, 0.16); color: #2dd4bf; }
+
+  /* Ribbon stripe — service-ribbon motif for the badge signature element */
+  .ribbon-bar {
+    background: linear-gradient(
+      180deg,
+      var(--color-signal) 0%,
+      var(--color-signal) 33%,
+      var(--color-accent) 33%,
+      var(--color-accent) 66%,
+      var(--color-olive) 66%,
+      var(--color-olive) 100%
+    );
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;

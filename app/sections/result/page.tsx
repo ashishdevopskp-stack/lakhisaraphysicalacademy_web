@@ -1,609 +1,142 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
 import {
+  Trophy,
   ClipboardList,
-  PlayCircle,
   MessageCircle,
-  ArrowRight,
+  Phone,
   Search,
-  Download,
-  Eye,
+  MapPin,
   Calendar,
-  Users,
-  TrendingUp,
   Award,
+  Share2,
+  ArrowRight,
+  PlayCircle,
   Shield,
+  ShieldAlert,
+  Star,
   ShieldCheck,
   TrainFront,
-  TreePine,
   Flame,
   Home as HomeIcon,
-  MoreHorizontal,
-  Video,
-  ChevronDown,
+  Landmark,
+  Users,
+  GraduationCap,
+  Quote,
+  UploadCloud,
 } from "lucide-react";
 import Container from "../../components/Container";
 import Button from "../../components/Button";
 import Badge from "../../components/Badge";
 
 const EASE = [0.22, 0.61, 0.36, 1] as const;
+const WHATSAPP_NUMBER = "918863081082";
 
-/* =========================================================
-   Data
-   ========================================================= */
-
-type Category = {
-  name: string;
-  icon: typeof Shield;
+const fadeUp = {
+  initial: { opacity: 0, y: 16 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: "-80px" },
+  transition: { duration: 0.55, ease: EASE },
 };
 
-const CATEGORIES: Category[] = [
-  { name: "Army", icon: Shield },
-  { name: "Bihar Police", icon: ShieldCheck },
-  { name: "Daroga (SI)", icon: Award },
-  { name: "SSC GD", icon: ShieldCheck },
-  { name: "CISF", icon: Shield },
-  { name: "CRPF", icon: Shield },
-  { name: "BSF", icon: Shield },
-  { name: "ITBP", icon: Shield },
-  { name: "Indian Navy", icon: Award },
-  { name: "Air Force", icon: Award },
-  { name: "Railway", icon: TrainFront },
-  { name: "Forest Guard", icon: TreePine },
-  { name: "Fireman", icon: Flame },
-  { name: "Home Guard", icon: HomeIcon },
-  { name: "Other Exams", icon: MoreHorizontal },
-];
-
-type ResultStatus = "New" | "Updated";
-
-type ResultItem = {
-  id: string;
-  title: string;
-  subtitle: string;
-  org: string;
-  date: string;
-  category: string;
-  status: ResultStatus;
-  totalSelected?: string;
-};
-
-const RESULTS: ResultItem[] = [
-  {
-    id: "bihar-police-constable-2026",
-    title: "Bihar Police Constable Result 2026",
-    subtitle: "PET / PST qualified list released",
-    org: "Bihar Police Subordinate Services Commission",
-    date: "02 Jul 2026",
-    category: "Bihar Police",
-    status: "New",
-    totalSelected: "9,842",
-  },
-  {
-    id: "ssc-gd-2026",
-    title: "SSC GD Constable Result 2026",
-    subtitle: "Physical Efficiency Test merit list",
-    org: "Staff Selection Commission",
-    date: "28 Jun 2026",
-    category: "SSC GD",
-    status: "New",
-    totalSelected: "26,140",
-  },
-  {
-    id: "army-agniveer-bharti-2026",
-    title: "Army Agniveer Bharti Result",
-    subtitle: "Physical & medical round outcome",
-    org: "Indian Army Recruitment Office",
-    date: "21 Jun 2026",
-    category: "Army",
-    status: "Updated",
-    totalSelected: "1,205",
-  },
-  {
-    id: "bihar-daroga-si-2026",
-    title: "Bihar Daroga (SI) Result 2026",
-    subtitle: "Written exam cut-off & merit list",
-    org: "Bihar Public Service Commission",
-    date: "14 Jun 2026",
-    category: "Daroga (SI)",
-    status: "Updated",
-    totalSelected: "2,317",
-  },
-  {
-    id: "crpf-constable-gd-2026",
-    title: "CRPF Constable (GD) Result",
-    subtitle: "Document verification list out",
-    org: "Central Reserve Police Force",
-    date: "05 Jun 2026",
-    category: "CRPF",
-    status: "New",
-    totalSelected: "4,590",
-  },
-  {
-    id: "railway-rpf-2026",
-    title: "RPF Constable Result 2026",
-    subtitle: "PET/PMT qualified candidates",
-    org: "Railway Protection Force",
-    date: "30 May 2026",
-    category: "Railway",
-    status: "Updated",
-    totalSelected: "6,003",
-  },
-];
-
-const STATS = [
-  { label: "Total Vacancies Tracked", value: "48,500+", icon: ClipboardList },
-  { label: "Candidates Qualified", value: "9,200+", icon: Users },
-  { label: "Selection Ratio", value: "1 : 19", icon: TrendingUp },
-  { label: "Results Published", value: "60+", icon: Award },
-];
-
-const VIDEOS = [
-  { title: "Bihar Police Constable — Full Result Analysis", duration: "12:40" },
-  { title: "SSC GD Cut-off Marks Explained", duration: "9:15" },
-  { title: "Army Agniveer Bharti Result Breakdown", duration: "15:02" },
-];
-
-const BLOGS = [
-  "How to Read Your Cut-off Marks Correctly",
-  "Merit List vs Waiting List — What's the Difference",
-  "Document Verification: What to Carry",
-  "What Happens After Your Result — Next Stage Prep",
-];
-
-const YEARS = ["2026", "2025", "2024"];
-const RESULT_TYPES = ["All Types", "Latest", "Final", "PET Result", "Written Result"];
-
 /* =========================================================
-   Page
+   1. Hero
    ========================================================= */
-
-export default function ResultsPage() {
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
-  const [query, setQuery] = useState("");
-  const [year, setYear] = useState(YEARS[0]);
-  const [type, setType] = useState(RESULT_TYPES[0]);
-
-  const filteredResults = useMemo(() => {
-    return RESULTS.filter((r) => {
-      const matchesCategory = activeCategory ? r.category === activeCategory : true;
-      const matchesQuery = query
-        ? (r.title + r.org + r.category).toLowerCase().includes(query.toLowerCase())
-        : true;
-      return matchesCategory && matchesQuery;
-    });
-  }, [activeCategory, query]);
-
-  return (
-    <>
-      <ResultsHero />
-      <CategorySection active={activeCategory} onSelect={setActiveCategory} />
-      <ListingsSection
-        results={filteredResults}
-        query={query}
-        onQueryChange={setQuery}
-        year={year}
-        onYearChange={setYear}
-        type={type}
-        onTypeChange={setType}
-      />
-      <StatsSection />
-      <VideosSection />
-      <BlogsSection />
-      <StayUpdatedSection />
-    </>
-  );
-}
-
-/* =========================================================
-   Hero
-   ========================================================= */
-
 function ResultsHero() {
   return (
-    <section
-      id="results-top"
-      className="relative overflow-hidden border-b border-line pb-16 pt-14 sm:pb-24 sm:pt-20 lg:pb-28 lg:pt-24"
-    >
-      <Container>
-        <div className="grid items-center gap-14 lg:grid-cols-[1.1fr_0.9fr]">
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: EASE }}
-          >
-            <p className="font-mono text-[13px] font-medium uppercase tracking-[0.18em] text-signal">
-              Result Centre
-            </p>
-
-            <h1 className="mt-5 max-w-[16ch] text-[34px] sm:text-[44px] lg:text-[56px]">
-              Latest Exam Results
-            </h1>
-
-            <p className="mt-6 max-w-[48ch] text-[17px] font-medium text-text">
-              Check the latest government recruitment results, merit lists
-              and selection updates as soon as they&rsquo;re declared.
-            </p>
-
-            <p className="mt-3.5 max-w-[52ch] text-[15px] text-text-muted">
-              Stay updated with results for Army, Bihar Police, Daroga, SSC
-              GD, Railway, CISF, CRPF, BSF, ITBP, Fireman and other
-              government exams &mdash; official PDFs, merit lists, cut-offs
-              and scorecards, all in one place.
-            </p>
-
-            <div className="mt-9 flex flex-wrap items-center gap-3">
-              <Button href="#results-listings" variant="primary" icon={ClipboardList}>
-                View Latest Results
-              </Button>
-              <Button href="#results-videos" variant="secondary" icon={PlayCircle}>
-                Watch Result Analysis
-              </Button>
-              <Button
-                href="https://wa.me/918863081082"
-                variant="secondary"
-                icon={MessageCircle}
-              >
-                WhatsApp Support
-              </Button>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, scale: 0.94 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7, ease: EASE, delay: 0.15 }}
-            className="relative order-first mx-auto aspect-square w-full max-w-[360px] lg:order-last lg:max-w-none"
-            aria-hidden="true"
-          >
-            <div
-              className="absolute inset-0 rounded-full border border-line"
-              style={{
-                background:
-                  "radial-gradient(circle at 50% 50%, var(--color-bg-raised) 0%, var(--color-bg) 72%)",
-              }}
-            />
-            <DeclaredStamp />
-          </motion.div>
-        </div>
-      </Container>
-    </section>
-  );
-}
-
-/* ---------------------------------------------------------
-   Signature element: a result sheet with an official stamp
-   slamming down onto it — the exact moment a result becomes
-   real for these candidates.
-   --------------------------------------------------------- */
-function DeclaredStamp() {
-  const shouldReduceMotion = useReducedMotion();
-
-  return (
-    <svg
-      viewBox="0 0 400 400"
-      role="img"
-      aria-label="Result sheet being stamped as declared"
-      className="relative h-full w-full"
-    >
-      {/* Document */}
-      <rect
-        x="96"
-        y="72"
-        width="208"
-        height="264"
-        rx="6"
-        fill="var(--color-bg)"
-        stroke="var(--color-line-strong)"
-        strokeWidth="2"
+    <section id="top" className="relative overflow-hidden pb-16 pt-14 sm:pb-24 sm:pt-20">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-1/2 top-0 -z-10 h-[480px] w-[880px] -translate-x-1/2 rounded-full opacity-60 blur-3xl"
+        style={{
+          background:
+            "radial-gradient(ellipse 60% 60% at 50% 0%, rgba(245,166,35,0.16), transparent 70%)",
+        }}
       />
-      {/* Document header block */}
-      <rect x="120" y="100" width="120" height="10" rx="2" fill="var(--color-line-strong)" />
-      <rect x="120" y="120" width="160" height="6" rx="2" fill="var(--color-line)" />
-
-      {/* Text lines */}
-      {Array.from({ length: 7 }).map((_, i) => (
-        <rect
-          key={i}
-          x="120"
-          y={150 + i * 18}
-          width={i % 3 === 2 ? 96 : 160}
-          height="6"
-          rx="2"
-          fill="var(--color-line)"
-        />
-      ))}
-
-      {/* Pulsing ripple behind the stamp */}
-      {!shouldReduceMotion && (
-        <motion.circle
-          cx="242"
-          cy="270"
-          r="46"
-          fill="none"
-          stroke="var(--color-signal)"
-          strokeWidth="2"
-          initial={{ opacity: 0.5, scale: 0.9 }}
-          animate={{ opacity: 0, scale: 1.4 }}
-          transition={{ duration: 1.8, repeat: Infinity, ease: "easeOut" }}
-          style={{ transformOrigin: "242px 270px" }}
-        />
-      )}
-
-      {/* Stamp seal, drops in and settles at an angle */}
-      <motion.g
-        style={{ transformOrigin: "242px 270px" }}
-        initial={shouldReduceMotion ? undefined : { opacity: 0, scale: 1.6, rotate: 6 }}
-        animate={{ opacity: 1, scale: 1, rotate: -10 }}
-        transition={
-          shouldReduceMotion
-            ? undefined
-            : { duration: 0.5, delay: 0.5, type: "spring", stiffness: 260, damping: 16 }
-        }
-      >
-        <circle
-          cx="242"
-          cy="270"
-          r="46"
-          fill="var(--color-bg)"
-          stroke="var(--color-signal)"
-          strokeWidth="3"
-        />
-        <circle
-          cx="242"
-          cy="270"
-          r="37"
-          fill="none"
-          stroke="var(--color-signal)"
-          strokeWidth="1.5"
-        />
-        <text
-          x="242"
-          y="266"
-          textAnchor="middle"
-          className="fill-signal font-mono text-[12px] font-bold uppercase tracking-[0.12em]"
-        >
-          Result
-        </text>
-        <text
-          x="242"
-          y="282"
-          textAnchor="middle"
-          className="fill-signal font-mono text-[12px] font-bold uppercase tracking-[0.12em]"
-        >
-          Declared
-        </text>
-      </motion.g>
-    </svg>
-  );
-}
-
-/* =========================================================
-   Category browse
-   ========================================================= */
-
-function CategorySection({
-  active,
-  onSelect,
-}: {
-  active: string | null;
-  onSelect: (name: string | null) => void;
-}) {
-  return (
-    <section className="border-b border-line py-14 sm:py-20">
       <Container>
-        <SectionHeading
-          eyebrow="Browse by Exam"
-          title="Find results for your exam"
-          description="Select a category to filter the listings below."
-        />
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: EASE }}
+          className="max-w-[62ch]"
+        >
+          <p className="font-mono text-[12px] font-semibold uppercase tracking-[0.22em] text-signal">
+            Success Stories
+          </p>
 
-        <div className="mt-8 flex flex-wrap gap-2.5">
-          <button
-            onClick={() => onSelect(null)}
-            className={`rounded-full border px-4 py-2 text-[13px] font-medium transition-colors ${
-              active === null
-                ? "border-signal bg-signal text-on-signal"
-                : "border-line text-text-muted hover:border-line-strong hover:text-text"
-            }`}
-          >
-            All Categories
-          </button>
-          {CATEGORIES.map(({ name, icon: Icon }) => {
-            const isActive = active === name;
-            return (
-              <button
-                key={name}
-                onClick={() => onSelect(isActive ? null : name)}
-                className={`flex items-center gap-1.5 rounded-full border px-4 py-2 text-[13px] font-medium transition-colors ${
-                  isActive
-                    ? "border-signal bg-signal text-on-signal"
-                    : "border-line text-text-muted hover:border-line-strong hover:text-text"
-                }`}
-              >
-                <Icon size={14} />
-                {name}
-              </button>
-            );
-          })}
-        </div>
-      </Container>
-    </section>
-  );
-}
+          <h1 className="font-display mt-5 max-w-[20ch] text-[32px] font-bold sm:text-[42px] lg:text-[50px]">
+            Our Selected Students
+          </h1>
 
-/* =========================================================
-   Search, filters & listings
-   ========================================================= */
+          <p className="font-body mt-5 text-[15px] font-medium text-text">
+            Celebrating the success stories of our proud achievers.
+          </p>
 
-function ListingsSection({
-  results,
-  query,
-  onQueryChange,
-  year,
-  onYearChange,
-  type,
-  onTypeChange,
-}: {
-  results: ResultItem[];
-  query: string;
-  onQueryChange: (v: string) => void;
-  year: string;
-  onYearChange: (v: string) => void;
-  type: string;
-  onTypeChange: (v: string) => void;
-}) {
-  return (
-    <section id="results-listings" className="border-b border-line py-14 sm:py-20">
-      <Container>
-        <SectionHeading
-          eyebrow="Latest Updates"
-          title="Result listings"
-          description="Official result PDFs, merit lists, cut-offs and scorecards as they're released."
-        />
+          <p className="font-body mt-4 text-[15px] leading-relaxed text-text-muted">
+            Our students have achieved remarkable success in various
+            Defence, Police, Paramilitary, Railway, and Government
+            recruitment examinations. Explore their inspiring journeys and
+            celebrate their achievements with us.
+          </p>
 
-        {/* Search + filters */}
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-          <div className="relative flex-1">
-            <Search
-              size={16}
-              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted"
-            />
-            <input
-              value={query}
-              onChange={(e) => onQueryChange(e.target.value)}
-              placeholder="Search by exam, organisation or category"
-              className="w-full rounded-lg border border-line bg-bg-raised py-2.5 pl-10 pr-4 text-[14px] text-text placeholder:text-text-muted focus:border-line-strong focus:outline-none"
-            />
+          <div className="mt-9 flex flex-wrap items-center gap-3">
+            <Button href="#students" variant="primary" icon={Trophy}>
+              View Success Stories
+            </Button>
+            <Button href="#submit" variant="secondary" icon={ClipboardList}>
+              Submit Your Selection
+            </Button>
+            <Button
+              href={`https://wa.me/${WHATSAPP_NUMBER}`}
+              variant="whatsapp"
+              icon={MessageCircle}
+            >
+              WhatsApp Enquiry
+            </Button>
           </div>
-
-          <FilterSelect value={year} onChange={onYearChange} options={YEARS} />
-          <FilterSelect value={type} onChange={onTypeChange} options={RESULT_TYPES} />
-        </div>
-
-        {/* Cards */}
-        <div className="mt-9 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {results.length > 0 ? (
-            results.map((r, i) => <ResultCard key={r.id} result={r} index={i} />)
-          ) : (
-            <p className="col-span-full py-10 text-center text-[14px] text-text-muted">
-              No results match your filters yet &mdash; try a different category or search term.
-            </p>
-          )}
-        </div>
+        </motion.div>
       </Container>
     </section>
   );
 }
 
-function FilterSelect({
-  value,
-  onChange,
-  options,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  options: string[];
-}) {
-  return (
-    <div className="relative">
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="appearance-none rounded-lg border border-line bg-bg-raised py-2.5 pl-4 pr-9 text-[14px] text-text focus:border-line-strong focus:outline-none"
-      >
-        {options.map((o) => (
-          <option key={o} value={o}>
-            {o}
-          </option>
-        ))}
-      </select>
-      <ChevronDown
-        size={14}
-        className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-text-muted"
-      />
-    </div>
-  );
-}
-
-function ResultCard({ result, index }: { result: ResultItem; index: number }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.5, ease: EASE, delay: (index % 3) * 0.06 }}
-      className="flex flex-col rounded-xl border border-line bg-bg-raised p-5"
-    >
-      <div className="flex items-start justify-between gap-3">
-        <Badge>{result.category}</Badge>
-        <span
-          className={`font-mono text-[11px] font-semibold uppercase tracking-[0.1em] ${
-            result.status === "New" ? "text-signal" : "text-text-muted"
-          }`}
-        >
-          {result.status}
-        </span>
-      </div>
-
-      <h3 className="mt-4 text-[17px] font-semibold text-text">{result.title}</h3>
-      <p className="mt-1.5 text-[14px] text-text-muted">{result.subtitle}</p>
-
-      <p className="mt-3 text-[13px] text-text-muted">{result.org}</p>
-
-      <div className="mt-3 flex items-center gap-4 text-[13px] text-text-muted">
-        <span className="flex items-center gap-1.5">
-          <Calendar size={13} />
-          {result.date}
-        </span>
-        {result.totalSelected && (
-          <span className="flex items-center gap-1.5">
-            <Users size={13} />
-            {result.totalSelected} selected
-          </span>
-        )}
-      </div>
-
-      <div className="mt-5 flex flex-wrap gap-2 border-t border-line pt-4">
-        <Button href={`/results/${result.id}`} variant="primary" icon={Eye}>
-          View Result
-        </Button>
-        <Button href={`/results/${result.id}#pdf`} variant="secondary" icon={Download}>
-          Download PDF
-        </Button>
-        <Button href={`/results/${result.id}#video`} variant="ghost" icon={PlayCircle}>
-          Watch Analysis
-        </Button>
-      </div>
-    </motion.div>
-  );
-}
-
 /* =========================================================
-   Stats strip
+   2. Success Statistics
    ========================================================= */
+const STATS = [
+  { label: "Total Students Trained", value: "1,200+", icon: Users },
+  { label: "Total Selections", value: "480+", icon: Trophy },
+  { label: "Army Selections", value: "160+", icon: Shield },
+  { label: "Police Selections", value: "140+", icon: ShieldAlert },
+  { label: "SSC GD Selections", value: "70+", icon: ShieldCheck },
+  { label: "Daroga Selections", value: "35+", icon: Star },
+  { label: "Railway Selections", value: "25+", icon: TrainFront },
+  { label: "Success Since", value: "2016", icon: Calendar },
+];
 
-function StatsSection() {
+function SuccessStatistics() {
   return (
-    <section className="border-b border-line py-14 sm:py-20">
+    <section className="py-16 sm:py-20">
       <Container>
-        <SectionHeading eyebrow="At a Glance" title="Result statistics" />
+        <motion.h2 {...fadeUp} className="font-display text-[26px] font-bold sm:text-[32px]">
+          Success Statistics
+        </motion.h2>
 
-        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {STATS.map(({ label, value, icon: Icon }, i) => (
             <motion.div
               key={label}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.5, ease: EASE, delay: i * 0.06 }}
-              className="rounded-xl border border-line bg-bg-raised p-6"
+              {...fadeUp}
+              transition={{ ...fadeUp.transition, delay: (i % 8) * 0.03 }}
+              className="card-flat px-4 py-6 text-center"
             >
-              <Icon size={18} className="text-signal" />
-              <p className="mt-4 font-mono text-[28px] font-semibold text-text">{value}</p>
-              <p className="mt-1 text-[13px] text-text-muted">{label}</p>
+              <Icon size={18} className="mx-auto text-signal-strong" />
+              <p className="font-display mt-3 text-[24px] font-bold text-text">
+                {value}
+              </p>
+              <p className="font-body mt-1 text-[12px] text-text-muted">{label}</p>
             </motion.div>
           ))}
         </div>
@@ -613,144 +146,462 @@ function StatsSection() {
 }
 
 /* =========================================================
-   Videos
+   3. Success Categories
    ========================================================= */
+const CATEGORIES = [
+  { label: "Army", icon: Shield },
+  { label: "Bihar Police", icon: ShieldAlert },
+  { label: "Bihar Daroga", icon: Star },
+  { label: "SSC GD", icon: ShieldCheck },
+  { label: "CISF", icon: Shield },
+  { label: "CRPF", icon: ShieldCheck },
+  { label: "BSF", icon: ShieldAlert },
+  { label: "ITBP", icon: ShieldCheck },
+  { label: "Railway", icon: TrainFront },
+  { label: "Fireman", icon: Flame },
+  { label: "Home Guard", icon: HomeIcon },
+  { label: "Other Government Jobs", icon: Landmark },
+] as const;
 
-function VideosSection() {
+function SuccessCategories() {
   return (
-    <section id="results-videos" className="border-b border-line py-14 sm:py-20">
+    <section className="py-16 sm:py-20">
       <Container>
-        <SectionHeading
-          eyebrow="Watch & Understand"
-          title="Result analysis videos"
-          description="A walkthrough of every cut-off, merit list and selection ratio, explained."
-        />
+        <motion.h2 {...fadeUp} className="font-display text-[26px] font-bold sm:text-[32px]">
+          Success Categories
+        </motion.h2>
 
-        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {VIDEOS.map((v, i) => (
-            <motion.a
-              key={v.title}
-              href="#"
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.5, ease: EASE, delay: i * 0.06 }}
-              className="group overflow-hidden rounded-xl border border-line bg-bg-raised"
+        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
+          {CATEGORIES.map(({ label, icon: Icon }, i) => (
+            <motion.div
+              key={label}
+              {...fadeUp}
+              transition={{ ...fadeUp.transition, delay: (i % 6) * 0.04 }}
+              className="card-flat flex flex-col items-center gap-2 px-3 py-5 text-center"
             >
-              <div className="relative flex aspect-video items-center justify-center bg-bg-raised-2">
-                <Video size={20} className="absolute left-3 top-3 text-text-muted" />
-                <PlayCircle
-                  size={40}
-                  className="text-signal transition-transform group-hover:scale-110"
-                />
-                <span className="absolute bottom-2 right-2.5 rounded bg-bg px-1.5 py-0.5 font-mono text-[11px] text-text-muted">
-                  {v.duration}
+              <Icon size={20} className="text-signal-strong" />
+              <span className="font-body text-[12px] text-text-muted">{label}</span>
+            </motion.div>
+          ))}
+        </div>
+      </Container>
+    </section>
+  );
+}
+
+/* =========================================================
+   4. Selected Student Cards — sample data
+   ========================================================= */
+interface SelectedStudent {
+  name: string;
+  post: string;
+  exam: string;
+  department: string;
+  district: string;
+  year: string;
+  rank?: string;
+  status: "Selected" | "Under Training" | "Document Verification";
+}
+
+const STUDENT_CATEGORY_LABELS = CATEGORIES.map((c) => c.label);
+
+const STUDENTS: SelectedStudent[] = [
+  { name: "Rohit Kumar", post: "Agniveer (GD)", exam: "Army Agniveer", department: "Army", district: "Lakhisarai", year: "2026", rank: "AIR 214", status: "Selected" },
+  { name: "Priya Sharma", post: "Constable", exam: "Bihar Police Constable", department: "Bihar Police", district: "Munger", year: "2026", status: "Selected" },
+  { name: "Amit Singh", post: "Sub-Inspector", exam: "Bihar Daroga (SI)", department: "Bihar Daroga", district: "Lakhisarai", year: "2025", rank: "Rank 88", status: "Selected" },
+  { name: "Suman Kumari", post: "Constable (GD)", exam: "SSC GD", department: "SSC GD", district: "Sheikhpura", year: "2025", status: "Selected" },
+  { name: "Deepak Yadav", post: "Constable", exam: "CRPF Recruitment", department: "CRPF", district: "Lakhisarai", year: "2025", status: "Under Training" },
+  { name: "Neha Kumari", post: "Constable", exam: "BSF Recruitment", department: "BSF", district: "Jamui", year: "2024", status: "Selected" },
+];
+
+const STATUS_STYLES: Record<SelectedStudent["status"], string> = {
+  Selected: "text-olive-strong",
+  "Under Training": "text-signal-strong",
+  "Document Verification": "text-text-faint",
+};
+
+function SelectedStudentCards() {
+  const [department, setDepartment] = useState("All");
+  const [year, setYear] = useState("All");
+  const [query, setQuery] = useState("");
+
+  const departmentOptions = useMemo(
+    () => ["All", ...STUDENT_CATEGORY_LABELS],
+    []
+  );
+  const yearOptions = useMemo(
+    () => ["All", ...Array.from(new Set(STUDENTS.map((s) => s.year))).sort().reverse()],
+    []
+  );
+
+  const filtered = STUDENTS.filter((s) => {
+    const matchesDept = department === "All" || s.department === department;
+    const matchesYear = year === "All" || s.year === year;
+    const matchesQuery =
+      query.trim() === "" ||
+      s.name.toLowerCase().includes(query.toLowerCase()) ||
+      s.post.toLowerCase().includes(query.toLowerCase());
+    return matchesDept && matchesYear && matchesQuery;
+  });
+
+  return (
+    <section id="students" className="py-16 sm:py-24">
+      <Container>
+        <motion.h2 {...fadeUp} className="font-display text-[28px] font-bold sm:text-[34px]">
+          Selected Students
+        </motion.h2>
+
+        {/* Search & Filter */}
+        <motion.div
+          {...fadeUp}
+          transition={{ ...fadeUp.transition, delay: 0.06 }}
+          className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center"
+        >
+          <div className="glass flex flex-1 items-center gap-2 rounded-lg px-4 py-2.5">
+            <Search size={16} className="shrink-0 text-text-faint" />
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search by name or post"
+              className="w-full bg-transparent text-[14px] text-text outline-none placeholder:text-text-faint"
+            />
+          </div>
+
+          <select
+            value={department}
+            onChange={(e) => setDepartment(e.target.value)}
+            className="glass rounded-lg px-4 py-2.5 text-[14px] text-text outline-none"
+          >
+            {departmentOptions.map((d) => (
+              <option key={d} value={d}>
+                {d === "All" ? "All Departments" : d}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={year}
+            onChange={(e) => setYear(e.target.value)}
+            className="glass rounded-lg px-4 py-2.5 text-[14px] text-text outline-none"
+          >
+            {yearOptions.map((y) => (
+              <option key={y} value={y}>
+                {y === "All" ? "All Years" : y}
+              </option>
+            ))}
+          </select>
+        </motion.div>
+
+        {/* Cards */}
+        <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {filtered.map((student, i) => (
+            <motion.div
+              key={student.name}
+              {...fadeUp}
+              transition={{ ...fadeUp.transition, delay: (i % 3) * 0.05 }}
+              className="card-flat flex flex-col p-6"
+            >
+              <div className="flex items-center gap-4">
+                <div className="glass flex h-16 w-16 shrink-0 items-center justify-center rounded-full">
+                  <GraduationCap size={22} className="text-text-muted" />
+                </div>
+                <div>
+                  <h3 className="font-display text-[16px] font-semibold text-text">
+                    {student.name}
+                  </h3>
+                  <p className="font-body mt-0.5 text-[13px] text-text-muted">
+                    {student.post}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-4 flex flex-wrap items-center gap-2">
+                <Badge>{student.department}</Badge>
+                <span
+                  className={`text-[12px] font-medium ${STATUS_STYLES[student.status]}`}
+                >
+                  ● {student.status}
                 </span>
               </div>
-              <p className="p-4 text-[14px] font-medium text-text">{v.title}</p>
-            </motion.a>
+
+              <div className="mt-4 flex flex-col gap-1.5 text-[13px] text-text-muted">
+                <span className="flex items-center gap-2">
+                  <ClipboardList size={14} /> {student.exam}
+                </span>
+                <span className="flex items-center gap-2">
+                  <MapPin size={14} /> {student.district}
+                </span>
+                <span className="flex items-center gap-2">
+                  <Calendar size={14} /> {student.year}
+                </span>
+                {student.rank && (
+                  <span className="flex items-center gap-2">
+                    <Award size={14} /> {student.rank}
+                  </span>
+                )}
+              </div>
+
+              <div className="mt-5 flex flex-wrap gap-2">
+                <Button href="#" variant="primary" icon={ArrowRight}>
+                  View Profile
+                </Button>
+                <Button href="#" variant="secondary" icon={Share2}>
+                  Share Success
+                </Button>
+              </div>
+            </motion.div>
           ))}
-        </div>
-      </Container>
-    </section>
-  );
-}
 
-/* =========================================================
-   Related blogs
-   ========================================================= */
-
-function BlogsSection() {
-  return (
-    <section className="border-b border-line py-14 sm:py-20">
-      <Container>
-        <SectionHeading eyebrow="Read Next" title="Related articles" />
-
-        <div className="mt-8 grid gap-3 sm:grid-cols-2">
-          {BLOGS.map((title, i) => (
-            <motion.a
-              key={title}
-              href="#"
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.45, ease: EASE, delay: i * 0.05 }}
-              className="group flex items-center justify-between gap-4 rounded-lg border border-line bg-bg-raised px-5 py-4"
-            >
-              <span className="text-[14px] font-medium text-text">{title}</span>
-              <ArrowRight
-                size={16}
-                className="shrink-0 text-text-muted transition-transform group-hover:translate-x-1 group-hover:text-signal"
-              />
-            </motion.a>
-          ))}
-        </div>
-      </Container>
-    </section>
-  );
-}
-
-/* =========================================================
-   Stay updated CTA
-   ========================================================= */
-
-function StayUpdatedSection() {
-  return (
-    <section className="py-14 sm:py-20">
-      <Container>
-        <div className="flex flex-col items-start gap-6 rounded-2xl border border-line bg-bg-raised p-8 sm:flex-row sm:items-center sm:justify-between sm:p-10">
-          <div>
-            <p className="font-mono text-[13px] font-medium uppercase tracking-[0.18em] text-signal">
-              Stay Updated
+          {filtered.length === 0 && (
+            <p className="font-body col-span-full text-[14px] text-text-muted">
+              No students match these filters right now.
             </p>
-            <h2 className="mt-3 max-w-[28ch] text-[26px] sm:text-[30px]">
-              Never miss a result update
-            </h2>
+          )}
+        </div>
+      </Container>
+    </section>
+  );
+}
+
+/* =========================================================
+   5. Success Story Videos — sample data
+   ========================================================= */
+const VIDEOS = [
+  { title: "From Village to Army: Rohit's Journey", post: "Agniveer (GD)" },
+  { title: "Cracking Bihar Police in First Attempt", post: "Constable" },
+  { title: "My Daroga Selection Story", post: "Sub-Inspector" },
+];
+
+function SuccessStoryVideos() {
+  return (
+    <section id="videos" className="py-16 sm:py-24">
+      <Container>
+        <motion.h2 {...fadeUp} className="font-display text-[28px] font-bold sm:text-[34px]">
+          Success Story Videos
+        </motion.h2>
+
+        <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-3">
+          {VIDEOS.map((video, i) => (
+            <motion.div
+              key={video.title}
+              {...fadeUp}
+              transition={{ ...fadeUp.transition, delay: i * 0.06 }}
+              className="card-flat p-5"
+            >
+              <div
+                className="flex aspect-video items-center justify-center rounded-lg border border-line"
+                style={{
+                  background:
+                    "radial-gradient(circle at 50% 40%, rgba(255,255,255,0.06) 0%, transparent 75%)",
+                }}
+              >
+                <PlayCircle size={30} className="text-signal-strong" />
+              </div>
+              <p className="font-body mt-4 text-[14px] font-medium text-text">
+                {video.title}
+              </p>
+              <p className="font-body mt-1 text-[12px] text-text-muted">{video.post}</p>
+              <div className="mt-4">
+                <Button href="https://youtube.com" variant="ghost" icon={PlayCircle}>
+                  Watch Now
+                </Button>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </Container>
+    </section>
+  );
+}
+
+/* =========================================================
+   6. Testimonials
+   ========================================================= */
+const TESTIMONIALS = [
+  {
+    name: "Rohit Kumar",
+    post: "Selected — Army Agniveer",
+    quote:
+      "The academy's structured training and daily discipline made the difference in my physical test.",
+  },
+  {
+    name: "Priya Sharma",
+    post: "Selected — Bihar Police Constable",
+    quote:
+      "Coaches tracked my running times every week, which kept me accountable and improving.",
+  },
+  {
+    name: "Amit Singh",
+    post: "Selected — Bihar Daroga (SI)",
+    quote:
+      "Beyond fitness, the mock tests and mentoring prepared me for the entire selection process.",
+  },
+];
+
+function Testimonials() {
+  return (
+    <section className="py-16 sm:py-24">
+      <Container>
+        <motion.h2 {...fadeUp} className="font-display text-[28px] font-bold sm:text-[34px]">
+          What Our Achievers Say
+        </motion.h2>
+
+        <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-3">
+          {TESTIMONIALS.map((t, i) => (
+            <motion.div
+              key={t.name}
+              {...fadeUp}
+              transition={{ ...fadeUp.transition, delay: i * 0.06 }}
+              className="card-flat p-6"
+            >
+              <Quote size={18} className="text-accent-strong" />
+              <p className="font-body mt-4 text-[14px] leading-relaxed text-text-muted">
+                &ldquo;{t.quote}&rdquo;
+              </p>
+              <p className="font-display mt-5 text-[13px] font-semibold text-text">
+                {t.name}
+              </p>
+              <p className="font-body text-[12px] text-text-muted">{t.post}</p>
+            </motion.div>
+          ))}
+        </div>
+      </Container>
+    </section>
+  );
+}
+
+/* =========================================================
+   7. Submit Your Selection
+   ========================================================= */
+function SubmitSelection() {
+  const [form, setForm] = useState({
+    name: "",
+    mobile: "",
+    exam: "",
+    post: "",
+    rank: "",
+    status: "Selected",
+    village: "",
+    district: "",
+    pincode: "",
+  });
+
+  const update = (key: keyof typeof form, value: string) =>
+    setForm((prev) => ({ ...prev, [key]: value }));
+
+  const message = `Hello Lakhisarai Physical Academy, I would like to submit my selection details:\nName: ${form.name}\nMobile: ${form.mobile}\nExam Name: ${form.exam}\nSelected Post: ${form.post}\nRank/Score: ${form.rank}\nSelection Status: ${form.status}\nVillage/City: ${form.village}\nDistrict: ${form.district}\nPIN Code: ${form.pincode}\nI will share my photo, result screenshot, and certificate on WhatsApp.`;
+  const whatsappHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+
+  const inputClasses =
+    "glass w-full rounded-lg px-4 py-2.5 text-[14px] text-text outline-none placeholder:text-text-faint";
+
+  return (
+    <section id="submit" className="py-16 sm:py-24">
+      <Container>
+        <motion.h2 {...fadeUp} className="font-display text-[28px] font-bold sm:text-[34px]">
+          Submit Your Selection
+        </motion.h2>
+        <motion.p
+          {...fadeUp}
+          transition={{ ...fadeUp.transition, delay: 0.05 }}
+          className="font-body mt-3 max-w-[60ch] text-[15px] leading-relaxed text-text-muted"
+        >
+          Selected in a Defence, Police, or Government exam after training
+          with us? Fill in your details below and submit via WhatsApp along
+          with your photo, result screenshot, and certificate.
+        </motion.p>
+
+        <motion.div
+          {...fadeUp}
+          transition={{ ...fadeUp.transition, delay: 0.1 }}
+          className="mt-8 grid max-w-[820px] grid-cols-1 gap-4 sm:grid-cols-2"
+        >
+          <input className={inputClasses} placeholder="Full Name *" value={form.name} onChange={(e) => update("name", e.target.value)} />
+          <input className={inputClasses} placeholder="Mobile Number *" value={form.mobile} onChange={(e) => update("mobile", e.target.value)} />
+          <input className={inputClasses} placeholder="Exam Name *" value={form.exam} onChange={(e) => update("exam", e.target.value)} />
+          <input className={inputClasses} placeholder="Selected Post *" value={form.post} onChange={(e) => update("post", e.target.value)} />
+          <input className={inputClasses} placeholder="Rank / Score" value={form.rank} onChange={(e) => update("rank", e.target.value)} />
+          <select className={inputClasses} value={form.status} onChange={(e) => update("status", e.target.value)}>
+            <option>Selected</option>
+            <option>Under Training</option>
+            <option>Document Verification</option>
+          </select>
+          <input className={inputClasses} placeholder="Village / City *" value={form.village} onChange={(e) => update("village", e.target.value)} />
+          <input className={inputClasses} placeholder="District *" value={form.district} onChange={(e) => update("district", e.target.value)} />
+          <input className={inputClasses} placeholder="PIN Code" value={form.pincode} onChange={(e) => update("pincode", e.target.value)} />
+
+          <div className="glass flex items-center gap-3 rounded-lg px-4 py-2.5 text-[13px] text-text-muted sm:col-span-2">
+            <UploadCloud size={16} className="shrink-0 text-signal-strong" />
+            Photo, result screenshot, and certificate can be shared directly in the WhatsApp chat after tapping submit.
           </div>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="sm:col-span-2">
+            <Button href={whatsappHref} variant="whatsapp" icon={MessageCircle}>
+              Submit via WhatsApp
+            </Button>
+          </div>
+        </motion.div>
+      </Container>
+    </section>
+  );
+}
+
+/* =========================================================
+   8. Become Our Next Success Story CTA
+   ========================================================= */
+function NextSuccessStoryCTA() {
+  return (
+    <section className="py-16 sm:py-24">
+      <Container>
+        <motion.div
+          {...fadeUp}
+          className="glass glass-sheen sheen-run relative overflow-hidden rounded-2xl px-6 py-14 text-center shadow-[var(--shadow-card)] sm:px-14"
+        >
+          <span className="ribbon-bar absolute inset-x-0 top-0 h-[4px]" aria-hidden />
+          <Trophy size={26} className="mx-auto text-accent-strong" />
+          <h2 className="font-display mx-auto mt-4 max-w-[28ch] text-[28px] font-bold sm:text-[36px]">
+            Become Our Next Success Story
+          </h2>
+          <p className="font-body mx-auto mt-3 max-w-[48ch] text-[15px] leading-relaxed text-text-muted">
+            Ready to achieve your dream? Join Lakhisarai Physical Academy
+            today and start your journey toward success.
+          </p>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            <Button href="/admission" variant="primary" icon={ClipboardList}>
+              Apply for Admission
+            </Button>
             <Button
-              href="https://wa.me/918863081082"
-              variant="primary"
+              href={`https://wa.me/${WHATSAPP_NUMBER}`}
+              variant="whatsapp"
               icon={MessageCircle}
             >
-              Join WhatsApp Channel
+              WhatsApp Now
             </Button>
-            <Button href="#" variant="secondary" icon={Video}>
-              Subscribe on Video
-            </Button>
-            <Button href="#" variant="ghost" icon={ArrowRight}>
-              Read Latest Blogs
+            <Button href="tel:8863081082" variant="secondary" icon={Phone}>
+              Call Now
             </Button>
           </div>
-        </div>
+        </motion.div>
       </Container>
     </section>
   );
 }
 
 /* =========================================================
-   Shared heading
+   Page content export
    ========================================================= */
-
-function SectionHeading({
-  eyebrow,
-  title,
-  description,
-}: {
-  eyebrow: string;
-  title: string;
-  description?: string;
-}) {
+export default function Results() {
   return (
-    <div className="max-w-[52ch]">
-      <p className="font-mono text-[13px] font-medium uppercase tracking-[0.18em] text-signal">
-        {eyebrow}
-      </p>
-      <h2 className="mt-3 text-[28px] sm:text-[34px]">{title}</h2>
-      {description && (
-        <p className="mt-3 text-[15px] text-text-muted">{description}</p>
-      )}
-    </div>
+    <>
+      <ResultsHero />
+      <SuccessStatistics />
+      <SuccessCategories />
+      <SelectedStudentCards />
+      <SuccessStoryVideos />
+      <Testimonials />
+      <SubmitSelection />
+      <NextSuccessStoryCTA />
+    </>
   );
 }

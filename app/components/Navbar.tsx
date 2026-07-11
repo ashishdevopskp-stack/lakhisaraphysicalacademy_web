@@ -1,55 +1,45 @@
-import { Phone, PhoneCall } from "lucide-react";
+"use client";
+
 import Container from "./Container";
 import Button from "./Button";
-
-const LINKS = [
-  { label: "About", href: "#about" },
-  { label: "Programs", href: "#programs" },
-  { label: "Vacancies", href: "#vacancies" },
-  { label: "Results", href: "#results" },
-  { label: "Hostel", href: "#hostel" },
-  { label: "Contact", href: "#contact" },
-];
+import ThemeToggle from "./ThemeToggle";
+import { brand, nav, contact } from "../lib/site-data";
+import { Phone } from "lucide-react";
 
 export default function Navbar() {
   return (
-    <header className="sticky top-0 z-40 border-b border-line bg-bg">
+    <header className="ios-blur sticky top-0 z-50 border-b border-line">
       <Container>
-        <div className="flex h-[68px] items-center justify-between gap-6 sm:h-[84px]">
-          <a href="#top" className="flex flex-shrink-0 items-center gap-3">
-            <span className="grid h-10 w-10 place-items-center rounded-sm bg-signal font-display text-[15px] font-bold tracking-wide text-on-signal">
-              LPA
-            </span>
-            <span className="hidden font-display text-[13px] font-semibold uppercase leading-tight tracking-wide text-text lg:inline-block">
-              Lakhisarai
-              <br />
-              Physical Academy
-            </span>
+        <div className="flex h-14 items-center justify-between">
+          <a
+            href="#top"
+            className="text-[17px] font-semibold tracking-tight text-text"
+          >
+            {brand.shortName}
           </a>
 
           <nav
+            className="hidden items-center gap-6 lg:flex"
             aria-label="Primary"
-            className="hidden items-center gap-7 text-sm font-medium text-text-muted lg:flex"
           >
-            {LINKS.map((link) => (
+            {nav.map((item) => (
               <a
-                key={link.href}
-                href={link.href}
-                className="transition-colors duration-150 hover:text-signal"
+                key={item.href}
+                href={item.href}
+                className="text-[14px] font-medium text-text-muted transition-colors hover:text-text"
               >
-                {link.label}
+                {item.label}
               </a>
             ))}
           </nav>
 
-          <div className="flex flex-shrink-0 items-center gap-2">
-            <Button href="tel:8863081082" variant="ghost" icon={PhoneCall}>
-              <span className="hidden sm:inline">Call Now</span>
-
-            </Button>
-            <Button href="#admission" variant="primary">
-              Apply Online
-            </Button>
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            <div className="hidden sm:block">
+              <Button href={contact.phoneHref} variant="secondary" icon={Phone}>
+                Call
+              </Button>
+            </div>
           </div>
         </div>
       </Container>

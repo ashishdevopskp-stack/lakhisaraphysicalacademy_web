@@ -23,7 +23,6 @@ import {
   Wallet,
   ChevronDown,
   Mail,
-  MapPin,
   BarChart3,
 } from "lucide-react";
 import Container from "../../components/Container";
@@ -39,15 +38,31 @@ const fadeUp = {
   transition: { duration: 0.55, ease: EASE },
 };
 
+const PILL_COLORS = ["pill-color-1", "pill-color-2", "pill-color-3", "pill-color-4", "pill-color-5"];
+
+/* Reusable soft gradient wash for section backgrounds — matches About page */
+function SectionGlow({ variant = 1 }: { variant?: 1 | 2 | 3 }) {
+  const images = {
+    1: "radial-gradient(ellipse 1000px 550px at 10% 0%, rgba(37,99,235,0.10), transparent 60%), radial-gradient(ellipse 800px 500px at 95% 30%, rgba(34,197,94,0.08), transparent 55%)",
+    2: "radial-gradient(ellipse 900px 500px at 90% 10%, rgba(20,184,166,0.10), transparent 55%), radial-gradient(ellipse 800px 500px at 5% 90%, rgba(37,99,235,0.08), transparent 55%)",
+    3: "radial-gradient(ellipse 1000px 600px at 50% 0%, rgba(34,197,94,0.09), transparent 60%), radial-gradient(ellipse 800px 500px at 100% 100%, rgba(37,99,235,0.08), transparent 55%)",
+  };
+  return (
+    <div
+      aria-hidden
+      className="pointer-events-none absolute inset-0 -z-10"
+      style={{ backgroundImage: images[variant] }}
+    />
+  );
+}
+
 /* =========================================================
    1. Hero
    ========================================================= */
 function CoursesHero() {
   return (
-    <section
-      id="top"
-      className="relative overflow-hidden border-b border-line pb-16 pt-14 sm:pb-24 sm:pt-20"
-    >
+    <section id="top" className="relative overflow-hidden pb-16 pt-16 sm:pb-24 sm:pt-24">
+      <SectionGlow variant={1} />
       <Container>
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -55,16 +70,16 @@ function CoursesHero() {
           transition={{ duration: 0.6, ease: EASE }}
           className="max-w-[62ch]"
         >
-          <p className="font-mono text-[13px] font-medium uppercase tracking-[0.18em] text-signal">
+          <p className="font-mono text-[13px] font-semibold uppercase tracking-[0.2em] text-signal">
             Courses &amp; Training Programs
           </p>
 
-          <h1 className="mt-5 max-w-[22ch] text-[34px] sm:text-[44px] lg:text-[52px]">
-            Professional Physical Training for Defence, Police &amp; Government
-            Recruitment
+          <h1 className="font-display mt-5 max-w-[22ch] text-[34px] font-extrabold leading-[1.1] sm:text-[44px] lg:text-[52px]">
+            Professional Physical Training for{" "}
+            <span className="text-gradient-brand">Defence, Police &amp; Government Recruitment</span>
           </h1>
 
-          <p className="mt-6 text-[15px] text-text-muted">
+          <p className="font-body mt-6 max-w-[54ch] text-[15.5px] leading-relaxed text-text-muted">
             Lakhisarai Physical Academy offers structured physical training
             programs designed to help candidates prepare for various
             government recruitment physical examinations. Our training
@@ -83,7 +98,7 @@ function CoursesHero() {
             >
               WhatsApp Enquiry
             </Button>
-            <Button href="tel:8863081082" variant="ghost" icon={Phone}>
+            <Button href="tel:8863081082" variant="secondary" icon={Phone}>
               Call Now
             </Button>
           </div>
@@ -254,18 +269,19 @@ const PROGRAMS = [
 
 function TrainingPrograms() {
   return (
-    <section className="border-b border-line py-16 sm:py-24">
+    <section className="relative overflow-hidden py-16 sm:py-24">
+      <SectionGlow variant={2} />
       <Container>
         <motion.p
           {...fadeUp}
-          className="font-mono text-[13px] font-medium uppercase tracking-[0.18em] text-signal"
+          className="font-mono text-[13px] font-semibold uppercase tracking-[0.2em] text-signal"
         >
           Our Training Programs
         </motion.p>
         <motion.h2
           {...fadeUp}
           transition={{ ...fadeUp.transition, delay: 0.05 }}
-          className="mt-4 max-w-[28ch] text-[28px] sm:text-[34px]"
+          className="font-display mt-4 max-w-[28ch] text-[28px] font-bold sm:text-[36px]"
         >
           A program for every recruitment goal
         </motion.h2>
@@ -276,15 +292,15 @@ function TrainingPrograms() {
               key={p.title}
               {...fadeUp}
               transition={{ ...fadeUp.transition, delay: (i % 3) * 0.05 }}
-              className="flex flex-col rounded-xl border border-line bg-bg-raised p-6"
+              className="card-flat flex flex-col p-6"
             >
               <p.icon size={22} className="text-signal" />
-              <h3 className="mt-4 text-[16px] font-semibold text-text">
+              <h3 className="font-display mt-4 text-[16px] font-semibold text-text">
                 {p.title}
               </h3>
 
               {p.overview && (
-                <p className="mt-2 text-[13px] text-text-muted">
+                <p className="font-body mt-2 text-[13px] text-text-muted">
                   {p.overview}
                 </p>
               )}
@@ -295,7 +311,7 @@ function TrainingPrograms() {
                 ))}
               </div>
 
-              <p className="mt-4 text-[13px] text-text-muted">
+              <p className="font-body mt-4 text-[13px] text-text-muted">
                 Suitable for: <span className="text-text">{p.suitableFor}</span>
               </p>
 
@@ -327,18 +343,18 @@ const EVALUATION_CRITERIA = [
 
 function PerformanceEvaluation() {
   return (
-    <section className="border-b border-line bg-bg-raised py-16 sm:py-24">
+    <section className="py-16 sm:py-24">
       <Container>
         <motion.p
           {...fadeUp}
-          className="font-mono text-[13px] font-medium uppercase tracking-[0.18em] text-signal"
+          className="font-mono text-[13px] font-semibold uppercase tracking-[0.2em] text-signal"
         >
           Performance Evaluation
         </motion.p>
         <motion.h2
           {...fadeUp}
           transition={{ ...fadeUp.transition, delay: 0.05 }}
-          className="mt-4 max-w-[36ch] text-[28px] sm:text-[34px]"
+          className="font-display mt-4 max-w-[36ch] text-[28px] font-bold sm:text-[36px]"
         >
           Every student is regularly assessed on
         </motion.h2>
@@ -349,10 +365,10 @@ function PerformanceEvaluation() {
               key={item}
               {...fadeUp}
               transition={{ ...fadeUp.transition, delay: i * 0.04 }}
-              className="flex items-center gap-2.5 rounded-lg border border-line bg-bg px-4 py-3.5"
+              className={`pill ${PILL_COLORS[i % PILL_COLORS.length]} flex items-center justify-center gap-2 py-3.5 text-center`}
             >
-              <BarChart3 size={16} className="shrink-0 text-signal" />
-              <span className="text-[14px] text-text">{item}</span>
+              <BarChart3 size={16} className="shrink-0" />
+              <span className="font-body text-[14px] font-medium">{item}</span>
             </motion.div>
           ))}
         </div>
@@ -366,35 +382,33 @@ function PerformanceEvaluation() {
    ========================================================= */
 function TrainingSchedule() {
   return (
-    <section className="border-b border-line py-16 sm:py-24">
+    <section className="relative overflow-hidden py-16 sm:py-24">
+      <SectionGlow variant={3} />
       <Container>
-        <motion.h2 {...fadeUp} className="text-[28px] sm:text-[34px]">
+        <motion.h2 {...fadeUp} className="font-display text-[28px] font-bold sm:text-[36px]">
           Training Schedule
         </motion.h2>
 
         <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2">
-          <motion.div
-            {...fadeUp}
-            className="rounded-xl border border-line bg-bg-raised p-7"
-          >
+          <motion.div {...fadeUp} className="card-flat p-7">
             <Sunrise size={22} className="text-signal" />
-            <p className="mt-4 text-[16px] font-semibold text-text">
+            <p className="font-display mt-4 text-[16px] font-semibold text-text">
               Morning Batch
             </p>
-            <p className="mt-1 font-mono text-[15px] text-text-muted">
+            <p className="font-mono mt-1 text-[15px] text-text-muted">
               05:00 AM &ndash; 08:00 AM
             </p>
           </motion.div>
           <motion.div
             {...fadeUp}
             transition={{ ...fadeUp.transition, delay: 0.08 }}
-            className="rounded-xl border border-line bg-bg-raised p-7"
+            className="card-flat p-7"
           >
-            <Sunset size={22} className="text-signal" />
-            <p className="mt-4 text-[16px] font-semibold text-text">
+            <Sunset size={22} className="text-accent-strong" />
+            <p className="font-display mt-4 text-[16px] font-semibold text-text">
               Evening Batch
             </p>
-            <p className="mt-1 font-mono text-[15px] text-text-muted">
+            <p className="font-mono mt-1 text-[15px] text-text-muted">
               04:00 PM &ndash; 07:00 PM
             </p>
           </motion.div>
@@ -403,7 +417,7 @@ function TrainingSchedule() {
         <motion.p
           {...fadeUp}
           transition={{ ...fadeUp.transition, delay: 0.15 }}
-          className="mt-6 text-[13px] italic text-text-muted"
+          className="font-body mt-6 text-[13px] italic text-text-muted"
         >
           Batch timings may change according to season or special training
           sessions.
@@ -429,9 +443,9 @@ const WHY_CHOOSE = [
 
 function WhyChoose() {
   return (
-    <section className="border-b border-line bg-bg-raised py-16 sm:py-24">
+    <section className="py-16 sm:py-24">
       <Container>
-        <motion.h2 {...fadeUp} className="max-w-[24ch] text-[28px] sm:text-[34px]">
+        <motion.h2 {...fadeUp} className="font-display max-w-[24ch] text-[28px] font-bold sm:text-[36px]">
           Why Choose Our Training?
         </motion.h2>
 
@@ -441,10 +455,10 @@ function WhyChoose() {
               key={label}
               {...fadeUp}
               transition={{ ...fadeUp.transition, delay: i * 0.04 }}
-              className="rounded-xl border border-line bg-bg p-6"
+              className="card-flat p-6"
             >
-              <CheckCircle2 size={20} className="text-signal" />
-              <p className="mt-4 text-[14px] font-medium text-text">
+              <CheckCircle2 size={20} className="text-accent-strong" />
+              <p className="font-body mt-4 text-[14px] font-semibold text-text">
                 {label}
               </p>
             </motion.div>
@@ -460,19 +474,20 @@ function WhyChoose() {
    ========================================================= */
 function HostelFacility() {
   return (
-    <section className="border-b border-line py-16 sm:py-24">
+    <section className="relative overflow-hidden py-16 sm:py-24">
+      <SectionGlow variant={1} />
       <Container>
         <motion.div
           {...fadeUp}
-          className="flex flex-col items-start gap-5 rounded-2xl border border-line bg-bg-raised p-8 sm:flex-row sm:items-center sm:justify-between"
+          className="card-flat flex flex-col items-start gap-5 p-8 sm:flex-row sm:items-center sm:justify-between"
         >
           <div className="flex items-start gap-4">
             <Bed size={24} className="mt-1 shrink-0 text-signal" />
             <div>
-              <h2 className="text-[20px] font-semibold text-text">
+              <h2 className="font-display text-[20px] font-semibold text-text">
                 Hostel Facility
               </h2>
-              <p className="mt-2 max-w-[54ch] text-[14px] text-text-muted">
+              <p className="font-body mt-2 max-w-[54ch] text-[14px] text-text-muted">
                 Hostel facilities are available for students coming from
                 nearby districts, subject to availability.
               </p>
@@ -488,38 +503,49 @@ function HostelFacility() {
 }
 
 /* =========================================================
-   7. Fees & Admission (final CTA)
+   7. Fees & Admission (gradient rounded CTA — matches About FinalCTA)
    ========================================================= */
 function FeesAdmission() {
   return (
-    <section id="admission" className="border-b border-line py-16 sm:py-24">
+    <section id="admission" className="py-16 sm:py-24">
       <Container>
         <motion.div
           {...fadeUp}
-          className="rounded-2xl border border-line bg-bg-raised px-6 py-14 text-center sm:px-14"
+          className="relative overflow-hidden rounded-2xl px-6 py-14 text-center sm:px-14"
+          style={{ backgroundColor: "var(--color-navy)" }}
         >
-          <Wallet size={26} className="mx-auto text-signal" />
-          <h2 className="mx-auto mt-4 max-w-[26ch] text-[28px] sm:text-[36px]">
-            Fees &amp; Admission
-          </h2>
-          <p className="mx-auto mt-4 max-w-[54ch] text-[15px] text-text-muted">
-            Interested candidates can apply online or visit the academy for
-            admission and batch selection.
-          </p>
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <Button href="#admission" variant="primary" icon={ClipboardList}>
-              Apply Online
-            </Button>
-            <Button
-              href="https://wa.me/918863081082"
-              variant="secondary"
-              icon={MessageCircle}
-            >
-              WhatsApp Enquiry
-            </Button>
-            <Button href="tel:8863081082" variant="ghost" icon={Phone}>
-              Call Now
-            </Button>
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0"
+            style={{
+              backgroundImage:
+                "radial-gradient(ellipse 800px 400px at 15% 0%, rgba(37,99,235,0.35), transparent 60%), radial-gradient(ellipse 700px 400px at 90% 100%, rgba(34,197,94,0.28), transparent 55%)",
+            }}
+          />
+          <div className="relative">
+            <Wallet size={26} className="mx-auto text-white" />
+            <h2 className="font-display mx-auto mt-4 max-w-[26ch] text-[28px] font-bold text-white sm:text-[38px]">
+              Fees &amp; Admission
+            </h2>
+            <p className="font-body mx-auto mt-4 max-w-[54ch] text-[15.5px] leading-relaxed text-text-on-dark-muted">
+              Interested candidates can apply online or visit the academy for
+              admission and batch selection.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              <Button href="#admission" variant="primary" icon={ClipboardList}>
+                Apply Online
+              </Button>
+              <Button
+                href="https://wa.me/918863081082"
+                variant="primary"
+                icon={MessageCircle}
+              >
+                WhatsApp Enquiry
+              </Button>
+              <Button href="tel:8863081082" variant="secondary" icon={Phone}>
+                Call Now
+              </Button>
+            </div>
           </div>
         </motion.div>
       </Container>
@@ -559,7 +585,7 @@ function FAQItem({ q, a }: { q: string; a: string }) {
         className="flex w-full items-center justify-between gap-4 text-left"
         aria-expanded={open}
       >
-        <span className="text-[15px] font-medium text-text">{q}</span>
+        <span className="font-body text-[15px] font-medium text-text">{q}</span>
         <ChevronDown
           size={18}
           className={`shrink-0 text-text-muted transition-transform ${
@@ -576,7 +602,7 @@ function FAQItem({ q, a }: { q: string; a: string }) {
             transition={{ duration: 0.25, ease: EASE }}
             className="overflow-hidden"
           >
-            <p className="pt-3 text-[14px] text-text-muted">{a}</p>
+            <p className="font-body pt-3 text-[14px] text-text-muted">{a}</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -586,16 +612,17 @@ function FAQItem({ q, a }: { q: string; a: string }) {
 
 function FAQ() {
   return (
-    <section className="border-b border-line bg-bg-raised py-16 sm:py-24">
+    <section className="relative overflow-hidden py-16 sm:py-24">
+      <SectionGlow variant={2} />
       <Container>
-        <motion.h2 {...fadeUp} className="text-[28px] sm:text-[34px]">
+        <motion.h2 {...fadeUp} className="font-display text-[28px] font-bold sm:text-[36px]">
           Frequently Asked Questions
         </motion.h2>
 
         <motion.div
           {...fadeUp}
           transition={{ ...fadeUp.transition, delay: 0.08 }}
-          className="mt-8 border-t border-line"
+          className="card-flat mt-8 divide-y divide-line overflow-hidden px-6"
         >
           {FAQS.map((item) => (
             <FAQItem key={item.q} q={item.q} a={item.a} />
@@ -615,14 +642,14 @@ function ContactInfo() {
       <Container>
         <motion.p
           {...fadeUp}
-          className="font-mono text-[13px] font-medium uppercase tracking-[0.18em] text-signal"
+          className="font-mono text-[13px] font-semibold uppercase tracking-[0.2em] text-signal"
         >
           Founder &amp; Director
         </motion.p>
         <motion.h2
           {...fadeUp}
           transition={{ ...fadeUp.transition, delay: 0.05 }}
-          className="mt-4 text-[28px] sm:text-[34px]"
+          className="font-display mt-4 text-[28px] font-bold sm:text-[36px]"
         >
           Contact Ganesh Sir
         </motion.h2>
@@ -632,22 +659,22 @@ function ContactInfo() {
           transition={{ ...fadeUp.transition, delay: 0.1 }}
           className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
         >
-          <div className="rounded-xl border border-line bg-bg-raised p-5">
+          <div className="card-flat p-5">
             <Phone size={18} className="text-signal" />
-            <p className="mt-3 text-[14px] font-medium text-text">Mobile</p>
-            <p className="text-[14px] text-text-muted">8863081082</p>
-            <p className="text-[14px] text-text-muted">7739776471</p>
+            <p className="font-display mt-3 text-[14px] font-semibold text-text">Mobile</p>
+            <p className="font-body text-[14px] text-text-muted">8863081082</p>
+            <p className="font-body text-[14px] text-text-muted">7739776471</p>
           </div>
-          <div className="rounded-xl border border-line bg-bg-raised p-5">
+          <div className="card-flat p-5">
             <MessageCircle size={18} className="text-signal" />
-            <p className="mt-3 text-[14px] font-medium text-text">WhatsApp</p>
-            <p className="text-[14px] text-text-muted">8863081082</p>
-            <p className="text-[14px] text-text-muted">7739776471</p>
+            <p className="font-display mt-3 text-[14px] font-semibold text-text">WhatsApp</p>
+            <p className="font-body text-[14px] text-text-muted">8863081082</p>
+            <p className="font-body text-[14px] text-text-muted">7739776471</p>
           </div>
-          <div className="rounded-xl border border-line bg-bg-raised p-5">
+          <div className="card-flat p-5">
             <Mail size={18} className="text-signal" />
-            <p className="mt-3 text-[14px] font-medium text-text">Email</p>
-            <p className="break-all text-[14px] text-text-muted">
+            <p className="font-display mt-3 text-[14px] font-semibold text-text">Email</p>
+            <p className="font-body break-all text-[14px] text-text-muted">
               ganeshkumar90067@gmail.com
             </p>
           </div>

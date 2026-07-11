@@ -1,38 +1,37 @@
-import type { Metadata } from "next";
-import { Oswald, Inter, JetBrains_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Inter, Poppins, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { seo } from "./lib/site-data";
 
-/* Display face: Oswald — condensed, bold, athletic. Reads like the
-   numbering on a jersey or a stenciled ground marker. Headings only. */
-const oswald = Oswald({
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
-  variable: "--font-oswald",
-  display: "swap",
-});
-
-/* Body face: Inter — clean and legible for course details, eligibility,
-   and dates. Disappears into the background so content stays scannable. */
 const inter = Inter({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
   variable: "--font-inter",
   display: "swap",
 });
 
-/* Utility face: JetBrains Mono — stats, timers, dates. Gives the page
-   a stopwatch / scoreboard feel that fits a physical-training academy. */
-const mono = JetBrains_Mono({
+const poppins = Poppins({
   subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-mono-utility",
+  weight: ["500", "600", "700"],
+  variable: "--font-poppins",
+  display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["500", "600"],
+  variable: "--font-jetbrains-mono",
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Lakhisarai Physical Academy | Army, Police & SSC GD Physical Training",
-  description:
-    "Professional physical training for Army, Bihar Police, Daroga, SSC GD, CISF, CRPF and BSF recruitment. Disciplined coaching, expert guidance, and hostel facility in Lakhisarai, Bihar.",
+  title: seo.title,
+  description: seo.description,
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0a0e16",
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({
@@ -41,7 +40,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${oswald.variable} ${inter.variable} ${mono.variable}`}
+      className={`${inter.variable} ${poppins.variable} ${jetbrainsMono.variable}`}
     >
       <body>{children}</body>
     </html>
