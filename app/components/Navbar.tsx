@@ -2,7 +2,6 @@
 
 import Container from "./Container";
 import Button from "./Button";
-import ThemeToggle from "./ThemeToggle";
 import { brand, nav, contact } from "../lib/site-data";
 import { Phone } from "lucide-react";
 
@@ -34,7 +33,7 @@ export default function Navbar() {
           </nav>
 
           <div className="flex items-center gap-3">
-            <ThemeToggle />
+           
             <div className="hidden sm:block">
               <Button href={contact.phoneHref} variant="secondary" icon={Phone}>
                 Call
