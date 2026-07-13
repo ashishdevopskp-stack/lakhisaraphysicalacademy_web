@@ -17,8 +17,8 @@ import {
   Camera as Instagram,
   Navigation,
 } from "lucide-react";
-import Container from "../../components/Container";
-import Button from "../../components/Button";
+import Container from "../components/Container";
+import Button from "../components/Button";
 
 const EASE = [0.22, 0.61, 0.36, 1] as const;
 const WHATSAPP_NUMBERS = ["918863081082", "917739776471"];

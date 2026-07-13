@@ -48,7 +48,7 @@ export const BLOG_NAV = [
   { href: "/blog/categories", label: "Categories" },
   { href: "/blog/articles", label: "Latest Articles" },
   { href: "/blog/topics", label: "Popular Topics" },
-  { href: "/blog/videos", label: "Video Learning" },
+ 
 ];
 
 export function BlogSubNav({ current }: { current: string }) {
@@ -111,9 +111,7 @@ function BlogHero() {
             <Button href="/blog/articles" variant="primary" icon={Newspaper}>
               Read Latest Blogs
             </Button>
-            <Button href="/blog/videos" variant="secondary" icon={PlayCircle}>
-              Watch Video Guides
-            </Button>
+            
             <Button
               href={`https://wa.me/${WHATSAPP_NUMBER}`}
               variant="secondary"
@@ -150,12 +148,7 @@ const EXPLORE_CARDS = [
     title: "Popular Topics",
     desc: "Quick-jump tags readers come back to most.",
   },
-  {
-    href: "/blogs/videos",
-    icon: PlayCircle,
-    title: "Video Learning",
-    desc: "Technique breakdowns and preparation videos.",
-  },
+ 
 ];
 
 const ICON_TINTS = [
