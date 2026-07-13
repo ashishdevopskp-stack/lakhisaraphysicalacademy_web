@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Poppins, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { seo } from "./lib/site-data";
+
 
 const inter = Inter({
   subsets: ["latin"],
@@ -23,10 +23,6 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: seo.title,
-  description: seo.description,
-};
 
 export const viewport: Viewport = {
   themeColor: "#0a0e16",

@@ -1,29 +1,37 @@
 import Navbar from "./components/Navbar";
-import About from "./sections/about/page";
-import Blog from "./sections/blogs/page";
-import Courses from "./sections/courses/page";
-import Events from "./sections/events/page";
-import Hero from "./sections/hero/page";
-import Hostel from "./sections/hostel/page";
-import Notifications from "./sections/notification/page";
-import Resources from "./sections/resources/page";
-import Results from "./sections/result/page";
-import Store from "./sections/store/page";
+import About from "./about/page";
+import Admission from "./admission-form/page";
+import Blog from "./blogs/page";
+import Courses from "./courses/page";
+import Events from "./events/page";
+import Hero from "./hero/page";
+import HostelSubNav from "./hostel/page";
+import Jobs from "./jobs/page";
+import Notifications from "./notification/page";
+import Resources from "./resources/page";
+import Results from "./result/page";
+import Store from "./store/page";
+import Videos from "./youtube-video/page";
 
 export default function Home() {
   return (
     <main>
-      {/* <Navbar /> */}
+      <Navbar />
       <Hero />
       <About />
       <Courses />
-      <Hostel />
+      <HostelSubNav />
+       <Notifications />
+     
       <Blog />
       <Events />
       <Results />
       <Store />
       <Resources />
-      <Notifications />
+     
+      <Jobs />
+      <Videos />
+      <Admission />
     </main>
   );
 }
