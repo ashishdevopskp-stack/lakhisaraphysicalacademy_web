@@ -3,10 +3,7 @@ export const brand = {
   fullName: "Lakhisarai Physical Academy",
 };
 
-/**
- * Each href matches the `id` wrapping its section on the homepage
- * (see app/page.tsx). Keep these in sync if you rename a section id.
- */
+
 export const nav = [
   { label: "About", href: "#about" },
   { label: "Courses", href: "#courses" },

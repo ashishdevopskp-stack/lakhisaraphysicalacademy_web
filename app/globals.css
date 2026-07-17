@@ -2,16 +2,16 @@
 
 @theme {
   /* Surface */
-  --color-bg: #0a0e16;
-  --color-bg-raised: rgba(255, 255, 255, 0.045);
-  --color-bg-raised-2: rgba(255, 255, 255, 0.07);
-  --color-bg-raised-3: rgba(255, 255, 255, 0.1);
-  --color-line: rgba(255, 255, 255, 0.1);
-  --color-line-strong: rgba(255, 255, 255, 0.2);
+  --color-bg: #f4f6fa;
+  --color-bg-raised: rgba(10, 14, 22, 0.035);
+  --color-bg-raised-2: rgba(10, 14, 22, 0.055);
+  --color-bg-raised-3: rgba(10, 14, 22, 0.08);
+  --color-line: rgba(10, 14, 22, 0.1);
+  --color-line-strong: rgba(10, 14, 22, 0.16);
 
   /* Text */
-  --color-text: #f3f5f8;
-  --color-text-muted: #a7b0c0;
+  --color-text: #10151f;
+  --color-text-muted: #4b5f73;
   --color-text-faint: #6b7688;
   --color-text-on-dark: #ffffff;
   --color-text-on-dark-muted: #cbd5e1;
@@ -19,7 +19,7 @@
   /* Signal — trust / force */
   --color-signal: #3b82f6;
   --color-signal-strong: #60a5fa;
-  --color-signal-dim: rgba(59, 130, 246, 0.16);
+  --color-signal-dim: rgba(59, 130, 246, 0.1);
   --color-on-signal: #ffffff;
 
   /* Accent — achievement / medal */
@@ -41,7 +41,7 @@
   --color-success: #22c55e;
   --color-danger: #ef4444;
 
-  --font-display: var(--font-barlow), "Arial Narrow", sans-serif;
+  --font-display: var(--font-poppins), "Arial Narrow", sans-serif;
   --font-body: var(--font-inter), -apple-system, BlinkMacSystemFont,
     "Helvetica Neue", Arial, sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, "SF Mono", Menlo,
@@ -53,8 +53,8 @@
   --radius-full: 999px;
   --container-app: 1180px;
 
-  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.16);
-  --shadow-card-hover: 0 12px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  --shadow-card: 0 8px 28px rgba(15, 23, 42, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  --shadow-card-hover: 0 12px 36px rgba(15, 23, 42, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
 @property --blob1-x { syntax: '<percentage>'; inherits: false; initial-value: 12%; }
@@ -74,24 +74,52 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    color-scheme: light;
+  }
+
+  /* ============ DARK THEME OVERRIDE ============ */
+  html[data-theme="dark"] {
     color-scheme: dark;
+
+    --color-bg: #0a0e16;
+    --color-bg-raised: rgba(255, 255, 255, 0.045);
+    --color-bg-raised-2: rgba(255, 255, 255, 0.07);
+    --color-bg-raised-3: rgba(255, 255, 255, 0.1);
+    --color-line: rgba(255, 255, 255, 0.1);
+    --color-line-strong: rgba(255, 255, 255, 0.2);
+
+    --color-text: #f3f5f8;
+    --color-text-muted: #a7b0c0;
+    --color-text-faint: #6b7688;
+
+    --color-signal-dim: rgba(59, 130, 246, 0.16);
+
+    --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+    --shadow-card-hover: 0 12px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.22);
   }
 
   body {
     background-color: var(--color-bg);
     background-image:
-      radial-gradient(620px 420px at var(--blob1-x) var(--blob1-y), rgba(59, 130, 246, 0.20), transparent 62%),
-      radial-gradient(680px 460px at var(--blob2-x) var(--blob2-y), rgba(245, 166, 35, 0.13), transparent 58%),
-      radial-gradient(560px 420px at var(--blob3-x) var(--blob3-y), rgba(20, 184, 166, 0.13), transparent 62%);
+      radial-gradient(620px 420px at var(--blob1-x) var(--blob1-y), rgba(59, 130, 246, 0.10), transparent 62%),
+      radial-gradient(680px 460px at var(--blob2-x) var(--blob2-y), rgba(245, 166, 35, 0.08), transparent 58%),
+      radial-gradient(560px 420px at var(--blob3-x) var(--blob3-y), rgba(20, 184, 166, 0.08), transparent 62%);
     background-attachment: fixed;
     animation: liquidDrift 28s ease-in-out infinite;
     color: var(--color-text);
     font-family: var(--font-body);
     -webkit-font-smoothing: antialiased;
     font-feature-settings: "cv11", "ss01";
+    transition: background-color 0.25s ease, color 0.25s ease;
   }
 
-  
+  html[data-theme="dark"] body {
+    background-image:
+      radial-gradient(620px 420px at var(--blob1-x) var(--blob1-y), rgba(59, 130, 246, 0.20), transparent 62%),
+      radial-gradient(680px 460px at var(--blob2-x) var(--blob2-y), rgba(245, 166, 35, 0.13), transparent 58%),
+      radial-gradient(560px 420px at var(--blob3-x) var(--blob3-y), rgba(20, 184, 166, 0.13), transparent 62%);
+  }
+
   h1 {
     font-family: var(--font-display);
     font-weight: 700;
@@ -124,10 +152,14 @@
 @layer components {
   /* Base liquid-glass surface, reused by cards, badges, panels */
   .glass {
-    background: linear-gradient(155deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.015));
+    background: linear-gradient(155deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.4));
     backdrop-filter: blur(20px) saturate(160%);
     -webkit-backdrop-filter: blur(20px) saturate(160%);
     border: 1px solid var(--color-line-strong);
+  }
+
+  html[data-theme="dark"] .glass {
+    background: linear-gradient(155deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.015));
   }
 
   .glass-sheen {
@@ -210,12 +242,20 @@
   }
 
   .btn-secondary {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(10, 14, 22, 0.03);
     color: var(--color-text);
     border: 1px solid var(--color-line-strong);
   }
   .btn-secondary:hover {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--color-signal);
     border-color: var(--color-signal-strong);
+  }
+
+  html[data-theme="dark"] .btn-secondary {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  html[data-theme="dark"] .btn-secondary:hover {
     background: rgba(59, 130, 246, 0.12);
     color: var(--color-text-on-dark);
   }
@@ -242,31 +282,43 @@
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     background-color: var(--color-signal-dim);
-    color: var(--color-signal-strong);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--color-signal);
+    border: 1px solid rgba(10, 14, 22, 0.06);
     transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease,
       border-color 0.15s ease;
   }
   .pill:hover {
     transform: translateY(-1px);
-    border-color: rgba(255, 255, 255, 0.18);
+    border-color: rgba(10, 14, 22, 0.14);
   }
   .pill-active {
     background-color: var(--color-signal);
     color: var(--color-on-signal);
   }
 
+  html[data-theme="dark"] .pill {
+    color: var(--color-signal-strong);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  html[data-theme="dark"] .pill:hover {
+    border-color: rgba(255, 255, 255, 0.18);
+  }
+
   .card-flat {
-    background: linear-gradient(155deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.015));
+    background: linear-gradient(155deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.55));
     backdrop-filter: blur(20px) saturate(160%);
     -webkit-backdrop-filter: blur(20px) saturate(160%);
     border: 1px solid var(--color-line-strong);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-card);
-    transition: box-shadow 0.15s ease, transform 0.15s ease;
+    transition: box-shadow 0.15s ease, transform 0.15s ease, background-color 0.15s ease;
   }
   .card-flat:hover {
     box-shadow: var(--shadow-card-hover);
+  }
+
+  html[data-theme="dark"] .card-flat {
+    background: linear-gradient(155deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.015));
   }
 
   .surface-navy {
@@ -289,11 +341,17 @@
     color: transparent;
   }
 
-  .pill-color-1 { background-color: rgba(59, 130, 246, 0.16); color: var(--color-signal-strong); }
-  .pill-color-2 { background-color: rgba(34, 197, 94, 0.14); color: #4ade80; }
-  .pill-color-3 { background-color: rgba(236, 72, 153, 0.14); color: #f472b6; }
-  .pill-color-4 { background-color: rgba(245, 166, 35, 0.16); color: var(--color-accent-strong); }
-  .pill-color-5 { background-color: rgba(20, 184, 166, 0.16); color: #2dd4bf; }
+  .pill-color-1 { background-color: rgba(59, 130, 246, 0.16); color: #2563eb; }
+  .pill-color-2 { background-color: rgba(34, 197, 94, 0.14); color: #16a34a; }
+  .pill-color-3 { background-color: rgba(236, 72, 153, 0.14); color: #db2777; }
+  .pill-color-4 { background-color: rgba(245, 166, 35, 0.16); color: #b45309; }
+  .pill-color-5 { background-color: rgba(20, 184, 166, 0.16); color: #0f766e; }
+
+  html[data-theme="dark"] .pill-color-1 { color: var(--color-signal-strong); }
+  html[data-theme="dark"] .pill-color-2 { color: #4ade80; }
+  html[data-theme="dark"] .pill-color-3 { color: #f472b6; }
+  html[data-theme="dark"] .pill-color-4 { color: var(--color-accent-strong); }
+  html[data-theme="dark"] .pill-color-5 { color: #2dd4bf; }
 
   /* Ribbon stripe — service-ribbon motif for the badge signature element */
   .ribbon-bar {

@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Poppins, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-
+import { ThemeProvider } from "../app/components/ThemeProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -23,12 +23,20 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
-
 export const viewport: Viewport = {
-  themeColor: "#0a0e16",
+  themeColor: "#f4f6fa",
   width: "device-width",
   initialScale: 1,
 };
+
+const themeInitScript = `
+  (function() {
+    try {
+      var theme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', theme);
+    } catch (e) {}
+  })();
+`;
 
 export default function RootLayout({
   children,
@@ -37,8 +45,14 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${inter.variable} ${poppins.variable} ${jetbrainsMono.variable}`}
+      suppressHydrationWarning
     >
-      <body>{children}</body>
+      <head>
+   
+      </head>
+      <body>
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
     </html>
   );
 }

@@ -12,11 +12,14 @@ import Resources from "./resources/page";
 import Results from "./result/page";
 import Store from "./store/page";
 import Videos from "./youtube-video/page";
+import Contact from "./contact/page";
+import Footer from "./components/Footer";
 
 export default function Home() {
   return (
     <main>
       <Navbar />
+      <Store  />
       <Hero />
       <About />
       <Courses />
@@ -26,12 +29,14 @@ export default function Home() {
       <Blog />
       <Events />
       <Results />
-      <Store />
+
       <Resources />
      
       <Jobs />
       <Videos />
       <Admission />
+      <Contact />
+      <Footer />
     </main>
   );
 }

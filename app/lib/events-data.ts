@@ -1,3 +1,4 @@
+import type { LucideIcon } from "lucide-react";
 import {
   Dumbbell,
   Shield,
@@ -14,7 +15,18 @@ import {
   Users,
 } from "lucide-react";
 
-export const WHATSAPP_NUMBER = "918863081082";
+/* =========================================================
+   EVENTS DATA — this file is the single source of truth for
+   the /events page. Right now it's filled with dummy data so
+   the UI has something real to render.
+
+   Later, when the admin panel is wired up, this is the only
+   file that needs to change: replace the arrays below with
+   data fetched from the admin panel's API/database (e.g. swap
+   the `export const EVENTS = [...]` for a fetch call, or keep
+   this as the fallback/seed data). The page component itself
+   never needs to change — it just imports from here.
+   ========================================================= */
 
 export type Category =
   | "Physical Training Camp"
@@ -48,7 +60,10 @@ export type EventItem = {
   youtube?: string;
 };
 
-export const CATEGORY_ICONS: Record<Category, React.ElementType> = {
+
+
+
+export const CATEGORY_ICONS: Record<Category, LucideIcon> = {
   "Physical Training Camp": Dumbbell,
   "Army Preparation Camp": Shield,
   "Bihar Police Camp": ShieldCheck,
@@ -78,6 +93,8 @@ export const CATEGORIES: Category[] = [
   "Academy Celebrations",
 ];
 
+// DUMMY DATA — replace with real events (or a fetch from the
+// admin panel) once that's ready. Shape must match EventItem[].
 export const EVENTS: EventItem[] = [
   {
     id: "guest-physical-test-jul-2026",
@@ -273,14 +290,16 @@ export const EVENTS: EventItem[] = [
   },
 ];
 
-export const GALLERY_GROUPS = [
+// DUMMY DATA — gallery tile labels shown on the /events page.
+export const GALLERY_GROUPS: { label: string; icon: LucideIcon }[] = [
   { label: "Training Moments", icon: Dumbbell },
   { label: "Award Ceremony", icon: Trophy },
   { label: "Group Photos", icon: Users },
   { label: "Practice Sessions", icon: Target },
 ];
 
-export const VIDEOS = [
+// DUMMY DATA — video cards shown on the /events page.
+export const VIDEOS: { title: string; href: string }[] = [
   { title: "Army Preparation Camp — Highlights", href: "https://youtube.com" },
   { title: "Selection Felicitation 2026", href: "https://youtube.com" },
   { title: "Bihar Police Camp — Mock PST", href: "https://youtube.com" },
@@ -290,3 +309,5 @@ export const MONTHS = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December",
 ];
+
+export const WHATSAPP_NUMBER = "919999999999"; 
