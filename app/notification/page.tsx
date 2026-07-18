@@ -7,9 +7,12 @@ import Button from "../components/Button";
 
 const EASE = [0.22, 0.61, 0.36, 1] as const;
 const WHATSAPP_NUMBER = "918863081082";
+const WHATSAPP_MESSAGE = encodeURIComponent(
+  "Hi, please add me to the WhatsApp updates for Lakhisarai Physical Academy."
+);
 
 /* =========================================================
-   Shared sub-navigation across all /notifications pages
+   Shared sub-navigation across all /notification pages
    ========================================================= */
 export const NOTIFICATIONS_NAV = [
   { href: "/notification", label: "Overview" },
@@ -82,20 +85,21 @@ function NotificationsHero() {
           </p>
 
           <div className="mt-8">
-            <NotificationsSubNav current="/notifications" />
+            <NotificationsSubNav current="/notification" />
           </div>
 
           <div className="mt-9 flex flex-wrap items-center gap-3">
-            <Button href="/notifications/updates" variant="primary" icon={Megaphone}>
+            <Button href="/notification/updates" variant="primary" icon={Megaphone}>
               Latest Notifications
             </Button>
             <Button
-              href={`https://wa.me/${WHATSAPP_NUMBER}`}
+              href={`https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_MESSAGE}`}
               variant="whatsapp"
               icon={MessageCircle}
             >
               Join WhatsApp
             </Button>
+            {/* TODO: replace with your actual YouTube channel/video URL */}
             <Button href="https://youtube.com" variant="ghost" icon={PlayCircle}>
               Watch Updates
             </Button>

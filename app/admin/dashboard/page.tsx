@@ -3,8 +3,16 @@ import Link from 'next/link'
 import { getCurrentUserRole } from '@/app/lib/action/auth'
 import { logout } from '@/app/lib/action/auth'
 import { getProducts } from '@/app/lib/action/products'
+import { getOrders } from '@/app/lib/action/orders'
 import { createClient } from '@/app/lib/supabase/server'
 import { AdminSidebar } from '../products/page'
+
+const ORDER_STATUS_STYLES: Record<string, string> = {
+  pending: 'bg-amber-500/10 text-amber-400',
+  confirmed: 'bg-blue-500/10 text-blue-400',
+  delivered: 'bg-green-500/10 text-green-400',
+  cancelled: 'bg-white/[0.06] text-[#9B9BA3]',
+}
 
 export default async function AdminDashboardPage() {
   const supabase = await createClient()
@@ -21,22 +29,26 @@ export default async function AdminDashboardPage() {
     redirect('/')
   }
 
-  const products = await getProducts()
+  const [products, orders] = await Promise.all([getProducts(), getOrders()])
 
   const totalProducts = products.length
   const inStock = products.filter((p) => p.availability === 'In Stock').length
   const limitedStock = products.filter((p) => p.availability === 'Limited Stock').length
   const outOfStock = products.filter((p) => p.availability === 'Out of Stock').length
 
+  const totalOrders = orders.length
+  const pendingOrders = orders.filter((o) => o.status === 'pending').length
+
   const stats = [
     { label: 'Total Products', value: String(totalProducts), delta: `${inStock} in stock` },
     { label: 'Limited Stock', value: String(limitedStock), delta: 'needs restocking' },
     { label: 'Out of Stock', value: String(outOfStock), delta: outOfStock > 0 ? 'action needed' : 'all good' },
-    { label: 'Signed in as', value: user.email?.split('@')[0] ?? 'Admin', delta: 'admin account' },
+    { label: 'Pending Orders', value: String(pendingOrders), delta: `${totalOrders} total orders` },
   ]
 
   // Most recently added/updated products stand in for "recent activity"
-  const recentProducts = products.slice(0, 6)
+  const recentProducts = products.slice(0, 5)
+  const recentOrders = orders.slice(0, 5)
 
   return (
     <div className="min-h-screen bg-[#0E0F13] text-[#EDEDEF] flex">
@@ -47,7 +59,10 @@ export default async function AdminDashboardPage() {
         <div className="flex items-start justify-between mb-8">
           <div>
             <h1 className="text-2xl font-semibold mb-1">Dashboard</h1>
-            <p className="text-sm text-[#9B9BA3]">A quick look at what's happening across the store.</p>
+            <p className="text-sm text-[#9B9BA3]">
+              A quick look at what&apos;s happening across the store. Signed in as{' '}
+              <span className="text-[#EDEDEF]">{user.email?.split('@')[0] ?? 'Admin'}</span>.
+            </p>
           </div>
           <form action={logout}>
             <button
@@ -71,6 +86,48 @@ export default async function AdminDashboardPage() {
               <p className="text-xs text-[#7C6AEF]">{stat.delta}</p>
             </div>
           ))}
+        </div>
+
+        {/* Recent orders */}
+        <div className="bg-[#17181D] border border-white/[0.06] rounded-xl overflow-hidden mb-8">
+          <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
+            <h2 className="text-sm font-medium">Recent Orders</h2>
+            <Link href="/admin/orders" className="text-xs text-[#7C6AEF] hover:underline">
+              View all
+            </Link>
+          </div>
+
+          <div>
+            {recentOrders.length === 0 ? (
+              <div className="px-5 py-10 text-center">
+                <p className="text-sm text-[#9B9BA3]">No orders yet.</p>
+              </div>
+            ) : (
+              recentOrders.map((order) => (
+                <div
+                  key={order.id}
+                  className="flex items-center justify-between px-5 py-3.5 border-b last:border-b-0 border-white/[0.04] hover:bg-white/[0.02] transition-colors"
+                >
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium truncate">
+                      {order.product_name} × {order.quantity}
+                    </p>
+                    <p className="text-sm text-[#9B9BA3] truncate">
+                      {order.customer_name} · {order.phone}
+                    </p>
+                  </div>
+                  <span
+                    className={
+                      'text-xs px-2.5 py-1 rounded-full shrink-0 ml-4 ' +
+                      ORDER_STATUS_STYLES[order.status]
+                    }
+                  >
+                    {order.status}
+                  </span>
+                </div>
+              ))
+            )}
+          </div>
         </div>
 
         {/* Recent products */}

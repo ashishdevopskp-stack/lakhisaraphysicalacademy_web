@@ -1,13 +1,17 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { ClipboardList, Phone, MessageCircle, ArrowRight } from "lucide-react";
 import Container from "../components/Container";
+import EnrollForm from "../components/EnrollForm";
 
 const EXAMS = ["Army", "Bihar Police", "Daroga", "SSC GD", "CISF", "CRPF", "BSF"];
 const PILL_COLORS = ["pill-color-1", "pill-color-2", "pill-color-3", "pill-color-4", "pill-color-5"];
 const EASE = [0.22, 0.61, 0.36, 1] as const;
+
+const PHONE_NUMBER = "918863081082";
 
 const pillContainer = {
   hidden: {},
@@ -22,6 +26,8 @@ const pillItem = {
 };
 
 export default function Hero() {
+  const [enrollOpen, setEnrollOpen] = useState(false);
+
   return (
     <section
       id="top"
@@ -104,23 +110,24 @@ export default function Hero() {
               transition={{ duration: 0.5, ease: EASE, delay: 0.35 }}
               className="mt-8 flex flex-wrap items-center gap-3"
             >
-              <a
-                href="#enroll"
+              <button
+                type="button"
+                onClick={() => setEnrollOpen(true)}
                 className="btn btn-primary group transition-transform duration-200 hover:-translate-y-0.5 active:translate-y-0"
               >
                 <ClipboardList className="h-4 w-4" />
                 Enroll Now
                 <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
-              </a>
+              </button>
               <a
-                href="tel:+910000000000"
+                href={`tel:+${PHONE_NUMBER}`}
                 className="btn btn-secondary transition-transform duration-200 hover:-translate-y-0.5 active:translate-y-0"
               >
                 <Phone className="h-4 w-4" />
                 Call Us
               </a>
               <a
-                href="https://wa.me/910000000000"
+                href={`https://wa.me/${PHONE_NUMBER}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-accent transition-transform duration-200 hover:-translate-y-0.5 active:translate-y-0"
@@ -167,7 +174,7 @@ export default function Hero() {
 
             <div className="group relative aspect-[4/5] w-full overflow-hidden rounded-lg border border-line shadow-[var(--shadow-card-hover)] sm:aspect-[5/4] lg:aspect-[4/5]">
               <Image
-                src="https://images.unsplash.com/photo-1754873361598-254d39b9bdde?auto=format&fit=crop&w=1400&q=80"
+                src="/heroimg.png"
                 alt="Empty running track at sunrise, ready for the morning training session"
                 fill
                 priority
@@ -203,6 +210,8 @@ export default function Hero() {
           </motion.div>
         </div>
       </Container>
+
+      <EnrollForm open={enrollOpen} onClose={() => setEnrollOpen(false)} />
     </section>
   );
 }

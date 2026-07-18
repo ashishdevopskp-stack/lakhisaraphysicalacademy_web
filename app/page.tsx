@@ -19,13 +19,13 @@ export default function Home() {
   return (
     <main>
       <Navbar />
-      <Store  />
+     
       <Hero />
       <About />
       <Courses />
       <HostelSubNav />
        <Notifications />
-     
+      <Store  />
       <Blog />
       <Events />
       <Results />

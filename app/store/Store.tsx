@@ -4,13 +4,12 @@ import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ShoppingBag,
-  MessageCircle,
   Phone,
   Search,
   Star,
   ChevronDown,
-  ArrowRight,
 } from "lucide-react";
+import OrderModal from "./OrderModal";
 import Container from "../components/Container";
 import Button from "../components/Button";
 import Badge from "../components/Badge";
@@ -31,13 +30,6 @@ const fadeUp = {
   viewport: { once: true, margin: "-80px" },
   transition: { duration: 0.55, ease: EASE },
 };
-
-const WHATSAPP_NUMBER = "918863081082";
-
-function whatsappOrderLink(productName: string) {
-  const message = `Hello Lakhisarai Physical Academy, I would like to order the following product:\nProduct Name: ${productName}\nQuantity: \nColor/Size (if applicable): \nPlease share the availability and payment details.`;
-  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-}
 
 /* =========================================================
    1. Hero
@@ -83,13 +75,6 @@ function StoreHero() {
           <div className="mt-9 flex flex-wrap items-center gap-3">
             <Button href="#products" variant="primary" icon={ShoppingBag}>
               Explore Products
-            </Button>
-            <Button
-              href={whatsappOrderLink("")}
-              variant="whatsapp"
-              icon={MessageCircle}
-            >
-              Order on WhatsApp
             </Button>
             <Button href="#faq" variant="ghost" icon={Phone}>
               Contact Us
@@ -141,7 +126,7 @@ function ProductCategories() {
 }
 
 /* =========================================================
-   3. Featured Products (now driven by live data)
+   3. Featured Products
    ========================================================= */
 const PRODUCT_CATEGORY_LABELS = CATEGORY_GROUPS.map((c) => c.label);
 
@@ -149,11 +134,10 @@ function FeaturedProducts({ products }: { products: Product[] }) {
   const [category, setCategory] = useState<string>("All");
   const [priceRange, setPriceRange] = useState<string>("All");
   const [query, setQuery] = useState("");
+  const [orderingProduct, setOrderingProduct] = useState<Product | null>(null);
 
-  const categoryOptions = useMemo(
-    () => ["All", ...PRODUCT_CATEGORY_LABELS],
-    []
-  );
+  const categoryOptions = useMemo(() => ["All", ...PRODUCT_CATEGORY_LABELS], []);
+
   const priceOptions = [
     { label: "All Prices", value: "All" },
     { label: "Under ₹300", value: "0-300" },
@@ -180,7 +164,6 @@ function FeaturedProducts({ products }: { products: Product[] }) {
           Featured Products
         </motion.h2>
 
-        {/* Search & Filter */}
         <motion.div
           {...fadeUp}
           transition={{ ...fadeUp.transition, delay: 0.06 }}
@@ -222,7 +205,6 @@ function FeaturedProducts({ products }: { products: Product[] }) {
           </select>
         </motion.div>
 
-        {/* Cards */}
         <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {filtered.map((product, i) => {
             const status = AVAILABILITY_STYLES[product.availability];
@@ -291,17 +273,16 @@ function FeaturedProducts({ products }: { products: Product[] }) {
                   {product.availability}
                 </span>
 
-                <div className="mt-5 flex flex-wrap gap-2">
-                  <Button href="#" variant="primary" icon={ArrowRight}>
-                    View Details
-                  </Button>
-                  <Button
-                    href={whatsappOrderLink(product.name)}
-                    variant="whatsapp"
-                    icon={MessageCircle}
+                <div className="mt-5">
+                  <button
+                    type="button"
+                    onClick={() => setOrderingProduct(product)}
+                    disabled={product.availability === "Out of Stock"}
+                    className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-teal-600 px-3.5 py-2 text-[13px] font-medium text-white transition-colors hover:bg-teal-500 disabled:cursor-not-allowed disabled:opacity-50"
                   >
-                    Order on WhatsApp
-                  </Button>
+                    <ShoppingBag size={14} />
+                    Order Now
+                  </button>
                 </div>
               </motion.div>
             );
@@ -314,6 +295,13 @@ function FeaturedProducts({ products }: { products: Product[] }) {
           )}
         </div>
       </Container>
+
+      {orderingProduct && (
+        <OrderModal
+          product={orderingProduct}
+          onClose={() => setOrderingProduct(null)}
+        />
+      )}
     </section>
   );
 }
@@ -462,16 +450,10 @@ function StoreCTA() {
           </h2>
           <p className="font-body mx-auto mt-3 max-w-[48ch] text-[15px] leading-relaxed text-text-muted">
             Order training essentials, study materials, and academy
-            merchandise directly on WhatsApp or visit the academy in person.
+            merchandise directly through the store or visit the academy in
+            person.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <Button
-              href={whatsappOrderLink("")}
-              variant="whatsapp"
-              icon={MessageCircle}
-            >
-              Order on WhatsApp
-            </Button>
             <Button href="tel:8863081082" variant="secondary" icon={Phone}>
               Call Now
             </Button>
@@ -486,7 +468,7 @@ function StoreCTA() {
 }
 
 /* =========================================================
-   Page content export — now takes products as a prop
+   Page content export
    ========================================================= */
 export default function Store({ products }: { products: Product[] }) {
   return (

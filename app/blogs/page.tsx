@@ -244,7 +244,7 @@ function StayUpdatedCTA() {
               <Button href="https://youtube.com" variant="primary" icon={Video}>
                 Subscribe on YouTube
               </Button>
-              <Button href="/blog/articles" variant="secondary" icon={Newspaper}>
+              <Button href="/blogs/articles" variant="secondary" icon={Newspaper}>
                 Read Latest Articles
               </Button>
             </div>
