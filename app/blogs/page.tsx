@@ -44,11 +44,10 @@ function SectionGlow({ variant = 1 }: { variant?: 1 | 2 | 3 }) {
    Shared sub-navigation across all /blog pages
    ========================================================= */
 export const BLOG_NAV = [
-  { href: "/blog", label: "Overview" },
-  { href: "/blog/categories", label: "Categories" },
-  { href: "/blog/articles", label: "Latest Articles" },
-  { href: "/blog/topics", label: "Popular Topics" },
- 
+  { href: "/blogs", label: "Overview" },
+  { href: "/blogs/categories", label: "Categories" },
+  { href: "/blogs/articles", label: "Latest Articles" },
+  { href: "/blogs/topics", label: "Popular Topics" },
 ];
 
 export function BlogSubNav({ current }: { current: string }) {
@@ -244,9 +243,7 @@ function StayUpdatedCTA() {
               <Button href="https://youtube.com" variant="primary" icon={Video}>
                 Subscribe on YouTube
               </Button>
-              <Button href="/blogs/articles" variant="secondary" icon={Newspaper}>
-                Read Latest Articles
-              </Button>
+            
             </div>
           </div>
         </motion.div>

@@ -2,22 +2,9 @@
 
 import { motion } from "framer-motion";
 import {
-  Shield,
-  ShieldAlert,
-  Star,
-  ShieldCheck,
-  TrainFront,
-  Siren,
-  Activity,
-  Dumbbell,
-  Salad,
-  Flame,
-  Target,
-  Megaphone,
-  Trophy,
-  Clapperboard,
-  GraduationCap,
-  Sparkles,
+  Shield, ShieldAlert, Star, ShieldCheck, TrainFront, Siren, Activity,
+  Dumbbell, Salad, Flame, Target, Megaphone, Trophy, Clapperboard,
+  GraduationCap, Sparkles,
 } from "lucide-react";
 import Container from "../../components/Container";
 import { BlogSubNav } from "../page";
@@ -76,7 +63,7 @@ function CategoriesHero() {
             Browse By <span className="text-gradient-brand">Category</span>
           </h1>
           <div className="mt-8">
-            <BlogSubNav current="/blog/categories" />
+            <BlogSubNav current="/blogs/categories" />
           </div>
         </motion.div>
       </Container>
@@ -92,7 +79,7 @@ function CategoryGrid() {
           {CATEGORIES.map(({ label, icon: Icon }, i) => (
             <motion.a
               key={label}
-              href={`/blog/articles?category=${encodeURIComponent(label)}`}
+              href={`/blogs/articles?category=${encodeURIComponent(label)}`}
               {...fadeUp}
               transition={{ ...fadeUp.transition, delay: (i % 8) * 0.03 }}
               className="card-flat flex flex-col items-center gap-2 px-3 py-5 text-center transition-transform hover:scale-[1.03]"

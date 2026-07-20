@@ -37,7 +37,7 @@ function TopicsHero() {
           Popular <span className="text-gradient-brand">Topics</span>
         </h1>
         <div className="mt-8">
-          <BlogSubNav current="/blog/topics" />
+          <BlogSubNav current="/blogs/topics" />
         </div>
       </Container>
     </section>
@@ -52,7 +52,7 @@ function TopicsGrid() {
           {POPULAR_TOPICS.map((topic, i) => (
             <motion.a
               key={topic}
-              href={`/blog/articles?category=${encodeURIComponent(topic)}`}
+              href={`/blogs/articles?category=${encodeURIComponent(topic)}`}
               {...fadeUp}
               transition={{ ...fadeUp.transition, delay: (i % 8) * 0.03 }}
               className={`pill ${PILL_COLORS[i % PILL_COLORS.length]} font-body text-[13px] transition-transform hover:scale-[1.03]`}
