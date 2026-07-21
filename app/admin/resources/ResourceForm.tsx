@@ -1,127 +1,109 @@
-"use client";
+import type { DbResource } from '@/app/lib/action/resources'
+import { CATEGORIES } from '@/app/lib/resourses-data'
 
-import { useState } from "react";
-import { useFormStatus } from "react-dom";
-import { CATEGORIES } from "@/app/lib/resourses-data";
-import type { DbResource } from "@/app/lib/action/resources";
-
-function SubmitButton({ label }: { label: string }) {
-  const { pending } = useFormStatus();
-  return (
-    <button
-      type="submit"
-      disabled={pending}
-      className="rounded-lg bg-signal px-5 py-2.5 text-[14px] font-semibold text-white disabled:opacity-50"
-    >
-      {pending ? "Saving…" : label}
-    </button>
-  );
-}
-
-export default function ResourceForm({
+export function ResourceForm({
   action,
-  resource,
-  submitLabel = "Create Resource",
-  error,
+  submitLabel,
+  initialData,
 }: {
-  action: (formData: FormData) => void;
-  resource?: DbResource;
-  submitLabel?: string;
-  error?: string;
+  action: (formData: FormData) => void | Promise<void>
+  submitLabel: string
+  initialData?: DbResource
 }) {
-  const [hasVideo, setHasVideo] = useState(!!resource?.video_url);
-
   return (
-    <form action={action} className="mt-8 flex max-w-2xl flex-col gap-5">
-      {error && (
-        <p className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-[13px] text-red-500">
-          {error}
-        </p>
-      )}
-
-      <label className="flex flex-col gap-1.5">
-        <span className="text-[13px] font-medium text-text-muted">Title</span>
-        <input
-          name="title"
-          required
-          defaultValue={resource?.title}
-          className="glass rounded-lg px-4 py-2.5 text-[14px] outline-none"
-        />
-      </label>
-
-      <label className="flex flex-col gap-1.5">
-        <span className="text-[13px] font-medium text-text-muted">Description</span>
-        <textarea
-          name="description"
-          required
-          rows={4}
-          defaultValue={resource?.description}
-          className="glass rounded-lg px-4 py-2.5 text-[14px] outline-none"
-        />
-      </label>
-
-      <label className="flex flex-col gap-1.5">
-        <span className="text-[13px] font-medium text-text-muted">Category</span>
-        <select
-          name="category"
-          required
-          defaultValue={resource?.category ?? CATEGORIES[0].label}
-          className="glass rounded-lg px-4 py-2.5 text-[14px] outline-none"
-        >
-          {CATEGORIES.map((c) => (
-            <option key={c.label} value={c.label}>
-              {c.label}
-            </option>
-          ))}
-        </select>
-      </label>
-
-      <label className="flex flex-col gap-1.5">
-        <span className="text-[13px] font-medium text-text-muted">Publish Date</span>
-        <input
-          type="date"
-          name="publishDate"
-          defaultValue={resource?.publish_date?.slice(0, 10)}
-          className="glass rounded-lg px-4 py-2.5 text-[14px] outline-none"
-        />
-      </label>
-
-      <label className="flex flex-col gap-1.5">
-        <span className="text-[13px] font-medium text-text-muted">
-          File {resource?.file_url ? "(leave empty to keep the current file)" : ""}
-        </span>
-        <input
-          type="file"
-          name="file"
-          accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-          className="glass rounded-lg px-4 py-2.5 text-[14px] outline-none"
-        />
-        {resource?.file_url && (
-          <a href={resource.file_url} target="_blank" className="text-[12px] text-signal underline">
+    <form action={action} className="space-y-5">
+      {initialData?.file_url && (
+        <div>
+          <p className="text-sm font-medium mb-2">Current File</p>
+          <a
+            href={initialData.file_url}
+            target="_blank"
+            className="text-sm text-[#7C6AEF] hover:underline"
+          >
             View current file
           </a>
-        )}
-      </label>
-
-      <label className="flex flex-col gap-1.5">
-        <span className="text-[13px] font-medium text-text-muted">Video URL (optional)</span>
-        <input
-          name="videoUrl"
-          defaultValue={resource?.video_url ?? ""}
-          onChange={(e) => setHasVideo(e.target.value.trim().length > 0)}
-          placeholder="https://youtube.com/…"
-          className="glass rounded-lg px-4 py-2.5 text-[14px] outline-none"
-        />
-        {hasVideo && (
-          <span className="text-[12px] text-text-faint">
-            A "Watch Video" button will show on this resource.
-          </span>
-        )}
-      </label>
+        </div>
+      )}
 
       <div>
-        <SubmitButton label={submitLabel} />
+        <label htmlFor="file" className="block text-sm font-medium mb-1.5">
+          {initialData ? 'Replace File (optional)' : 'File'}
+        </label>
+        <input
+          id="file"
+          name="file"
+          type="file"
+          accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+          className="w-full text-sm text-[#9B9BA3] file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-white/[0.06] file:text-sm file:text-[#EDEDEF] hover:file:bg-white/[0.1] file:cursor-pointer cursor-pointer"
+        />
       </div>
+
+      <div>
+        <label htmlFor="title" className="block text-sm font-medium mb-1.5">Title</label>
+        <input
+          id="title" name="title" type="text" required
+          defaultValue={initialData?.title}
+          placeholder="e.g. Physical Standards Chart 2026"
+          className="w-full bg-[#17181D] border border-white/[0.08] rounded-lg px-3.5 py-2.5 text-sm outline-none focus:border-[#7C6AEF] transition-colors"
+        />
+      </div>
+
+      <div>
+        <label htmlFor="description" className="block text-sm font-medium mb-1.5">Description</label>
+        <textarea
+          id="description" name="description" required rows={4}
+          defaultValue={initialData?.description}
+          placeholder="Short description shown on the resource card"
+          className="w-full bg-[#17181D] border border-white/[0.08] rounded-lg px-3.5 py-2.5 text-sm outline-none focus:border-[#7C6AEF] transition-colors resize-y"
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="category" className="block text-sm font-medium mb-1.5">Category</label>
+          <select
+            id="category" name="category" required
+            defaultValue={initialData?.category ?? CATEGORIES[0].label}
+            className="w-full bg-[#17181D] border border-white/[0.08] rounded-lg px-3.5 py-2.5 text-sm outline-none focus:border-[#7C6AEF] transition-colors"
+          >
+            {CATEGORIES.map((c) => (
+              <option key={c.label} value={c.label}>{c.label}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label htmlFor="publishDate" className="block text-sm font-medium mb-1.5">Publish Date</label>
+          <input
+            id="publishDate" name="publishDate" type="date"
+            defaultValue={initialData?.publish_date?.slice(0, 10) ?? new Date().toISOString().slice(0, 10)}
+            className="w-full bg-[#17181D] border border-white/[0.08] rounded-lg px-3.5 py-2.5 text-sm outline-none focus:border-[#7C6AEF] transition-colors"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label htmlFor="videoUrl" className="block text-sm font-medium mb-1.5">
+          Video URL <span className="text-[#9B9BA3]">(optional)</span>
+        </label>
+        <input
+          id="videoUrl"
+          name="videoUrl"
+          type="text"
+          placeholder="https://youtube.com/…"
+          defaultValue={initialData?.video_url ?? undefined}
+          className="w-full bg-[#17181D] border border-white/[0.08] rounded-lg px-3.5 py-2.5 text-sm outline-none focus:border-[#7C6AEF] transition-colors"
+        />
+        <p className="mt-1.5 text-xs text-[#9B9BA3]">
+          A &quot;Watch Video&quot; button will show on this resource if set.
+        </p>
+      </div>
+
+      <button
+        type="submit"
+        className="w-full bg-[#7C6AEF] hover:bg-[#6D5CE0] text-white rounded-lg py-2.5 text-sm font-medium transition-colors"
+      >
+        {submitLabel}
+      </button>
     </form>
-  );
+  )
 }

@@ -1,11 +1,15 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { Briefcase, PlayCircle } from 'lucide-react'
 import { getCurrentUserRole, logout } from '@/app/lib/action/auth'
 import { getProducts } from '@/app/lib/action/products'
 import { getOrders } from '@/app/lib/action/orders'
 import { getBlogs } from '@/app/lib/action/blogs'
 import { getEvents } from '@/app/lib/action/events'
 import { getResults } from '@/app/lib/action/results'
+import { getResources } from '@/app/lib/action/resources'
+import { getJobs } from '@/app/lib/action/jobs'
+import { getVideos } from '@/app/lib/action/videos'
 import { createClient } from '@/app/lib/supabase/server'
 import { AdminSidebar } from '../products/page'
 
@@ -34,6 +38,17 @@ const RESULT_STATUS_STYLES: Record<string, string> = {
   'Document Verification': 'bg-amber-500/10 text-amber-400',
 }
 
+const JOB_STATUS_STYLES: Record<string, string> = {
+  New: 'bg-green-500/10 text-green-400',
+  Ongoing: 'bg-blue-500/10 text-blue-400',
+  Closed: 'bg-white/[0.06] text-[#9B9BA3]',
+}
+
+const VIDEO_STATUS_STYLES: Record<string, string> = {
+  Published: 'bg-green-500/10 text-green-400',
+  Draft: 'bg-white/[0.06] text-[#9B9BA3]',
+}
+
 export default async function AdminDashboardPage() {
   const supabase = await createClient()
   const { data: { user }, error } = await supabase.auth.getUser()
@@ -42,12 +57,15 @@ export default async function AdminDashboardPage() {
   const role = await getCurrentUserRole()
   if (role !== 'admin') redirect('/')
 
-  const [products, orders, blogs, events, results] = await Promise.all([
+  const [products, orders, blogs, events, results, resources, jobs, videos] = await Promise.all([
     getProducts(),
     getOrders(),
     getBlogs(),
     getEvents(),
     getResults(),
+    getResources(),
+    getJobs(),
+    getVideos(),
   ])
 
   const inStock = products.filter((p) => p.availability === 'In Stock').length
@@ -56,6 +74,10 @@ export default async function AdminDashboardPage() {
   const pendingOrders = orders.filter((o) => o.status === 'pending').length
   const openEvents = events.filter((e) => e.status === 'Open').length
   const selectedResults = results.filter((r) => r.status === 'Selected').length
+  const totalResourceDownloads = resources.reduce((sum, r) => sum + r.downloads, 0)
+  const newJobs = jobs.filter((j) => j.status === 'New').length
+  const ongoingJobs = jobs.filter((j) => j.status === 'Ongoing').length
+  const publishedVideos = videos.filter((v) => v.status === 'Published').length
 
   const stats = [
     { label: 'Total Products', value: products.length, delta: `${inStock} in stock` },
@@ -65,6 +87,9 @@ export default async function AdminDashboardPage() {
     { label: 'Total Blogs', value: blogs.length, delta: `${blogs.reduce((sum, b) => sum + b.views, 0).toLocaleString('en-IN')} views` },
     { label: 'Total Events', value: events.length, delta: `${openEvents} open for registration` },
     { label: 'Total Results', value: results.length, delta: `${selectedResults} selected` },
+    { label: 'Total Resources', value: resources.length, delta: `${totalResourceDownloads.toLocaleString('en-IN')} downloads` },
+    { label: 'Total Jobs', value: jobs.length, delta: `${newJobs} new · ${ongoingJobs} ongoing` },
+    { label: 'Total Videos', value: videos.length, delta: `${publishedVideos} published` },
   ]
 
   const recentOrders = orders.slice(0, 5)
@@ -72,6 +97,9 @@ export default async function AdminDashboardPage() {
   const recentBlogs = blogs.slice(0, 5)
   const recentEvents = events.slice(0, 5)
   const recentResults = results.slice(0, 5)
+  const recentResources = resources.slice(0, 5)
+  const recentJobs = jobs.slice(0, 5)
+  const recentVideos = videos.slice(0, 5)
 
   return (
     <div className="min-h-screen bg-[#0E0F13] text-[#EDEDEF] flex flex-col lg:flex-row">
@@ -96,7 +124,7 @@ export default async function AdminDashboardPage() {
         </div>
 
         {/* Stat cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-4 mb-10">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-9 gap-4 mb-10">
           {stats.map((stat) => (
             <div
               key={stat.label}
@@ -299,6 +327,123 @@ export default async function AdminDashboardPage() {
                     </div>
                     <span className={'text-xs px-2.5 py-1 rounded-full shrink-0 ' + RESULT_STATUS_STYLES[result.status]}>
                       {result.status}
+                    </span>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+
+          {/* Recent resources */}
+          <div className="bg-[#17181D] border border-white/[0.06] rounded-xl overflow-hidden">
+            <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
+              <h2 className="text-sm font-medium">Recent Resources</h2>
+              <Link href="/admin/resources" className="text-xs text-[#7C6AEF] hover:underline">View all</Link>
+            </div>
+            <div>
+              {recentResources.length === 0 ? (
+                <div className="px-5 py-10 text-center">
+                  <p className="text-sm text-[#9B9BA3] mb-3">No resources yet.</p>
+                  <Link href="/admin/resources/new" className="text-sm text-[#7C6AEF] hover:underline">
+                    Add your first resource
+                  </Link>
+                </div>
+              ) : (
+                recentResources.map((resource) => (
+                  <div
+                    key={resource.id}
+                    className="flex items-center justify-between gap-3 px-5 py-3.5 border-b last:border-b-0 border-white/[0.04] hover:bg-white/[0.02] transition-colors"
+                  >
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium truncate">{resource.title}</p>
+                      <p className="text-sm text-[#9B9BA3] truncate">
+                        {resource.category} · {resource.file_url ? 'has file' : 'no file'}
+                        {resource.has_video ? ' · video' : ''}
+                      </p>
+                    </div>
+                    <span className="text-xs px-2.5 py-1 rounded-full shrink-0 bg-white/[0.06] text-[#9B9BA3]">
+                      {resource.downloads.toLocaleString('en-IN')} downloads
+                    </span>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+
+          {/* Recent jobs */}
+          <div className="bg-[#17181D] border border-white/[0.06] rounded-xl overflow-hidden">
+            <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
+              <h2 className="text-sm font-medium">Recent Jobs</h2>
+              <Link href="/admin/jobs" className="text-xs text-[#7C6AEF] hover:underline">View all</Link>
+            </div>
+            <div>
+              {recentJobs.length === 0 ? (
+                <div className="px-5 py-10 text-center">
+                  <p className="text-sm text-[#9B9BA3] mb-3">No jobs yet.</p>
+                  <Link href="/admin/jobs/new" className="text-sm text-[#7C6AEF] hover:underline">
+                    Add your first job
+                  </Link>
+                </div>
+              ) : (
+                recentJobs.map((job) => (
+                  <div
+                    key={job.id}
+                    className="flex items-center justify-between gap-3 px-5 py-3.5 border-b last:border-b-0 border-white/[0.04] hover:bg-white/[0.02] transition-colors"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-8 h-8 rounded-lg bg-white/[0.06] overflow-hidden flex items-center justify-center shrink-0">
+                        <Briefcase size={16} className="text-[#9B9BA3]" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium truncate">{job.title}</p>
+                        <p className="text-sm text-[#9B9BA3] truncate">{job.category} · {job.organization}</p>
+                      </div>
+                    </div>
+                    <span className={'text-xs px-2.5 py-1 rounded-full shrink-0 ' + (JOB_STATUS_STYLES[job.status] ?? JOB_STATUS_STYLES.Closed)}>
+                      {job.status}
+                    </span>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+
+          {/* Recent videos */}
+          <div className="bg-[#17181D] border border-white/[0.06] rounded-xl overflow-hidden">
+            <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
+              <h2 className="text-sm font-medium">Recent Videos</h2>
+              <Link href="/admin/videos" className="text-xs text-[#7C6AEF] hover:underline">View all</Link>
+            </div>
+            <div>
+              {recentVideos.length === 0 ? (
+                <div className="px-5 py-10 text-center">
+                  <p className="text-sm text-[#9B9BA3] mb-3">No videos yet.</p>
+                  <Link href="/admin/videos/new" className="text-sm text-[#7C6AEF] hover:underline">
+                    Add your first video
+                  </Link>
+                </div>
+              ) : (
+                recentVideos.map((video) => (
+                  <div
+                    key={video.id}
+                    className="flex items-center justify-between gap-3 px-5 py-3.5 border-b last:border-b-0 border-white/[0.04] hover:bg-white/[0.02] transition-colors"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-8 h-8 rounded-lg bg-white/[0.06] overflow-hidden flex items-center justify-center shrink-0">
+                        {video.thumbnail_url ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={video.thumbnail_url} alt={video.title} className="w-full h-full object-cover" />
+                        ) : (
+                          <PlayCircle size={16} className="text-[#9B9BA3]" />
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium truncate">{video.title}</p>
+                        <p className="text-sm text-[#9B9BA3] truncate">{video.category}</p>
+                      </div>
+                    </div>
+                    <span className={'text-xs px-2.5 py-1 rounded-full shrink-0 ' + (VIDEO_STATUS_STYLES[video.status] ?? VIDEO_STATUS_STYLES.Draft)}>
+                      {video.status}
                     </span>
                   </div>
                 ))

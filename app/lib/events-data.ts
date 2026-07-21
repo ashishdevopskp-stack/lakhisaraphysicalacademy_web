@@ -144,6 +144,27 @@ export function mapDbGalleryImage(row: DbGalleryImage): GalleryTile {
   };
 }
 
+// Gallery filter groups — the tiles shown at the top of the Event
+// Gallery page (/events/gallery) so visitors can jump to a category
+// of photos. Kept as a small, fixed set distinct from the full
+// event CATEGORIES list above, since not every event category needs
+// its own gallery tile.
+export type GalleryGroup = {
+  label: string;
+  icon: LucideIcon;
+};
+
+export const GALLERY_GROUPS: GalleryGroup[] = [
+  { label: "Training Camps", icon: Dumbbell },
+  { label: "Army Preparation", icon: Shield },
+  { label: "Bihar Police", icon: ShieldCheck },
+  { label: "Guest Physical Tests", icon: UserCheck },
+  { label: "Selection Felicitation", icon: Trophy },
+  { label: "Fitness Challenges", icon: Flame },
+  { label: "Sports Competitions", icon: Medal },
+  { label: "Academy Celebrations", icon: PartyPopper },
+];
+
 export const MONTHS = [
   "January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December",

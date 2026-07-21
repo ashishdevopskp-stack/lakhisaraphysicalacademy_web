@@ -13,11 +13,6 @@ import {
 } from "lucide-react";
 import type { DbResource } from "./action/resources";
 
-/* =========================================================
-   RESOURCES DATA — single source of truth for the /resources
-   page and the admin form's category dropdown.
-   ========================================================= */
-
 export interface ResourceCategory {
   label: string;
   icon: LucideIcon;
@@ -49,9 +44,6 @@ export interface ResourceItem {
   fileUrl: string | null;
   videoUrl: string | null;
 }
-
-// Kept for anything still importing the old dummy-data shape.
-export type Resource = Omit<ResourceItem, "id" | "fileUrl" | "videoUrl">;
 
 export function mapDbResourceToResourceItem(db: DbResource): ResourceItem {
   return {

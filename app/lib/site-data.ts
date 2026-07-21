@@ -1,5 +1,5 @@
 export const brand = {
-  shortName: "LPA",
+  shortName: "Lakhisarai Physical Academy",
   fullName: "Lakhisarai Physical Academy",
 };
 

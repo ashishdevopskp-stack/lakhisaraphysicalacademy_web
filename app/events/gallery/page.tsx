@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Container from "../../components/Container";
-import  EventsSubNav  from "../page";
+
 import { GALLERY_GROUPS } from "@/app/lib/events-data";
 
 const EASE = [0.22, 0.61, 0.36, 1] as const;
@@ -43,7 +43,7 @@ function GalleryHero() {
             celebrations.
           </p>
           <div className="mt-8">
-            <EventsSubNav/>
+          
           </div>
         </motion.div>
       </Container>

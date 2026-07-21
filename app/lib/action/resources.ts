@@ -1,11 +1,9 @@
 'use server'
 
+import { randomUUID } from 'crypto'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/app/lib/supabase/server'
-// ^ Adjust this import if your Supabase server client helper
-// lives at a different path in blogs.ts / results.ts — match
-// whatever those files already import.
 
 export interface DbResource {
   id: string
@@ -63,7 +61,7 @@ async function uploadResourceFile(
   file: File
 ): Promise<string> {
   const ext = file.name.split('.').pop()
-  const path = `${crypto.randomUUID()}.${ext}`
+  const path = `${randomUUID()}.${ext}`
 
   const { error } = await supabase.storage
     .from('resource-files')

@@ -1,11 +1,17 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { FileText } from 'lucide-react'
+import { Briefcase } from 'lucide-react'
 import { getCurrentUserRole } from '@/app/lib/action/auth'
-import { getResources, deleteResource } from '@/app/lib/action/resources'
+import { getJobs, deleteJob } from '@/app/lib/action/jobs'
+
+const STATUS_BADGE: Record<string, string> = {
+  New: 'bg-green-500/10 text-green-400',
+  Ongoing: 'bg-blue-500/10 text-blue-400',
+  Closed: 'bg-white/[0.06] text-[#9B9BA3]',
+}
 import { AdminSidebar } from '../products/page'
 
-export default async function AdminResourcesPage({
+export default async function AdminJobsPage({
   searchParams,
 }: {
   searchParams: Promise<{ error?: string }>
@@ -15,23 +21,23 @@ export default async function AdminResourcesPage({
   const role = await getCurrentUserRole()
   if (role !== 'admin') redirect('/')
 
-  const resources = await getResources()
+  const jobs = await getJobs()
 
   return (
     <div className="min-h-screen bg-[#0E0F13] text-[#EDEDEF] flex">
-      <AdminSidebar active="Resources" />
+      <AdminSidebar active="Jobs" />
 
       <main className="flex-1 p-8 max-w-5xl">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-semibold mb-1">Resources</h1>
-            <p className="text-sm text-[#9B9BA3]">Manage what shows up on the resources page.</p>
+            <h1 className="text-2xl font-semibold mb-1">Jobs</h1>
+            <p className="text-sm text-[#9B9BA3]">Manage what shows up on the jobs page.</p>
           </div>
           <Link
-            href="/admin/resources/new"
+            href="/admin/jobs/new"
             className="text-sm px-4 py-2 rounded-lg bg-[#7C6AEF] text-white font-medium hover:bg-[#6D5CE0] transition-colors"
           >
-            + Add Resource
+            + Add Job
           </Link>
         </div>
 
@@ -42,53 +48,56 @@ export default async function AdminResourcesPage({
         )}
 
         <div className="bg-[#17181D] border border-white/[0.06] rounded-xl overflow-hidden">
-          {resources.length === 0 ? (
+          {jobs.length === 0 ? (
             <div className="p-10 text-center">
-              <p className="text-sm text-[#9B9BA3] mb-4">No resources yet.</p>
-              <Link href="/admin/resources/new" className="text-sm text-[#7C6AEF] hover:underline">
-                Add your first resource
+              <p className="text-sm text-[#9B9BA3] mb-4">No jobs yet.</p>
+              <Link href="/admin/jobs/new" className="text-sm text-[#7C6AEF] hover:underline">
+                Add your first job
               </Link>
             </div>
           ) : (
             <div>
-              {resources.map((resource) => (
+              {jobs.map((job) => (
                 <div
-                  key={resource.id}
+                  key={job.id}
                   className="flex items-center justify-between px-5 py-4 border-b last:border-b-0 border-white/[0.04] hover:bg-white/[0.02] transition-colors"
                 >
                   <div className="flex items-center gap-4 min-w-0">
                     <div className="w-11 h-11 rounded-lg bg-white/[0.06] overflow-hidden shrink-0 flex items-center justify-center">
-                      <FileText size={18} className="text-[#9B9BA3]" />
+                      <Briefcase size={18} className="text-[#9B9BA3]" />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-medium truncate">{resource.title}</p>
+                      <p className="text-sm font-medium truncate">{job.title}</p>
                       <p className="text-sm text-[#9B9BA3] truncate">
-                        {resource.category} · {new Date(resource.publish_date).toLocaleDateString('en-IN')}
-                        {resource.has_video ? ' · video' : ''}
+                        {job.category} · {job.organization} · {job.location}
+                      </p>
+                      <p className="text-xs text-[#6E6E76] truncate">
+                        Notified {new Date(job.notification_date).toLocaleDateString('en-IN')} · Last date{' '}
+                        {new Date(job.last_date).toLocaleDateString('en-IN')}
                       </p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-4 shrink-0 ml-4">
-                    <span className="text-xs px-2.5 py-1 rounded-full bg-white/[0.06] text-[#9B9BA3]">
-                      {resource.downloads.toLocaleString('en-IN')} downloads
+                    <span className={'text-xs px-2.5 py-1 rounded-full ' + (STATUS_BADGE[job.status] ?? STATUS_BADGE.Closed)}>
+                      {job.status}
                     </span>
-                    {resource.file_url && (
-                      <a
-                        href={resource.file_url}
+                    {job.pdf_url && (
+                    <a
+                        href={job.pdf_url}
                         target="_blank"
                         className="text-sm text-[#9B9BA3] hover:text-[#EDEDEF] transition-colors"
                       >
-                        View
+                        PDF
                       </a>
                     )}
                     <Link
-                      href={`/admin/resources/${resource.id}/edit`}
+                      href={`/admin/jobs/${job.id}/edit`}
                       className="text-sm text-[#9B9BA3] hover:text-[#EDEDEF] transition-colors"
                     >
                       Edit
                     </Link>
-                    <form action={deleteResource.bind(null, resource.id)}>
+                    <form action={deleteJob.bind(null, job.id)}>
                       <button type="submit" className="text-sm text-red-400 hover:text-red-300 transition-colors">
                         Delete
                       </button>

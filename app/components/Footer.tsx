@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   Phone,
   Mail,
@@ -110,9 +111,13 @@ export default function Footer() {
             {/* Brand */}
             <div className="lg:col-span-1">
               <Link href="/" className="flex items-center gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-signal font-mono text-[13px] font-bold text-on-signal">
-                  LPA
-                </span>
+                <Image
+                  src="/logo.png"
+                  alt="Lakhisarai Physical Academy"
+                  width={40}
+                  height={40}
+                  className="h-10 w-10 shrink-0 rounded-xl object-contain"
+                />
                 <span className="text-[14px] font-medium text-text">
                   Lakhisarai Physical Academy
                 </span>
