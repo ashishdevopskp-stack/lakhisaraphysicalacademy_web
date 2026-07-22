@@ -1,20 +1,11 @@
 "use client";
 
 import { useMemo } from "react";
-import { motion } from "framer-motion";
 import { CalendarDays, MapPin, Clock } from "lucide-react";
 import Container from "../../components/Container";
-import EventsSubNav from "../page";
 import { CATEGORY_ICONS, type EventItem } from "@/app/lib/events-data";
-
-const EASE = [0.22, 0.61, 0.36, 1] as const;
-
-const fadeUp = {
-  initial: { opacity: 0, y: 16 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-80px" },
-  transition: { duration: 0.55, ease: EASE },
-};
+import { FadeInUp, ScrollFadeUp, StaggerList, StaggerItem } from "../_EventsMotion";
+import { EventsSubNav } from "../_shared";
 
 interface EventsProps {
   events: EventItem[];
@@ -32,12 +23,7 @@ function PastHero() {
         }}
       />
       <Container>
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: EASE }}
-          className="max-w-[62ch]"
-        >
+        <FadeInUp className="max-w-[62ch]">
           <p className="font-mono text-[13px] font-semibold uppercase tracking-[0.2em] text-signal">
             Events &amp; Activities
           </p>
@@ -45,13 +31,13 @@ function PastHero() {
             Past Events Archive
           </h1>
           <p className="font-body mt-5 max-w-[54ch] text-[15px] leading-relaxed text-text-muted">
-            A record of completed camps, challenges, and celebrations at
-            Lakhisarai Physical Academy.
+            A record of completed camps, challenges, and celebrations at Lakhisarai Physical
+            Academy.
           </p>
           <div className="mt-8">
             <EventsSubNav />
           </div>
-        </motion.div>
+        </FadeInUp>
       </Container>
     </section>
   );
@@ -68,16 +54,11 @@ function PastTimeline({ events }: EventsProps) {
   return (
     <section className="py-14 sm:py-20">
       <Container>
-        <div className="relative flex flex-col gap-5 border-l border-line pl-6 sm:pl-8">
-          {past.map((event, i) => {
+        <StaggerList className="relative flex flex-col gap-5 border-l border-line pl-6 sm:pl-8">
+          {past.map((event) => {
             const Icon = CATEGORY_ICONS[event.category];
             return (
-              <motion.div
-                key={event.id}
-                {...fadeUp}
-                transition={{ ...fadeUp.transition, delay: i * 0.05 }}
-                className="card-flat relative p-5"
-              >
+              <StaggerItem key={event.id} className="card-flat relative p-5">
                 <span
                   aria-hidden
                   className="glass absolute -left-[34px] top-5 flex h-7 w-7 items-center justify-center rounded-full sm:-left-[42px]"
@@ -108,10 +89,10 @@ function PastTimeline({ events }: EventsProps) {
                     {event.venue}
                   </span>
                 </div>
-              </motion.div>
+              </StaggerItem>
             );
           })}
-        </div>
+        </StaggerList>
       </Container>
     </section>
   );

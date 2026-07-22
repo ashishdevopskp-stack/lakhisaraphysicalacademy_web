@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { motion } from "framer-motion";
 import {
   ClipboardList,
   MessageCircle,
@@ -18,21 +17,14 @@ import {
 } from "lucide-react";
 import Container from "../components/Container";
 import Button from "../components/Button";
+import { PHONE_NUMBER } from "@/app/lib/constants";
 import {
   CATEGORIES,
   JOB_CATEGORY_LABELS,
   STATUS_STYLES,
   type JobItem,
 } from "../lib/jobs-data";
-
-const EASE = [0.22, 0.61, 0.36, 1] as const;
-
-const fadeUp = {
-  initial: { opacity: 0, y: 16 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-80px" },
-  transition: { duration: 0.55, ease: EASE },
-};
+import { FadeInUp, ScrollFadeUp, StaggerList, StaggerItem } from "./_JobsMotion";
 
 const PILL_COLORS = ["pill-color-1", "pill-color-2", "pill-color-3", "pill-color-4", "pill-color-5"];
 
@@ -59,12 +51,7 @@ function JobsHero() {
     <section id="top" className="relative overflow-hidden pb-16 pt-14 sm:pb-24 sm:pt-20">
       <SectionGlow variant={1} />
       <Container>
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: EASE }}
-          className="max-w-[62ch]"
-        >
+        <FadeInUp className="max-w-[62ch]">
           <p className="font-mono text-[12px] font-semibold uppercase tracking-[0.22em] text-signal">
             Job Vacancies
           </p>
@@ -92,11 +79,11 @@ function JobsHero() {
             <Button href="#videos" variant="secondary" icon={PlayCircle}>
               Watch Guidance Videos
             </Button>
-            <Button href="https://wa.me/918863081082" variant="whatsapp" icon={MessageCircle}>
+            <Button href={`https://wa.me/${PHONE_NUMBER}`} variant="whatsapp" icon={MessageCircle}>
               WhatsApp Enquiry
             </Button>
           </div>
-        </motion.div>
+        </FadeInUp>
       </Container>
     </section>
   );
@@ -109,30 +96,28 @@ function JobCategories() {
   return (
     <section className="py-16 sm:py-24">
       <Container>
-        <motion.p {...fadeUp} className="font-mono text-[12px] font-semibold uppercase tracking-[0.22em] text-signal">
+        <ScrollFadeUp as="p" className="font-mono text-[12px] font-semibold uppercase tracking-[0.22em] text-signal">
           Browse By
-        </motion.p>
-        <motion.h2
-          {...fadeUp}
-          transition={{ ...fadeUp.transition, delay: 0.05 }}
+        </ScrollFadeUp>
+        <ScrollFadeUp
+          as="h2"
+          delay={0.05}
           className="font-display mt-4 text-[28px] font-bold sm:text-[36px]"
         >
           Job Categories
-        </motion.h2>
+        </ScrollFadeUp>
 
-        <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
-          {CATEGORIES.map(({ label, icon: Icon }, i) => (
-            <motion.div
+        <StaggerList className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
+          {CATEGORIES.map(({ label, icon: Icon }) => (
+            <StaggerItem
               key={label}
-              {...fadeUp}
-              transition={{ ...fadeUp.transition, delay: (i % 8) * 0.03 }}
               className="card-flat flex flex-col items-center gap-2 px-3 py-5 text-center"
             >
               <Icon size={20} className="text-signal-strong" />
               <span className="font-body text-[12px] text-text-muted">{label}</span>
-            </motion.div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerList>
       </Container>
     </section>
   );
@@ -163,21 +148,20 @@ function JobListings({ jobs }: { jobs: JobItem[] }) {
     <section id="listings" className="relative overflow-hidden py-16 sm:py-24">
       <SectionGlow variant={2} />
       <Container>
-        <motion.p {...fadeUp} className="font-mono text-[12px] font-semibold uppercase tracking-[0.22em] text-signal">
+        <ScrollFadeUp as="p" className="font-mono text-[12px] font-semibold uppercase tracking-[0.22em] text-signal">
           Stay Ahead
-        </motion.p>
-        <motion.h2
-          {...fadeUp}
-          transition={{ ...fadeUp.transition, delay: 0.05 }}
+        </ScrollFadeUp>
+        <ScrollFadeUp
+          as="h2"
+          delay={0.05}
           className="font-display mt-4 text-[28px] font-bold sm:text-[36px]"
         >
           Latest Job Listings
-        </motion.h2>
+        </ScrollFadeUp>
 
         {/* Search & Filter */}
-        <motion.div
-          {...fadeUp}
-          transition={{ ...fadeUp.transition, delay: 0.1 }}
+        <ScrollFadeUp
+          delay={0.1}
           className="card-flat mt-8 flex flex-col gap-3 p-3 sm:flex-row sm:items-center"
         >
           <div className="flex flex-1 items-center gap-2 rounded-lg border border-line bg-bg px-4 py-2.5">
@@ -214,79 +198,75 @@ function JobListings({ jobs }: { jobs: JobItem[] }) {
               </option>
             ))}
           </select>
-        </motion.div>
+        </ScrollFadeUp>
 
         {/* Cards */}
-        <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((job, i) => (
-            <motion.div
-              key={job.id}
-              {...fadeUp}
-              transition={{ ...fadeUp.transition, delay: (i % 3) * 0.05 }}
-              className="card-flat flex flex-col p-6"
-            >
-              <div className="flex items-center justify-between gap-3">
-                <span className={`pill ${PILL_COLORS[i % PILL_COLORS.length]}`}>
-                  {job.category}
-                </span>
-                <span className={`font-mono text-[12px] font-medium ${STATUS_STYLES[job.status]}`}>
-                  ● {job.status}
-                </span>
-              </div>
+        {filtered.length === 0 ? (
+          <p className="font-body col-span-full mt-8 text-[14px] text-text-muted">
+            No vacancies match these filters right now.
+          </p>
+        ) : (
+          <StaggerList className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {filtered.map((job, i) => (
+              <StaggerItem key={job.id} className="card-flat flex flex-col p-6">
+                <div className="flex items-center justify-between gap-3">
+                  <span className={`pill ${PILL_COLORS[i % PILL_COLORS.length]}`}>
+                    {job.category}
+                  </span>
+                  <span className={`font-mono text-[12px] font-medium ${STATUS_STYLES[job.status]}`}>
+                    ● {job.status}
+                  </span>
+                </div>
 
-              <h3 className="font-display mt-4 text-[16px] font-semibold text-text">
-                {job.title}
-              </h3>
-              {job.subtitle && (
-                <p className="font-body mt-1 text-[13px] text-text-muted">{job.subtitle}</p>
-              )}
-              <p className="font-body mt-2 text-[13px] text-text-muted">{job.organization}</p>
-
-              <div className="font-body mt-4 flex flex-col gap-1.5 text-[13px] text-text-muted">
-                <span className="flex items-center gap-2">
-                  <Calendar size={14} className="text-text-faint" /> Notified: {job.notificationDate}
-                </span>
-                <span className="flex items-center gap-2">
-                  <Clock size={14} className="text-text-faint" /> Last date: {job.lastDate}
-                </span>
-                <span className="flex items-center gap-2">
-                  <MapPin size={14} className="text-text-faint" /> {job.location}
-                </span>
-              </div>
-
-              <div className="mt-5 flex flex-wrap gap-2">
-                {job.detailsUrl && (
-                  <Button href={job.detailsUrl} variant="primary" icon={ArrowRight}>
-                    Read More
-                  </Button>
+                <h3 className="font-display mt-4 text-[16px] font-semibold text-text">
+                  {job.title}
+                </h3>
+                {job.subtitle && (
+                  <p className="font-body mt-1 text-[13px] text-text-muted">{job.subtitle}</p>
                 )}
-                {job.pdfUrl && (
-                  <Button href={job.pdfUrl} variant="secondary" icon={Download}>
-                    Download PDF
-                  </Button>
-                )}
-                {job.videoUrl && (
-                  <Button href={job.videoUrl} variant="ghost" icon={PlayCircle}>
-                    Watch Video
-                  </Button>
-                )}
-              </div>
-            </motion.div>
-          ))}
+                <p className="font-body mt-2 text-[13px] text-text-muted">{job.organization}</p>
 
-          {filtered.length === 0 && (
-            <p className="font-body col-span-full text-[14px] text-text-muted">
-              No vacancies match these filters right now.
-            </p>
-          )}
-        </div>
+                <div className="font-body mt-4 flex flex-col gap-1.5 text-[13px] text-text-muted">
+                  <span className="flex items-center gap-2">
+                    <Calendar size={14} className="text-text-faint" /> Notified: {job.notificationDate}
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <Clock size={14} className="text-text-faint" /> Last date: {job.lastDate}
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <MapPin size={14} className="text-text-faint" /> {job.location}
+                  </span>
+                </div>
+
+                <div className="mt-5 flex flex-wrap gap-2">
+                  {job.detailsUrl && (
+                    <Button href={job.detailsUrl} variant="primary" icon={ArrowRight}>
+                      Read More
+                    </Button>
+                  )}
+                  {job.pdfUrl && (
+                    <Button href={job.pdfUrl} variant="secondary" icon={Download}>
+                      Download PDF
+                    </Button>
+                  )}
+                  {job.videoUrl && (
+                    <Button href={job.videoUrl} variant="ghost" icon={PlayCircle}>
+                      Watch Video
+                    </Button>
+                  )}
+                </div>
+              </StaggerItem>
+            ))}
+          </StaggerList>
+        )}
       </Container>
     </section>
   );
 }
 
 /* =========================================================
-   4. Recruitment Guidance Videos — static, unrelated to jobs table
+   4. Recruitment Guidance Videos — static, unrelated to jobs
+   table. Currently unused (see export at bottom).
    ========================================================= */
 const VIDEOS = [
   { title: "Running Technique for PET", duration: "8:24" },
@@ -298,25 +278,20 @@ function GuidanceVideos() {
   return (
     <section id="videos" className="py-16 sm:py-24">
       <Container>
-        <motion.p {...fadeUp} className="font-mono text-[12px] font-semibold uppercase tracking-[0.22em] text-signal">
+        <ScrollFadeUp as="p" className="font-mono text-[12px] font-semibold uppercase tracking-[0.22em] text-signal">
           Watch &amp; Learn
-        </motion.p>
-        <motion.h2
-          {...fadeUp}
-          transition={{ ...fadeUp.transition, delay: 0.05 }}
+        </ScrollFadeUp>
+        <ScrollFadeUp
+          as="h2"
+          delay={0.05}
           className="font-display mt-4 text-[28px] font-bold sm:text-[36px]"
         >
           Recruitment Guidance Videos
-        </motion.h2>
+        </ScrollFadeUp>
 
-        <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-3">
-          {VIDEOS.map((video, i) => (
-            <motion.div
-              key={video.title}
-              {...fadeUp}
-              transition={{ ...fadeUp.transition, delay: i * 0.06 }}
-              className="card-flat p-5"
-            >
+        <StaggerList className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-3">
+          {VIDEOS.map((video) => (
+            <StaggerItem key={video.title} className="card-flat p-5">
               <div className="flex aspect-video items-center justify-center rounded-[12px] border border-line bg-bg-raised-2">
                 <PlayCircle size={30} className="text-signal-strong" />
               </div>
@@ -327,16 +302,17 @@ function GuidanceVideos() {
                   Watch Now
                 </Button>
               </div>
-            </motion.div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerList>
       </Container>
     </section>
   );
 }
 
 /* =========================================================
-   5. Related Blog Articles — static
+   5. Related Blog Articles — static. Currently unused (see
+   export at bottom).
    ========================================================= */
 const BLOGS = ["Preparation Tips", "Physical Training Guides", "Exam Strategy", "Previous Year Analysis", "Success Stories"];
 
@@ -346,45 +322,41 @@ function RelatedBlogs() {
       <SectionGlow variant={3} />
       <Container>
         <div className="flex flex-wrap items-end justify-between gap-4">
-          <motion.h2 {...fadeUp} className="font-display text-[28px] font-bold sm:text-[36px]">
+          <ScrollFadeUp as="h2" className="font-display text-[28px] font-bold sm:text-[36px]">
             Related Blog Articles
-          </motion.h2>
-          <motion.div {...fadeUp}>
+          </ScrollFadeUp>
+          <ScrollFadeUp>
             <Button href="/blog" variant="ghost" icon={Newspaper}>
               Read Latest Blogs
             </Button>
-          </motion.div>
+          </ScrollFadeUp>
         </div>
 
-        <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-5">
+        <StaggerList className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-5">
           {BLOGS.map((topic, i) => (
-            <motion.div
+            <StaggerItem
               key={topic}
-              {...fadeUp}
-              transition={{ ...fadeUp.transition, delay: i * 0.05 }}
               className={`card-flat flex aspect-square flex-col items-center justify-center gap-2 px-3 text-center ${PILL_COLORS[i % PILL_COLORS.length]}`}
             >
               <Newspaper size={20} />
               <span className="font-body text-[12px] font-medium">{topic}</span>
-            </motion.div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerList>
       </Container>
     </section>
   );
 }
 
 /* =========================================================
-   6. Job Alert CTA
+   6. Job Alert CTA — currently unused (see export at bottom).
    ========================================================= */
 function JobAlertCTA() {
   return (
     <section className="py-16 sm:py-24">
       <Container>
-        <motion.div
-          {...fadeUp}
-          className="relative overflow-hidden rounded-2xl border border-line px-6 py-14 text-center sm:px-14"
-          style={{ backgroundColor: "var(--color-navy)" }}
+        <ScrollFadeUp
+          className="relative overflow-hidden rounded-2xl border border-line px-6 py-14 text-center sm:px-14 bg-navy"
         >
           <span className="ribbon-bar absolute inset-x-0 top-0 h-[4px]" aria-hidden />
           <div
@@ -406,7 +378,7 @@ function JobAlertCTA() {
               guidance.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <Button href="https://wa.me/918863081082" variant="whatsapp" icon={MessageCircle}>
+              <Button href={`https://wa.me/${PHONE_NUMBER}`} variant="whatsapp" icon={MessageCircle}>
                 Join WhatsApp Channel
               </Button>
               <Button href="https://youtube.com" variant="secondary" icon={Video}>
@@ -417,7 +389,7 @@ function JobAlertCTA() {
               </Button>
             </div>
           </div>
-        </motion.div>
+        </ScrollFadeUp>
       </Container>
     </section>
   );

@@ -1,6 +1,5 @@
-"use client";
+// app/hostel/facilities/page.tsx
 
-import { motion } from "framer-motion";
 import {
   BedDouble,
   Utensils,
@@ -14,29 +13,14 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import Container from "../../components/Container";
-import { HostelSubNav } from "../page";
+import { SectionGlow, HostelSubNav } from "../_shared";
+import { FadeInUp, ScrollFadeUp, StaggerList, StaggerItem } from "../_HostelMotion";
 
-const EASE = [0.22, 0.61, 0.36, 1] as const;
-
-const fadeUp = {
-  initial: { opacity: 0, y: 16 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-80px" },
-  transition: { duration: 0.55, ease: EASE },
+export const metadata = {
+  title: "Hostel Facilities | Lakhisarai Physical Academy",
+  description:
+    "Explore hostel facilities at Lakhisarai Physical Academy: furnished rooms, mess, RO water, power backup, Wi-Fi, self-study area and more.",
 };
-
-function SectionGlow() {
-  return (
-    <div
-      aria-hidden
-      className="pointer-events-none absolute inset-0 -z-10"
-      style={{
-        backgroundImage:
-          "radial-gradient(ellipse 1000px 550px at 10% 0%, rgba(37,99,235,0.10), transparent 60%), radial-gradient(ellipse 800px 500px at 95% 30%, rgba(34,197,94,0.08), transparent 55%)",
-      }}
-    />
-  );
-}
 
 const OVERVIEW = [
   "Safe & Secure Environment",
@@ -67,7 +51,7 @@ function FacilitiesHero() {
     <section id="top" className="relative overflow-hidden pb-12 pt-16 sm:pt-24">
       <SectionGlow />
       <Container>
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: EASE }}>
+        <FadeInUp>
           <p className="font-mono text-[13px] font-semibold uppercase tracking-[0.2em] text-signal">
             Hostel
           </p>
@@ -77,7 +61,7 @@ function FacilitiesHero() {
           <div className="mt-8">
             <HostelSubNav current="/hostel/facilities" />
           </div>
-        </motion.div>
+        </FadeInUp>
       </Container>
     </section>
   );
@@ -87,22 +71,22 @@ function HostelOverview() {
   return (
     <section className="py-12 sm:py-20">
       <Container>
-        <motion.h2 {...fadeUp} className="font-display text-[22px] font-bold sm:text-[28px]">
-          At a Glance
-        </motion.h2>
-        <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {OVERVIEW.map((item, i) => (
-            <motion.div
-              key={item}
-              {...fadeUp}
-              transition={{ ...fadeUp.transition, delay: (i % 4) * 0.05 }}
-              className="card-flat flex items-center gap-3 px-4 py-4"
-            >
+        <ScrollFadeUp>
+          <h2 className="font-display text-[22px] font-bold sm:text-[28px]">
+            At a Glance
+          </h2>
+        </ScrollFadeUp>
+        <StaggerList
+          className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4"
+          staggerDelay={0.05}
+        >
+          {OVERVIEW.map((item) => (
+            <StaggerItem key={item} className="card-flat flex items-center gap-3 px-4 py-4">
               <ShieldCheck size={16} className="shrink-0 text-signal" />
               <span className="font-body text-[13px] text-text">{item}</span>
-            </motion.div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerList>
       </Container>
     </section>
   );
@@ -112,22 +96,22 @@ function FacilitiesGrid() {
   return (
     <section className="py-12 sm:py-20">
       <Container>
-        <motion.h2 {...fadeUp} className="font-display text-[22px] font-bold sm:text-[28px]">
-          What's Included
-        </motion.h2>
-        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-5">
-          {FACILITIES.map(({ label, icon: Icon }, i) => (
-            <motion.div
+        <ScrollFadeUp>
+          <h2 className="font-display text-[22px] font-bold sm:text-[28px]">
+            What's Included
+          </h2>
+        </ScrollFadeUp>
+        <StaggerList className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-5" staggerDelay={0.04}>
+          {FACILITIES.map(({ label, icon: Icon }) => (
+            <StaggerItem
               key={label}
-              {...fadeUp}
-              transition={{ ...fadeUp.transition, delay: (i % 5) * 0.04 }}
               className="card-flat flex flex-col items-center gap-2 px-3 py-5 text-center"
             >
               <Icon size={20} className="text-signal" />
               <span className="font-body text-[12px] text-text-muted">{label}</span>
-            </motion.div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerList>
       </Container>
     </section>
   );

@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { motion } from "framer-motion";
 import {
   Video as Youtube,
   MessageCircle,
@@ -22,17 +21,9 @@ import {
 } from "lucide-react";
 import Container from "../components/Container";
 import Button from "../components/Button";
+import { PHONE_NUMBER } from "@/app/lib/constants";
 import type { DbVideo } from "@/app/lib/action/videos";
-
-const EASE = [0.22, 0.61, 0.36, 1] as const;
-const WHATSAPP_NUMBER = "918863081082";
-
-const fadeUp = {
-  initial: { opacity: 0, y: 16 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-80px" },
-  transition: { duration: 0.55, ease: EASE },
-};
+import { FadeInUp, ScrollFadeUp, StaggerList, StaggerItem } from "./_VideosMotion";
 
 const PILL_COLORS = ["pill-color-1", "pill-color-2", "pill-color-3", "pill-color-4", "pill-color-5"];
 
@@ -60,19 +51,13 @@ function VideosHero() {
     <section id="top" className="relative overflow-hidden pb-16 pt-14 sm:pb-24 sm:pt-20">
       <SectionGlow variant={1} />
       <Container>
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: EASE }}
-          className="max-w-[62ch]"
-        >
+        <FadeInUp className="max-w-[62ch]">
           <p className="font-mono text-[12px] font-semibold uppercase tracking-[0.22em] text-signal">
             Video Library
           </p>
 
           <h1 className="font-display mt-5 max-w-[20ch] text-[34px] font-bold leading-[1.14] sm:text-[44px] lg:text-[52px]">
-            YouTube{" "}
-            <span className="text-gradient-brand">Videos</span>
+            YouTube <span className="text-gradient-brand">Videos</span>
           </h1>
 
           <p className="font-body mt-6 text-[15.5px] font-medium text-text">
@@ -91,22 +76,14 @@ function VideosHero() {
             <Button href="#videos" variant="primary" icon={PlayCircle}>
               Watch Videos
             </Button>
-            <Button
-              href="https://youtube.com"
-              variant="secondary"
-              icon={Youtube}
-            >
+            <Button href="https://youtube.com" variant="secondary" icon={Youtube}>
               Subscribe on YouTube
             </Button>
-            <Button
-              href={`https://wa.me/${WHATSAPP_NUMBER}`}
-              variant="whatsapp"
-              icon={MessageCircle}
-            >
+            <Button href={`https://wa.me/${PHONE_NUMBER}`} variant="whatsapp" icon={MessageCircle}>
               WhatsApp Enquiry
             </Button>
           </div>
-        </motion.div>
+        </FadeInUp>
       </Container>
     </section>
   );
@@ -132,40 +109,35 @@ function VideoCategories() {
   return (
     <section className="py-16 sm:py-24">
       <Container>
-        <motion.p
-          {...fadeUp}
-          className="font-mono text-[12px] font-semibold uppercase tracking-[0.22em] text-signal"
-        >
+        <ScrollFadeUp as="p" className="font-mono text-[12px] font-semibold uppercase tracking-[0.22em] text-signal">
           Browse By
-        </motion.p>
-        <motion.h2
-          {...fadeUp}
-          transition={{ ...fadeUp.transition, delay: 0.05 }}
+        </ScrollFadeUp>
+        <ScrollFadeUp
+          as="h2"
+          delay={0.05}
           className="font-display mt-4 text-[28px] font-bold sm:text-[36px]"
         >
           Video Categories
-        </motion.h2>
+        </ScrollFadeUp>
 
-        <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-5">
-          {CATEGORIES.map(({ label, icon: Icon }, i) => (
-            <motion.div
+        <StaggerList className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-5">
+          {CATEGORIES.map(({ label, icon: Icon }) => (
+            <StaggerItem
               key={label}
-              {...fadeUp}
-              transition={{ ...fadeUp.transition, delay: (i % 5) * 0.04 }}
               className="card-flat flex flex-col items-center gap-2 px-3 py-5 text-center"
             >
               <Icon size={20} className="text-signal-strong" />
               <span className="font-body text-[12px] text-text-muted">{label}</span>
-            </motion.div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerList>
       </Container>
     </section>
   );
 }
 
 /* =========================================================
-   3. Video Grid — now backed by real Supabase data
+   3. Video Grid — backed by real Supabase data
    ========================================================= */
 const VIDEO_CATEGORY_LABELS = CATEGORIES.map((c) => c.label);
 
@@ -181,10 +153,7 @@ function VideoGrid({ videos }: { videos: DbVideo[] }) {
   const [category, setCategory] = useState("All");
   const [query, setQuery] = useState("");
 
-  const categoryOptions = useMemo(
-    () => ["All", ...VIDEO_CATEGORY_LABELS],
-    []
-  );
+  const categoryOptions = useMemo(() => ["All", ...VIDEO_CATEGORY_LABELS], []);
 
   const filtered = videos.filter((v) => {
     const matchesCategory = category === "All" || v.category === category;
@@ -200,24 +169,20 @@ function VideoGrid({ videos }: { videos: DbVideo[] }) {
     <section id="videos" className="relative overflow-hidden py-16 sm:py-24">
       <SectionGlow variant={2} />
       <Container>
-        <motion.p
-          {...fadeUp}
-          className="font-mono text-[12px] font-semibold uppercase tracking-[0.22em] text-signal"
-        >
+        <ScrollFadeUp as="p" className="font-mono text-[12px] font-semibold uppercase tracking-[0.22em] text-signal">
           Fresh Uploads
-        </motion.p>
-        <motion.h2
-          {...fadeUp}
-          transition={{ ...fadeUp.transition, delay: 0.05 }}
+        </ScrollFadeUp>
+        <ScrollFadeUp
+          as="h2"
+          delay={0.05}
           className="font-display mt-4 text-[28px] font-bold sm:text-[36px]"
         >
           Latest Videos
-        </motion.h2>
+        </ScrollFadeUp>
 
         {/* Search & Filter */}
-        <motion.div
-          {...fadeUp}
-          transition={{ ...fadeUp.transition, delay: 0.1 }}
+        <ScrollFadeUp
+          delay={0.1}
           className="card-flat mt-8 flex flex-col gap-3 p-3 sm:flex-row sm:items-center"
         >
           <div className="flex flex-1 items-center gap-2 rounded-lg border border-line bg-bg px-4 py-2.5">
@@ -242,19 +207,22 @@ function VideoGrid({ videos }: { videos: DbVideo[] }) {
               </option>
             ))}
           </select>
-        </motion.div>
+        </ScrollFadeUp>
 
         {/* Featured video */}
         {featured && (
-          <motion.div
-            {...fadeUp}
-            transition={{ ...fadeUp.transition, delay: 0.15 }}
+          <ScrollFadeUp
+            delay={0.15}
             className="card-flat mt-8 flex flex-col overflow-hidden sm:flex-row"
           >
-            <div className="flex aspect-video items-center justify-center border-b border-line bg-bg-raised-2 sm:w-[55%] sm:border-b-0 sm:border-r overflow-hidden">
+            <div className="flex aspect-video items-center justify-center overflow-hidden border-b border-line bg-bg-raised-2 sm:w-[55%] sm:border-b-0 sm:border-r">
               {featured.thumbnail_url ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={featured.thumbnail_url} alt={featured.title} className="w-full h-full object-cover" />
+                <img
+                  src={featured.thumbnail_url}
+                  alt={featured.title}
+                  className="h-full w-full object-cover"
+                />
               ) : (
                 <PlayCircle size={36} className="text-signal-strong" />
               )}
@@ -283,59 +251,58 @@ function VideoGrid({ videos }: { videos: DbVideo[] }) {
                 </Button>
               </div>
             </div>
-          </motion.div>
+          </ScrollFadeUp>
         )}
 
         {/* Grid */}
-        <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {rest.map((video, i) => (
-            <motion.div
-              key={video.id}
-              {...fadeUp}
-              transition={{ ...fadeUp.transition, delay: (i % 3) * 0.05 }}
-              className="card-flat flex flex-col p-5"
-            >
-              <div className="flex aspect-video items-center justify-center rounded-[12px] border border-line-strong bg-bg-raised-2 overflow-hidden">
-                {video.thumbnail_url ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={video.thumbnail_url} alt={video.title} className="w-full h-full object-cover" />
-                ) : (
-                  <PlayCircle size={28} className="text-signal-strong" />
+        {filtered.length === 0 ? (
+          <p className="font-body col-span-full mt-8 text-[14px] text-text-muted">
+            No videos match these filters right now.
+          </p>
+        ) : (
+          <StaggerList className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {rest.map((video, i) => (
+              <StaggerItem key={video.id} className="card-flat flex flex-col p-5">
+                <div className="flex aspect-video items-center justify-center overflow-hidden rounded-[12px] border border-line-strong bg-bg-raised-2">
+                  {video.thumbnail_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={video.thumbnail_url}
+                      alt={video.title}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <PlayCircle size={28} className="text-signal-strong" />
+                  )}
+                </div>
+
+                <div className="mt-4 flex items-center justify-between gap-2">
+                  <span className={`pill ${PILL_COLORS[(i + 1) % PILL_COLORS.length]}`}>
+                    {video.category}
+                  </span>
+                  <span className="font-body flex items-center gap-1.5 text-[12px] text-text-faint">
+                    <Calendar size={13} /> {formatDate(video.publish_date)}
+                  </span>
+                </div>
+
+                <h3 className="font-display mt-3 text-[15px] font-semibold text-text">
+                  {video.title}
+                </h3>
+                {video.description && (
+                  <p className="font-body mt-1.5 text-[13px] text-text-muted">
+                    {video.description}
+                  </p>
                 )}
-              </div>
 
-              <div className="mt-4 flex items-center justify-between gap-2">
-                <span className={`pill ${PILL_COLORS[(i + 1) % PILL_COLORS.length]}`}>
-                  {video.category}
-                </span>
-                <span className="font-body flex items-center gap-1.5 text-[12px] text-text-faint">
-                  <Calendar size={13} /> {formatDate(video.publish_date)}
-                </span>
-              </div>
-
-              <h3 className="font-display mt-3 text-[15px] font-semibold text-text">
-                {video.title}
-              </h3>
-              {video.description && (
-                <p className="font-body mt-1.5 text-[13px] text-text-muted">
-                  {video.description}
-                </p>
-              )}
-
-              <div className="mt-5">
-                <Button href={video.video_url} variant="ghost" icon={PlayCircle}>
-                  Watch on YouTube
-                </Button>
-              </div>
-            </motion.div>
-          ))}
-
-          {filtered.length === 0 && (
-            <p className="font-body col-span-full text-[14px] text-text-muted">
-              No videos match these filters right now.
-            </p>
-          )}
-        </div>
+                <div className="mt-5">
+                  <Button href={video.video_url} variant="ghost" icon={PlayCircle}>
+                    Watch on YouTube
+                  </Button>
+                </div>
+              </StaggerItem>
+            ))}
+          </StaggerList>
+        )}
       </Container>
     </section>
   );
@@ -348,11 +315,8 @@ function SubscribeCTA() {
   return (
     <section className="py-16 sm:py-24">
       <Container>
-        <motion.div
-          {...fadeUp}
-          className="relative overflow-hidden rounded-2xl border border-line px-6 py-14 text-center sm:px-14"
-          style={{ backgroundColor: "var(--color-navy)" }}
-        >
+        <ScrollFadeUp className="relative overflow-hidden rounded-2xl border border-line px-6 py-14 text-center sm:px-14">
+          <div aria-hidden className="pointer-events-none absolute inset-0 bg-[var(--color-navy)]" />
           <span className="ribbon-bar absolute inset-x-0 top-0 h-[4px]" aria-hidden />
           <div
             aria-hidden
@@ -375,16 +339,12 @@ function SubscribeCTA() {
               <Button href="https://youtube.com" variant="primary" icon={Youtube}>
                 Subscribe on YouTube
               </Button>
-              <Button
-                href={`https://wa.me/${WHATSAPP_NUMBER}`}
-                variant="whatsapp"
-                icon={MessageCircle}
-              >
+              <Button href={`https://wa.me/${PHONE_NUMBER}`} variant="whatsapp" icon={MessageCircle}>
                 Join WhatsApp Channel
               </Button>
             </div>
           </div>
-        </motion.div>
+        </ScrollFadeUp>
       </Container>
     </section>
   );

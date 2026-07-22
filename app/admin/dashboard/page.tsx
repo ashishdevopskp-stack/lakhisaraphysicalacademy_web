@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
-import Link from 'next/link'
-import { Briefcase, PlayCircle } from 'lucide-react'
+import {
+  Package, ShoppingCart, FileText, Calendar, Award, BookOpen, Briefcase, PlayCircle, Activity, AlertTriangle,
+} from 'lucide-react'
 import { getCurrentUserRole, logout } from '@/app/lib/action/auth'
 import { getProducts } from '@/app/lib/action/products'
 import { getOrders } from '@/app/lib/action/orders'
@@ -11,62 +12,79 @@ import { getResources } from '@/app/lib/action/resources'
 import { getJobs } from '@/app/lib/action/jobs'
 import { getVideos } from '@/app/lib/action/videos'
 import { createClient } from '@/app/lib/supabase/server'
-import { AdminSidebar } from '../products/page'
+import { AdminSidebar } from '../_components/AdminSidebar'
+import { StatCard } from '../_components/StatCard'
+import { ActivityFeed, type ActivityItem } from '../_components/ActivityFeed'
 
-const ORDER_STATUS_STYLES: Record<string, string> = {
-  pending: 'bg-amber-500/10 text-amber-400',
-  confirmed: 'bg-blue-500/10 text-blue-400',
-  delivered: 'bg-green-500/10 text-green-400',
-  cancelled: 'bg-white/[0.06] text-[#9B9BA3]',
-}
+// Reads loosely (as Record<string, unknown>) on purpose — we don't know the
+// exact field names on every content type, and guessing wrong with strict
+// types would fail the build. Runtime-safe: falls back to sensible defaults
+// instead of crashing if a field is missing or named differently.
+function toActivityItem(
+  raw: unknown,
+  type: ActivityItem['type'],
+  href: string,
+  titleFields: string[],
+  metaFields: string[]
+): ActivityItem {
+  const obj = (raw ?? {}) as Record<string, unknown>
 
-const PRODUCT_STATUS_STYLES: Record<string, string> = {
-  'In Stock': 'bg-green-500/10 text-green-400',
-  'Limited Stock': 'bg-amber-500/10 text-amber-400',
-  'Out of Stock': 'bg-white/[0.06] text-[#9B9BA3]',
-  'Pre-Order': 'bg-blue-500/10 text-blue-400',
-}
+  const id = obj.id != null ? String(obj.id) : Math.random().toString(36).slice(2)
 
-const EVENT_STATUS_STYLES: Record<string, string> = {
-  Open: 'bg-green-500/10 text-green-400',
-  Closed: 'bg-white/[0.06] text-[#9B9BA3]',
-}
+  const title =
+    titleFields.map((f) => obj[f]).find((v) => typeof v === 'string' && v.length > 0) as string | undefined
 
-const RESULT_STATUS_STYLES: Record<string, string> = {
-  Selected: 'bg-green-500/10 text-green-400',
-  'Under Training': 'bg-blue-500/10 text-blue-400',
-  'Document Verification': 'bg-amber-500/10 text-amber-400',
-}
+  const meta =
+    metaFields.map((f) => obj[f]).find((v) => typeof v === 'string' || typeof v === 'number')
 
-const JOB_STATUS_STYLES: Record<string, string> = {
-  New: 'bg-green-500/10 text-green-400',
-  Ongoing: 'bg-blue-500/10 text-blue-400',
-  Closed: 'bg-white/[0.06] text-[#9B9BA3]',
-}
+  const dateVal =
+    [obj.created_at, obj.createdAt, obj.date, obj.published_at, obj.publishedAt].find(
+      (v) => typeof v === 'string'
+    ) as string | undefined
 
-const VIDEO_STATUS_STYLES: Record<string, string> = {
-  Published: 'bg-green-500/10 text-green-400',
-  Draft: 'bg-white/[0.06] text-[#9B9BA3]',
+  return {
+    id,
+    type,
+    title: title ?? type[0].toUpperCase() + type.slice(1),
+    meta: meta != null ? String(meta) : undefined,
+    date: dateVal ?? null,
+    href,
+  }
 }
 
 export default async function AdminDashboardPage() {
   const supabase = await createClient()
-  const { data: { user }, error } = await supabase.auth.getUser()
-  if (error || !user) redirect('/admin/login')
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  if (authError || !user) redirect('/admin/login')
 
   const role = await getCurrentUserRole()
   if (role !== 'admin') redirect('/')
 
-  const [products, orders, blogs, events, results, resources, jobs, videos] = await Promise.all([
-    getProducts(),
-    getOrders(),
-    getBlogs(),
-    getEvents(),
-    getResults(),
-    getResources(),
-    getJobs(),
-    getVideos(),
-  ])
+  let dataError: string | null = null
+  let products: Awaited<ReturnType<typeof getProducts>> = []
+  let orders: Awaited<ReturnType<typeof getOrders>> = []
+  let blogs: Awaited<ReturnType<typeof getBlogs>> = []
+  let events: Awaited<ReturnType<typeof getEvents>> = []
+  let results: Awaited<ReturnType<typeof getResults>> = []
+  let resources: Awaited<ReturnType<typeof getResources>> = []
+  let jobs: Awaited<ReturnType<typeof getJobs>> = []
+  let videos: Awaited<ReturnType<typeof getVideos>> = []
+
+  try {
+    ;[products, orders, blogs, events, results, resources, jobs, videos] = await Promise.all([
+      getProducts(),
+      getOrders(),
+      getBlogs(),
+      getEvents(),
+      getResults(),
+      getResources(),
+      getJobs(),
+      getVideos(),
+    ])
+  } catch (err) {
+    console.error('Dashboard data fetch failed:', err)
+    dataError = 'Some dashboard data failed to load. Numbers below may be incomplete.'
+  }
 
   const inStock = products.filter((p) => p.availability === 'In Stock').length
   const limitedStock = products.filter((p) => p.availability === 'Limited Stock').length
@@ -80,376 +98,77 @@ export default async function AdminDashboardPage() {
   const publishedVideos = videos.filter((v) => v.status === 'Published').length
 
   const stats = [
-    { label: 'Total Products', value: products.length, delta: `${inStock} in stock` },
-    { label: 'Limited Stock', value: limitedStock, delta: 'needs restocking' },
-    { label: 'Out of Stock', value: outOfStock, delta: outOfStock > 0 ? 'action needed' : 'all good' },
-    { label: 'Pending Orders', value: pendingOrders, delta: `${orders.length} total orders` },
-    { label: 'Total Blogs', value: blogs.length, delta: `${blogs.reduce((sum, b) => sum + b.views, 0).toLocaleString('en-IN')} views` },
-    { label: 'Total Events', value: events.length, delta: `${openEvents} open for registration` },
-    { label: 'Total Results', value: results.length, delta: `${selectedResults} selected` },
-    { label: 'Total Resources', value: resources.length, delta: `${totalResourceDownloads.toLocaleString('en-IN')} downloads` },
-    { label: 'Total Jobs', value: jobs.length, delta: `${newJobs} new · ${ongoingJobs} ongoing` },
-    { label: 'Total Videos', value: videos.length, delta: `${publishedVideos} published` },
+    { label: 'Total Products', value: products.length, delta: `${inStock} in stock`, href: '/admin/products', icon: Package, tint: 'indigo' as const },
+    { label: 'Limited Stock', value: limitedStock, delta: 'needs restocking', href: '/admin/products', icon: Package, tint: 'amber' as const },
+    { label: 'Out of Stock', value: outOfStock, delta: outOfStock > 0 ? 'action needed' : 'all good', href: '/admin/products', icon: Package, tint: outOfStock > 0 ? 'red' as const : 'green' as const },
+    { label: 'Pending Orders', value: pendingOrders, delta: `${orders.length} total orders`, href: '/admin/orders', icon: ShoppingCart, tint: 'amber' as const },
+    { label: 'Total Blogs', value: blogs.length, delta: `${blogs.reduce((sum, b) => sum + b.views, 0).toLocaleString('en-IN')} views`, href: '/admin/blogs', icon: FileText, tint: 'indigo' as const },
+    { label: 'Total Events', value: events.length, delta: `${openEvents} open for registration`, href: '/admin/events', icon: Calendar, tint: 'green' as const },
+    { label: 'Total Results', value: results.length, delta: `${selectedResults} selected`, href: '/admin/results', icon: Award, tint: 'indigo' as const },
+    { label: 'Total Resources', value: resources.length, delta: `${totalResourceDownloads.toLocaleString('en-IN')} downloads`, href: '/admin/resources', icon: BookOpen, tint: 'indigo' as const },
+    { label: 'Total Jobs', value: jobs.length, delta: `${newJobs} new · ${ongoingJobs} ongoing`, href: '/admin/jobs', icon: Briefcase, tint: 'green' as const },
+    { label: 'Total Videos', value: videos.length, delta: `${publishedVideos} published`, href: '/admin/videos', icon: PlayCircle, tint: 'indigo' as const },
   ]
 
-  const recentOrders = orders.slice(0, 5)
-  const recentProducts = products.slice(0, 5)
-  const recentBlogs = blogs.slice(0, 5)
-  const recentEvents = events.slice(0, 5)
-  const recentResults = results.slice(0, 5)
-  const recentResources = resources.slice(0, 5)
-  const recentJobs = jobs.slice(0, 5)
-  const recentVideos = videos.slice(0, 5)
+  const activity: ActivityItem[] = [
+    ...products.map((p) => toActivityItem(p, 'product', '/admin/products', ['name', 'title'], ['availability'])),
+    ...orders.map((o) => toActivityItem(o, 'order', '/admin/orders', ['id'], ['status'])),
+    ...blogs.map((b) => toActivityItem(b, 'blog', '/admin/blogs', ['title'], ['views'])),
+    ...events.map((e) => toActivityItem(e, 'event', '/admin/events', ['title'], ['status'])),
+    ...results.map((r) => toActivityItem(r, 'result', '/admin/results', ['title'], ['status'])),
+    ...jobs.map((j) => toActivityItem(j, 'job', '/admin/jobs', ['title'], ['status'])),
+    ...videos.map((v) => toActivityItem(v, 'video', '/admin/videos', ['title'], ['status'])),
+  ]
+    .filter((item) => item.date !== null)
+    .sort((a, b) => new Date(b.date as string).getTime() - new Date(a.date as string).getTime())
+    .slice(0, 5)
 
   return (
-    <div className="min-h-screen bg-[#0E0F13] text-[#EDEDEF] flex flex-col lg:flex-row">
+    <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col lg:flex-row">
       <AdminSidebar active="Dashboard" />
 
       <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-6xl w-full">
-        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
           <div>
             <h1 className="text-2xl font-semibold mb-1">Dashboard</h1>
-            <p className="text-sm text-[#9B9BA3]">
-              Signed in as <span className="text-[#EDEDEF]">{user.email?.split('@')[0] ?? 'Admin'}</span>
+            <p className="text-sm text-gray-500">
+              Signed in as <span className="text-gray-900 font-medium">{user.email?.split('@')[0] ?? 'Admin'}</span>
             </p>
           </div>
           <form action={logout}>
             <button
               type="submit"
-              className="text-sm px-4 py-2 border border-white/[0.08] rounded-lg hover:bg-white/[0.04] transition-colors"
+              className="text-sm px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 font-medium hover:bg-gray-50 hover:border-gray-400 transition-colors"
             >
               Sign out
             </button>
           </form>
         </div>
 
-        {/* Stat cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-9 gap-4 mb-10">
+        {dataError && (
+          <div className="flex items-start gap-2.5 text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 mb-6">
+            <AlertTriangle size={16} className="shrink-0 mt-0.5" />
+            <p>{dataError}</p>
+          </div>
+        )}
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 mb-6">
           {stats.map((stat) => (
-            <div
-              key={stat.label}
-              className="bg-[#17181D] border border-white/[0.06] rounded-xl p-4 sm:p-5 hover:border-white/[0.12] transition-colors"
-            >
-              <p className="text-xs sm:text-sm text-[#9B9BA3] mb-2 sm:mb-3 truncate">{stat.label}</p>
-              <p className="text-xl sm:text-2xl font-semibold tabular-nums mb-1.5 truncate">{stat.value}</p>
-              <p className="text-xs text-[#7C6AEF] truncate">{stat.delta}</p>
-            </div>
+            <StatCard key={stat.label} {...stat} />
           ))}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Recent orders */}
-          <div className="bg-[#17181D] border border-white/[0.06] rounded-xl overflow-hidden">
-            <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
-              <h2 className="text-sm font-medium">Recent Orders</h2>
-              <Link href="/admin/orders" className="text-xs text-[#7C6AEF] hover:underline">View all</Link>
-            </div>
+        <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-4 sm:p-6">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+              <Activity size={16} />
+            </span>
             <div>
-              {recentOrders.length === 0 ? (
-                <div className="px-5 py-10 text-center">
-                  <p className="text-sm text-[#9B9BA3]">No orders yet.</p>
-                </div>
-              ) : (
-                recentOrders.map((order) => (
-                  <div
-                    key={order.id}
-                    className="flex items-center justify-between gap-3 px-5 py-3.5 border-b last:border-b-0 border-white/[0.04] hover:bg-white/[0.02] transition-colors"
-                  >
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium truncate">
-                        {order.product_name} × {order.quantity}
-                      </p>
-                      <p className="text-sm text-[#9B9BA3] truncate">
-                        {order.customer_name} · {order.phone}
-                      </p>
-                    </div>
-                    <span className={'text-xs px-2.5 py-1 rounded-full shrink-0 ' + ORDER_STATUS_STYLES[order.status]}>
-                      {order.status}
-                    </span>
-                  </div>
-                ))
-              )}
+              <h2 className="text-sm font-semibold text-gray-900">Recent Activity</h2>
+              <p className="text-xs text-gray-500">Latest updates across your content</p>
             </div>
           </div>
-
-          {/* Recent products */}
-          <div className="bg-[#17181D] border border-white/[0.06] rounded-xl overflow-hidden">
-            <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
-              <h2 className="text-sm font-medium">Recent Products</h2>
-              <Link href="/admin/products" className="text-xs text-[#7C6AEF] hover:underline">View all</Link>
-            </div>
-            <div>
-              {recentProducts.length === 0 ? (
-                <div className="px-5 py-10 text-center">
-                  <p className="text-sm text-[#9B9BA3] mb-3">No products yet.</p>
-                  <Link href="/admin/products/new" className="text-sm text-[#7C6AEF] hover:underline">
-                    Add your first product
-                  </Link>
-                </div>
-              ) : (
-                recentProducts.map((product) => (
-                  <div
-                    key={product.id}
-                    className="flex items-center justify-between gap-3 px-5 py-3.5 border-b last:border-b-0 border-white/[0.04] hover:bg-white/[0.02] transition-colors"
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-8 h-8 rounded-lg bg-white/[0.06] overflow-hidden flex items-center justify-center shrink-0">
-                        {product.image_url ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={product.image_url} alt={product.name} className="w-full h-full object-cover" />
-                        ) : (
-                          <span className="text-xs text-[#9B9BA3]">—</span>
-                        )}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-sm font-medium truncate">{product.name}</p>
-                        <p className="text-sm text-[#9B9BA3] truncate">{product.category} · ₹{product.price}</p>
-                      </div>
-                    </div>
-                    <span className={'text-xs px-2.5 py-1 rounded-full shrink-0 ' + PRODUCT_STATUS_STYLES[product.availability]}>
-                      {product.availability}
-                    </span>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-
-          {/* Recent blogs */}
-          <div className="bg-[#17181D] border border-white/[0.06] rounded-xl overflow-hidden">
-            <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
-              <h2 className="text-sm font-medium">Recent Blogs</h2>
-              <Link href="/admin/blogs" className="text-xs text-[#7C6AEF] hover:underline">View all</Link>
-            </div>
-            <div>
-              {recentBlogs.length === 0 ? (
-                <div className="px-5 py-10 text-center">
-                  <p className="text-sm text-[#9B9BA3] mb-3">No blogs yet.</p>
-                  <Link href="/admin/blogs/new" className="text-sm text-[#7C6AEF] hover:underline">
-                    Add your first blog
-                  </Link>
-                </div>
-              ) : (
-                recentBlogs.map((blog) => (
-                  <div
-                    key={blog.id}
-                    className="flex items-center justify-between gap-3 px-5 py-3.5 border-b last:border-b-0 border-white/[0.04] hover:bg-white/[0.02] transition-colors"
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-8 h-8 rounded-lg bg-white/[0.06] overflow-hidden flex items-center justify-center shrink-0">
-                        {blog.image_url ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={blog.image_url} alt={blog.title} className="w-full h-full object-cover" />
-                        ) : (
-                          <span className="text-xs text-[#9B9BA3]">—</span>
-                        )}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-sm font-medium truncate">{blog.title}</p>
-                        <p className="text-sm text-[#9B9BA3] truncate">{blog.category} · {blog.author}</p>
-                      </div>
-                    </div>
-                    <span className="text-xs px-2.5 py-1 rounded-full shrink-0 bg-white/[0.06] text-[#9B9BA3]">
-                      {blog.views.toLocaleString('en-IN')} views
-                    </span>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-
-          {/* Recent events */}
-          <div className="bg-[#17181D] border border-white/[0.06] rounded-xl overflow-hidden">
-            <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
-              <h2 className="text-sm font-medium">Recent Events</h2>
-              <Link href="/admin/events" className="text-xs text-[#7C6AEF] hover:underline">View all</Link>
-            </div>
-            <div>
-              {recentEvents.length === 0 ? (
-                <div className="px-5 py-10 text-center">
-                  <p className="text-sm text-[#9B9BA3] mb-3">No events yet.</p>
-                  <Link href="/admin/events/new" className="text-sm text-[#7C6AEF] hover:underline">
-                    Add your first event
-                  </Link>
-                </div>
-              ) : (
-                recentEvents.map((event) => (
-                  <div
-                    key={event.id}
-                    className="flex items-center justify-between gap-3 px-5 py-3.5 border-b last:border-b-0 border-white/[0.04] hover:bg-white/[0.02] transition-colors"
-                  >
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium truncate">{event.title}</p>
-                      <p className="text-sm text-[#9B9BA3] truncate">{event.category} · {event.event_date}</p>
-                    </div>
-                    <span className={'text-xs px-2.5 py-1 rounded-full shrink-0 ' + EVENT_STATUS_STYLES[event.status]}>
-                      {event.status}
-                    </span>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-
-          {/* Recent results */}
-          <div className="bg-[#17181D] border border-white/[0.06] rounded-xl overflow-hidden">
-            <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
-              <h2 className="text-sm font-medium">Recent Results</h2>
-              <Link href="/admin/results" className="text-xs text-[#7C6AEF] hover:underline">View all</Link>
-            </div>
-            <div>
-              {recentResults.length === 0 ? (
-                <div className="px-5 py-10 text-center">
-                  <p className="text-sm text-[#9B9BA3] mb-3">No results yet.</p>
-                  <Link href="/admin/results/new" className="text-sm text-[#7C6AEF] hover:underline">
-                    Add your first result
-                  </Link>
-                </div>
-              ) : (
-                recentResults.map((result) => (
-                  <div
-                    key={result.id}
-                    className="flex items-center justify-between gap-3 px-5 py-3.5 border-b last:border-b-0 border-white/[0.04] hover:bg-white/[0.02] transition-colors"
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-8 h-8 rounded-lg bg-white/[0.06] overflow-hidden flex items-center justify-center shrink-0">
-                        {result.photo_url ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={result.photo_url} alt={result.name} className="w-full h-full object-cover" />
-                        ) : (
-                          <span className="text-xs text-[#9B9BA3]">—</span>
-                        )}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-sm font-medium truncate">{result.name}</p>
-                        <p className="text-sm text-[#9B9BA3] truncate">{result.department} · {result.year}</p>
-                      </div>
-                    </div>
-                    <span className={'text-xs px-2.5 py-1 rounded-full shrink-0 ' + RESULT_STATUS_STYLES[result.status]}>
-                      {result.status}
-                    </span>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-
-          {/* Recent resources */}
-          <div className="bg-[#17181D] border border-white/[0.06] rounded-xl overflow-hidden">
-            <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
-              <h2 className="text-sm font-medium">Recent Resources</h2>
-              <Link href="/admin/resources" className="text-xs text-[#7C6AEF] hover:underline">View all</Link>
-            </div>
-            <div>
-              {recentResources.length === 0 ? (
-                <div className="px-5 py-10 text-center">
-                  <p className="text-sm text-[#9B9BA3] mb-3">No resources yet.</p>
-                  <Link href="/admin/resources/new" className="text-sm text-[#7C6AEF] hover:underline">
-                    Add your first resource
-                  </Link>
-                </div>
-              ) : (
-                recentResources.map((resource) => (
-                  <div
-                    key={resource.id}
-                    className="flex items-center justify-between gap-3 px-5 py-3.5 border-b last:border-b-0 border-white/[0.04] hover:bg-white/[0.02] transition-colors"
-                  >
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium truncate">{resource.title}</p>
-                      <p className="text-sm text-[#9B9BA3] truncate">
-                        {resource.category} · {resource.file_url ? 'has file' : 'no file'}
-                        {resource.has_video ? ' · video' : ''}
-                      </p>
-                    </div>
-                    <span className="text-xs px-2.5 py-1 rounded-full shrink-0 bg-white/[0.06] text-[#9B9BA3]">
-                      {resource.downloads.toLocaleString('en-IN')} downloads
-                    </span>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-
-          {/* Recent jobs */}
-          <div className="bg-[#17181D] border border-white/[0.06] rounded-xl overflow-hidden">
-            <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
-              <h2 className="text-sm font-medium">Recent Jobs</h2>
-              <Link href="/admin/jobs" className="text-xs text-[#7C6AEF] hover:underline">View all</Link>
-            </div>
-            <div>
-              {recentJobs.length === 0 ? (
-                <div className="px-5 py-10 text-center">
-                  <p className="text-sm text-[#9B9BA3] mb-3">No jobs yet.</p>
-                  <Link href="/admin/jobs/new" className="text-sm text-[#7C6AEF] hover:underline">
-                    Add your first job
-                  </Link>
-                </div>
-              ) : (
-                recentJobs.map((job) => (
-                  <div
-                    key={job.id}
-                    className="flex items-center justify-between gap-3 px-5 py-3.5 border-b last:border-b-0 border-white/[0.04] hover:bg-white/[0.02] transition-colors"
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-8 h-8 rounded-lg bg-white/[0.06] overflow-hidden flex items-center justify-center shrink-0">
-                        <Briefcase size={16} className="text-[#9B9BA3]" />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-sm font-medium truncate">{job.title}</p>
-                        <p className="text-sm text-[#9B9BA3] truncate">{job.category} · {job.organization}</p>
-                      </div>
-                    </div>
-                    <span className={'text-xs px-2.5 py-1 rounded-full shrink-0 ' + (JOB_STATUS_STYLES[job.status] ?? JOB_STATUS_STYLES.Closed)}>
-                      {job.status}
-                    </span>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-
-          {/* Recent videos */}
-          <div className="bg-[#17181D] border border-white/[0.06] rounded-xl overflow-hidden">
-            <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
-              <h2 className="text-sm font-medium">Recent Videos</h2>
-              <Link href="/admin/videos" className="text-xs text-[#7C6AEF] hover:underline">View all</Link>
-            </div>
-            <div>
-              {recentVideos.length === 0 ? (
-                <div className="px-5 py-10 text-center">
-                  <p className="text-sm text-[#9B9BA3] mb-3">No videos yet.</p>
-                  <Link href="/admin/videos/new" className="text-sm text-[#7C6AEF] hover:underline">
-                    Add your first video
-                  </Link>
-                </div>
-              ) : (
-                recentVideos.map((video) => (
-                  <div
-                    key={video.id}
-                    className="flex items-center justify-between gap-3 px-5 py-3.5 border-b last:border-b-0 border-white/[0.04] hover:bg-white/[0.02] transition-colors"
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-8 h-8 rounded-lg bg-white/[0.06] overflow-hidden flex items-center justify-center shrink-0">
-                        {video.thumbnail_url ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={video.thumbnail_url} alt={video.title} className="w-full h-full object-cover" />
-                        ) : (
-                          <PlayCircle size={16} className="text-[#9B9BA3]" />
-                        )}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-sm font-medium truncate">{video.title}</p>
-                        <p className="text-sm text-[#9B9BA3] truncate">{video.category}</p>
-                      </div>
-                    </div>
-                    <span className={'text-xs px-2.5 py-1 rounded-full shrink-0 ' + (VIDEO_STATUS_STYLES[video.status] ?? VIDEO_STATUS_STYLES.Draft)}>
-                      {video.status}
-                    </span>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
+          <ActivityFeed items={activity} />
         </div>
       </main>
     </div>

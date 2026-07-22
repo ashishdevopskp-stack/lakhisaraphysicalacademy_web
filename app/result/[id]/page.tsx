@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import {
@@ -14,12 +15,32 @@ import Button from "../../components/Button";
 import Badge from "../../components/Badge";
 import { getResult } from "../../lib/action/results";
 import { mapDbResultToStudentItem } from "../../lib/results-data";
-
-const WHATSAPP_NUMBER = "918863081082";
+import { whatsappHref } from "@/app/lib/constants";
 
 // Rendered fresh on every request so an edited/deleted student
 // reflects immediately.
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const dbResult = await getResult(id);
+  if (!dbResult) {
+    return { title: "Student Not Found | Lakhisarai Physical Academy" };
+  }
+  const student = mapDbResultToStudentItem(dbResult);
+  return {
+    title: `${student.name} — ${student.post} | Lakhisarai Physical Academy`,
+    description:
+      `${student.name} was selected as ${student.post} (${student.exam}) — a success story from Lakhisarai Physical Academy.`.slice(
+        0,
+        160
+      ),
+  };
+}
 
 export default async function StudentProfilePage({
   params,
@@ -32,9 +53,11 @@ export default async function StudentProfilePage({
 
   const student = mapDbResultToStudentItem(dbResult);
 
-  const whatsappHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-    `Hello, I saw ${student.name}'s success story and would like to know more about training at the academy.`
-  )}`;
+  const enquiryHref = whatsappHref(
+    encodeURIComponent(
+      `Hello, I saw ${student.name}'s success story and would like to know more about training at the academy.`
+    )
+  );
 
   return (
     <section className="py-16 sm:py-24">
@@ -107,7 +130,7 @@ export default async function StudentProfilePage({
             )}
 
             <div className="mt-8 flex flex-wrap gap-3">
-              <Button href={whatsappHref} variant="whatsapp" icon={MessageCircle}>
+              <Button href={enquiryHref} variant="whatsapp" icon={MessageCircle}>
                 Ask About This Journey
               </Button>
             </div>

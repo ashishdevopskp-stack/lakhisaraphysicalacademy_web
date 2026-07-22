@@ -6,6 +6,7 @@ import { createClient } from '@/app/lib/supabase/server'
 import { getCurrentUserRole } from '@/app/lib/action/auth'
 
 export interface DbResult {
+  title: string
   id: string
   name: string
   post: string

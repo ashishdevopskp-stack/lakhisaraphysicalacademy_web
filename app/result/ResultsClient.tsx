@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState, type MouseEvent } from "react";
-import { motion } from "framer-motion";
 import {
   Trophy,
   ClipboardList,
@@ -23,6 +22,7 @@ import {
 import Container from "../components/Container";
 import Button from "../components/Button";
 import Badge from "../components/Badge";
+import { PHONE_NUMBER, whatsappHref, telHref } from "@/app/lib/constants";
 import {
   DEPARTMENTS,
   DEPARTMENT_ICONS,
@@ -31,16 +31,7 @@ import {
   type StudentItem,
   type SelectionStatus,
 } from "../lib/results-data";
-
-const EASE = [0.22, 0.61, 0.36, 1] as const;
-const WHATSAPP_NUMBER = "918863081082";
-
-const fadeUp = {
-  initial: { opacity: 0, y: 16 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-80px" },
-  transition: { duration: 0.55, ease: EASE },
-};
+import { FadeInUp, ScrollFadeUp, StaggerList, StaggerItem } from "./_ResultsMotion";
 
 function ResultsHero() {
   return (
@@ -54,12 +45,7 @@ function ResultsHero() {
         }}
       />
       <Container>
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: EASE }}
-          className="max-w-[62ch]"
-        >
+        <FadeInUp className="max-w-[62ch]">
           <p className="font-mono text-[12px] font-semibold uppercase tracking-[0.22em] text-signal">
             Success Stories
           </p>
@@ -87,14 +73,14 @@ function ResultsHero() {
               Submit Your Selection
             </Button>
             <Button
-              href={`https://wa.me/${WHATSAPP_NUMBER}`}
+              href={`https://wa.me/${PHONE_NUMBER}`}
               variant="whatsapp"
               icon={MessageCircle}
             >
               WhatsApp Enquiry
             </Button>
           </div>
-        </motion.div>
+        </FadeInUp>
       </Container>
     </section>
   );
@@ -134,26 +120,19 @@ function SuccessStatistics({ students }: { students: StudentItem[] }) {
   return (
     <section className="py-16 sm:py-20">
       <Container>
-        <motion.h2 {...fadeUp} className="font-display text-[26px] font-bold sm:text-[32px]">
+        <ScrollFadeUp as="h2" className="font-display text-[26px] font-bold sm:text-[32px]">
           Success Statistics
-        </motion.h2>
+        </ScrollFadeUp>
 
-        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {stats.map(({ label, value, icon: Icon }, i) => (
-            <motion.div
-              key={label}
-              {...fadeUp}
-              transition={{ ...fadeUp.transition, delay: (i % 8) * 0.03 }}
-              className="card-flat px-4 py-6 text-center"
-            >
+        <StaggerList className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {stats.map(({ label, value, icon: Icon }) => (
+            <StaggerItem key={label} className="card-flat px-4 py-6 text-center">
               <Icon size={18} className="mx-auto text-signal-strong" />
-              <p className="font-display mt-3 text-[24px] font-bold text-text">
-                {value}
-              </p>
+              <p className="font-display mt-3 text-[24px] font-bold text-text">{value}</p>
               <p className="font-body mt-1 text-[12px] text-text-muted">{label}</p>
-            </motion.div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerList>
       </Container>
     </section>
   );
@@ -163,26 +142,24 @@ function SuccessCategories() {
   return (
     <section className="py-16 sm:py-20">
       <Container>
-        <motion.h2 {...fadeUp} className="font-display text-[26px] font-bold sm:text-[32px]">
+        <ScrollFadeUp as="h2" className="font-display text-[26px] font-bold sm:text-[32px]">
           Success Categories
-        </motion.h2>
+        </ScrollFadeUp>
 
-        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
-          {DEPARTMENTS.map((label, i) => {
+        <StaggerList className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-6">
+          {DEPARTMENTS.map((label) => {
             const Icon = DEPARTMENT_ICONS[label];
             return (
-              <motion.div
+              <StaggerItem
                 key={label}
-                {...fadeUp}
-                transition={{ ...fadeUp.transition, delay: (i % 6) * 0.04 }}
                 className="card-flat flex flex-col items-center gap-2 px-3 py-5 text-center"
               >
                 <Icon size={20} className="text-signal-strong" />
                 <span className="font-body text-[12px] text-text-muted">{label}</span>
-              </motion.div>
+              </StaggerItem>
             );
           })}
-        </div>
+        </StaggerList>
       </Container>
     </section>
   );
@@ -245,13 +222,12 @@ function SelectedStudentCards({ students }: { students: StudentItem[] }) {
   return (
     <section id="students" className="py-16 sm:py-24">
       <Container>
-        <motion.h2 {...fadeUp} className="font-display text-[28px] font-bold sm:text-[34px]">
+        <ScrollFadeUp as="h2" className="font-display text-[28px] font-bold sm:text-[34px]">
           Selected Students
-        </motion.h2>
+        </ScrollFadeUp>
 
-        <motion.div
-          {...fadeUp}
-          transition={{ ...fadeUp.transition, delay: 0.06 }}
+        <ScrollFadeUp
+          delay={0.06}
           className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center"
         >
           <div className="glass flex flex-1 items-center gap-2 rounded-lg px-4 py-2.5">
@@ -288,98 +264,91 @@ function SelectedStudentCards({ students }: { students: StudentItem[] }) {
               </option>
             ))}
           </select>
-        </motion.div>
+        </ScrollFadeUp>
 
-        <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((student, i) => (
-            <motion.div
-              key={student.id}
-              {...fadeUp}
-              transition={{ ...fadeUp.transition, delay: (i % 3) * 0.05 }}
-              className="card-flat flex flex-col p-6"
-            >
-              <div className="flex items-center gap-4">
-                <div className="glass flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full">
-                  {student.photoUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={student.photoUrl}
-                      alt={student.name}
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <GraduationCap size={22} className="text-text-muted" />
-                  )}
+        {filtered.length === 0 ? (
+          <p className="font-body mt-8 text-[14px] text-text-muted">
+            No students match these filters right now.
+          </p>
+        ) : (
+          <StaggerList className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {filtered.map((student) => (
+              <StaggerItem key={student.id} className="card-flat flex flex-col p-6">
+                <div className="flex items-center gap-4">
+                  <div className="glass flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full">
+                    {student.photoUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={student.photoUrl}
+                        alt={student.name}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <GraduationCap size={22} className="text-text-muted" />
+                    )}
+                  </div>
+                  <div>
+                    <h3 className="font-display text-[16px] font-semibold text-text">
+                      {student.name}
+                    </h3>
+                    <p className="font-body mt-0.5 text-[13px] text-text-muted">
+                      {student.post}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-display text-[16px] font-semibold text-text">
-                    {student.name}
-                  </h3>
-                  <p className="font-body mt-0.5 text-[13px] text-text-muted">
-                    {student.post}
-                  </p>
-                </div>
-              </div>
 
-              <div className="mt-4 flex flex-wrap items-center gap-2">
-                <Badge>{student.department}</Badge>
-                <span
-                  className={`text-[12px] font-medium ${STATUS_STYLES[student.status]}`}
-                >
-                  ● {student.status}
-                </span>
-              </div>
-
-              <div className="mt-4 flex flex-col gap-1.5 text-[13px] text-text-muted">
-                <span className="flex items-center gap-2">
-                  <ClipboardList size={14} /> {student.exam}
-                </span>
-                <span className="flex items-center gap-2">
-                  <MapPin size={14} /> {student.district}
-                </span>
-                <span className="flex items-center gap-2">
-                  <Calendar size={14} /> {student.year}
-                </span>
-                {student.rank && (
-                  <span className="flex items-center gap-2">
-                    <Award size={14} /> {student.rank}
+                <div className="mt-4 flex flex-wrap items-center gap-2">
+                  <Badge>{student.department}</Badge>
+                  <span className={`text-[12px] font-medium ${STATUS_STYLES[student.status]}`}>
+                    ● {student.status}
                   </span>
-                )}
-              </div>
+                </div>
 
-              {/* <div className="mt-5 flex flex-wrap gap-2">
-                <Button
-                  href={`/result/${student.id}`}
-                  variant="primary"
-                  icon={ArrowRight}
-                >
-                  View Profile
-                </Button>
-                <button
-                  type="button"
-                  onClick={(e: MouseEvent) => {
-                    e.preventDefault();
-                    handleShare(student);
-                  }}
-                  className="btn btn-secondary text-[14px] inline-flex items-center gap-2"
-                >
-                  {copiedId === student.id ? (
-                    <Check className="h-4 w-4" />
-                  ) : (
-                    <Share2 className="h-4 w-4" />
+                <div className="mt-4 flex flex-col gap-1.5 text-[13px] text-text-muted">
+                  <span className="flex items-center gap-2">
+                    <ClipboardList size={14} /> {student.exam}
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <MapPin size={14} /> {student.district}
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <Calendar size={14} /> {student.year}
+                  </span>
+                  {student.rank && (
+                    <span className="flex items-center gap-2">
+                      <Award size={14} /> {student.rank}
+                    </span>
                   )}
-                  {copiedId === student.id ? "Link Copied" : "Share Success"}
-                </button>
-              </div> */}
-            </motion.div>
-          ))}
+                </div>
 
-          {filtered.length === 0 && (
-            <p className="font-body col-span-full text-[14px] text-text-muted">
-              No students match these filters right now.
-            </p>
-          )}
-        </div>
+                {/* <div className="mt-5 flex flex-wrap gap-2">
+                  <Button
+                    href={`/result/${student.id}`}
+                    variant="primary"
+                    icon={ArrowRight}
+                  >
+                    View Profile
+                  </Button>
+                  <button
+                    type="button"
+                    onClick={(e: MouseEvent) => {
+                      e.preventDefault();
+                      handleShare(student);
+                    }}
+                    className="btn btn-secondary text-[14px] inline-flex items-center gap-2"
+                  >
+                    {copiedId === student.id ? (
+                      <Check className="h-4 w-4" />
+                    ) : (
+                      <Share2 className="h-4 w-4" />
+                    )}
+                    {copiedId === student.id ? "Link Copied" : "Share Success"}
+                  </button>
+                </div> */}
+              </StaggerItem>
+            ))}
+          </StaggerList>
+        )}
       </Container>
     </section>
   );
@@ -395,18 +364,13 @@ function SuccessStoryVideos({ students }: { students: StudentItem[] }) {
   return (
     <section id="videos" className="py-16 sm:py-24">
       <Container>
-        <motion.h2 {...fadeUp} className="font-display text-[28px] font-bold sm:text-[34px]">
+        <ScrollFadeUp as="h2" className="font-display text-[28px] font-bold sm:text-[34px]">
           Success Story Videos
-        </motion.h2>
+        </ScrollFadeUp>
 
-        <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-3">
-          {videos.map((student, i) => (
-            <motion.div
-              key={student.id}
-              {...fadeUp}
-              transition={{ ...fadeUp.transition, delay: i * 0.06 }}
-              className="card-flat p-5"
-            >
+        <StaggerList className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-3">
+          {videos.map((student) => (
+            <StaggerItem key={student.id} className="card-flat p-5">
               <div
                 className="flex aspect-video items-center justify-center rounded-lg border border-line"
                 style={{
@@ -425,9 +389,9 @@ function SuccessStoryVideos({ students }: { students: StudentItem[] }) {
                   Watch Now
                 </Button>
               </div>
-            </motion.div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerList>
       </Container>
     </section>
   );
@@ -443,18 +407,13 @@ function Testimonials({ students }: { students: StudentItem[] }) {
   return (
     <section className="py-16 sm:py-24">
       <Container>
-        <motion.h2 {...fadeUp} className="font-display text-[28px] font-bold sm:text-[34px]">
+        <ScrollFadeUp as="h2" className="font-display text-[28px] font-bold sm:text-[34px]">
           What Our Achievers Say
-        </motion.h2>
+        </ScrollFadeUp>
 
-        <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-3">
-          {testimonials.map((student, i) => (
-            <motion.div
-              key={student.id}
-              {...fadeUp}
-              transition={{ ...fadeUp.transition, delay: i * 0.06 }}
-              className="card-flat p-6"
-            >
+        <StaggerList className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-3">
+          {testimonials.map((student) => (
+            <StaggerItem key={student.id} className="card-flat p-6">
               <Quote size={18} className="text-accent-strong" />
               <p className="font-body mt-4 text-[14px] leading-relaxed text-text-muted">
                 &ldquo;{student.testimonial}&rdquo;
@@ -465,9 +424,9 @@ function Testimonials({ students }: { students: StudentItem[] }) {
               <p className="font-body text-[12px] text-text-muted">
                 Selected &mdash; {student.post}
               </p>
-            </motion.div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerList>
       </Container>
     </section>
   );
@@ -490,7 +449,7 @@ function SubmitSelection() {
     setForm((prev) => ({ ...prev, [key]: value }));
 
   const message = `Hello Lakhisarai Physical Academy, I would like to submit my selection details:\nName: ${form.name}\nMobile: ${form.mobile}\nExam Name: ${form.exam}\nSelected Post: ${form.post}\nRank/Score: ${form.rank}\nSelection Status: ${form.status}\nVillage/City: ${form.village}\nDistrict: ${form.district}\nPIN Code: ${form.pincode}\nI will share my photo, result screenshot, and certificate on WhatsApp.`;
-  const whatsappHref = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  const submitHref = whatsappHref(encodeURIComponent(message));
 
   const inputClasses =
     "glass w-full rounded-lg px-4 py-2.5 text-[14px] text-text outline-none placeholder:text-text-faint";
@@ -498,22 +457,21 @@ function SubmitSelection() {
   return (
     <section id="submit" className="py-16 sm:py-24">
       <Container>
-        <motion.h2 {...fadeUp} className="font-display text-[28px] font-bold sm:text-[34px]">
+        <ScrollFadeUp as="h2" className="font-display text-[28px] font-bold sm:text-[34px]">
           Submit Your Selection
-        </motion.h2>
-        <motion.p
-          {...fadeUp}
-          transition={{ ...fadeUp.transition, delay: 0.05 }}
+        </ScrollFadeUp>
+        <ScrollFadeUp
+          as="p"
+          delay={0.05}
           className="font-body mt-3 max-w-[60ch] text-[15px] leading-relaxed text-text-muted"
         >
           Selected in a Defence, Police, or Government exam after training
           with us? Fill in your details below and submit via WhatsApp along
           with your photo, result screenshot, and certificate.
-        </motion.p>
+        </ScrollFadeUp>
 
-        <motion.div
-          {...fadeUp}
-          transition={{ ...fadeUp.transition, delay: 0.1 }}
+        <ScrollFadeUp
+          delay={0.1}
           className="mt-8 grid max-w-[820px] grid-cols-1 gap-4 sm:grid-cols-2"
         >
           <input className={inputClasses} placeholder="Full Name *" value={form.name} onChange={(e) => update("name", e.target.value)} />
@@ -536,11 +494,11 @@ function SubmitSelection() {
           </div>
 
           <div className="sm:col-span-2">
-            <Button href={whatsappHref} variant="whatsapp" icon={MessageCircle}>
+            <Button href={submitHref} variant="whatsapp" icon={MessageCircle}>
               Submit via WhatsApp
             </Button>
           </div>
-        </motion.div>
+        </ScrollFadeUp>
       </Container>
     </section>
   );
@@ -550,10 +508,7 @@ function NextSuccessStoryCTA() {
   return (
     <section className="py-16 sm:py-24">
       <Container>
-        <motion.div
-          {...fadeUp}
-          className="glass glass-sheen sheen-run relative overflow-hidden rounded-2xl px-6 py-14 text-center shadow-[var(--shadow-card)] sm:px-14"
-        >
+        <ScrollFadeUp className="glass glass-sheen sheen-run relative overflow-hidden rounded-2xl px-6 py-14 text-center shadow-[var(--shadow-card)] sm:px-14">
           <span className="ribbon-bar absolute inset-x-0 top-0 h-[4px]" aria-hidden />
           <Trophy size={26} className="mx-auto text-accent-strong" />
           <h2 className="font-display mx-auto mt-4 max-w-[28ch] text-[28px] font-bold sm:text-[36px]">
@@ -568,17 +523,17 @@ function NextSuccessStoryCTA() {
               Apply for Admission
             </Button>
             <Button
-              href={`https://wa.me/${WHATSAPP_NUMBER}`}
+              href={`https://wa.me/${PHONE_NUMBER}`}
               variant="whatsapp"
               icon={MessageCircle}
             >
               WhatsApp Now
             </Button>
-            <Button href="tel:8863081082" variant="secondary" icon={Phone}>
+            <Button href={telHref()} variant="secondary" icon={Phone}>
               Call Now
             </Button>
           </div>
-        </motion.div>
+        </ScrollFadeUp>
       </Container>
     </section>
   );
@@ -593,7 +548,7 @@ export default function ResultsClient({ students }: { students: StudentItem[] })
       <SelectedStudentCards students={students} />
       <SuccessStoryVideos students={students} />
       <Testimonials students={students} />
-      <SubmitSelection />
+  
       <NextSuccessStoryCTA />
     </>
   );

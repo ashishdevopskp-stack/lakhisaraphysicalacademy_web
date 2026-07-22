@@ -1,6 +1,7 @@
+// app/store/OrderModal.tsx
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { X, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 import { createOrder } from "@/app/lib/action/orders";
 import type { Product } from "../lib/store-data";
@@ -16,34 +17,59 @@ export default function OrderModal({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape" && !isPending) onClose();
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isPending, onClose]);
+
   function handleSubmit(formData: FormData) {
     setError(null);
     startTransition(async () => {
-      const result = await createOrder(formData);
-      if (result.success) {
-        setSuccess(true);
-        setTimeout(onClose, 1800);
-      } else {
-        setError(result.error ?? "Something went wrong. Please try again.");
+      try {
+        const result = await createOrder(formData);
+        if (result.success) {
+          setSuccess(true);
+          setTimeout(onClose, 1800);
+        } else {
+          setError(result.error ?? "Something went wrong. Please try again.");
+        }
+      } catch {
+        setError(
+          "Couldn't reach the server. Please check your connection and try again."
+        );
       }
     });
+  }
+
+  function handleBackdropClick() {
+    if (!isPending) onClose();
   }
 
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
-      onClick={onClose}
+      onClick={handleBackdropClick}
+      role="presentation"
     >
       <div
         className="glass max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl p-6"
         onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="order-modal-title"
       >
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="font-mono text-[11px] uppercase tracking-wide text-text-faint">
               Order Request
             </p>
-            <h3 className="font-display mt-1 text-[18px] font-semibold text-text">
+            <h3
+              id="order-modal-title"
+              className="font-display mt-1 text-[18px] font-semibold text-text"
+            >
               {product.name}
             </h3>
             <p className="font-body text-[13px] text-text-muted">₹{product.price}</p>
@@ -51,7 +77,8 @@ export default function OrderModal({
           <button
             type="button"
             onClick={onClose}
-            className="shrink-0 rounded-lg p-1 text-text-faint transition-colors hover:bg-white/5 hover:text-text"
+            disabled={isPending}
+            className="shrink-0 rounded-lg p-1 text-text-faint transition-colors hover:bg-white/5 hover:text-text disabled:cursor-not-allowed disabled:opacity-50"
             aria-label="Close"
           >
             <X size={18} />
@@ -75,7 +102,10 @@ export default function OrderModal({
             <input type="hidden" name="productName" value={product.name} />
 
             {error && (
-              <div className="flex items-start gap-2 rounded-lg border border-line bg-white/[0.03] px-3.5 py-2.5">
+              <div
+                role="alert"
+                className="flex items-start gap-2 rounded-lg border border-line bg-white/[0.03] px-3.5 py-2.5"
+              >
                 <AlertCircle size={15} className="mt-0.5 shrink-0 text-accent-strong" />
                 <p className="font-body text-[13px] text-text-muted">{error}</p>
               </div>
@@ -90,7 +120,8 @@ export default function OrderModal({
                 name="customerName"
                 type="text"
                 required
-                className="w-full rounded-lg border border-line bg-transparent px-3.5 py-2.5 text-[14px] text-text outline-none transition-colors focus:border-signal"
+                disabled={isPending}
+                className="w-full rounded-lg border border-line bg-transparent px-3.5 py-2.5 text-[14px] text-text outline-none transition-colors focus:border-signal disabled:opacity-60"
                 placeholder="Your full name"
               />
             </div>
@@ -104,10 +135,11 @@ export default function OrderModal({
                 name="phone"
                 type="tel"
                 required
+                disabled={isPending}
                 inputMode="numeric"
                 pattern="[0-9]{10}"
                 maxLength={10}
-                className="w-full rounded-lg border border-line bg-transparent px-3.5 py-2.5 text-[14px] text-text outline-none transition-colors focus:border-signal"
+                className="w-full rounded-lg border border-line bg-transparent px-3.5 py-2.5 text-[14px] text-text outline-none transition-colors focus:border-signal disabled:opacity-60"
                 placeholder="10-digit mobile number"
               />
             </div>
@@ -127,7 +159,8 @@ export default function OrderModal({
                     name="street"
                     type="text"
                     required
-                    className="w-full rounded-lg border border-line bg-transparent px-3.5 py-2.5 text-[14px] text-text outline-none transition-colors focus:border-signal"
+                    disabled={isPending}
+                    className="w-full rounded-lg border border-line bg-transparent px-3.5 py-2.5 text-[14px] text-text outline-none transition-colors focus:border-signal disabled:opacity-60"
                     placeholder="e.g. Ward No. 4, Station Road"
                   />
                 </div>
@@ -142,7 +175,8 @@ export default function OrderModal({
                       name="city"
                       type="text"
                       required
-                      className="w-full rounded-lg border border-line bg-transparent px-3.5 py-2.5 text-[14px] text-text outline-none transition-colors focus:border-signal"
+                      disabled={isPending}
+                      className="w-full rounded-lg border border-line bg-transparent px-3.5 py-2.5 text-[14px] text-text outline-none transition-colors focus:border-signal disabled:opacity-60"
                       placeholder="e.g. Lakhisarai"
                     />
                   </div>
@@ -155,7 +189,8 @@ export default function OrderModal({
                       name="district"
                       type="text"
                       required
-                      className="w-full rounded-lg border border-line bg-transparent px-3.5 py-2.5 text-[14px] text-text outline-none transition-colors focus:border-signal"
+                      disabled={isPending}
+                      className="w-full rounded-lg border border-line bg-transparent px-3.5 py-2.5 text-[14px] text-text outline-none transition-colors focus:border-signal disabled:opacity-60"
                       placeholder="e.g. Lakhisarai"
                     />
                   </div>
@@ -170,10 +205,11 @@ export default function OrderModal({
                     name="pincode"
                     type="text"
                     required
+                    disabled={isPending}
                     inputMode="numeric"
                     pattern="[0-9]{6}"
                     maxLength={6}
-                    className="w-full rounded-lg border border-line bg-transparent px-3.5 py-2.5 text-[14px] text-text outline-none transition-colors focus:border-signal"
+                    className="w-full rounded-lg border border-line bg-transparent px-3.5 py-2.5 text-[14px] text-text outline-none transition-colors focus:border-signal disabled:opacity-60"
                     placeholder="e.g. 811311"
                   />
                 </div>
@@ -191,7 +227,8 @@ export default function OrderModal({
                   type="number"
                   min={1}
                   defaultValue={1}
-                  className="w-full rounded-lg border border-line bg-transparent px-3.5 py-2.5 text-[14px] text-text outline-none transition-colors focus:border-signal"
+                  disabled={isPending}
+                  className="w-full rounded-lg border border-line bg-transparent px-3.5 py-2.5 text-[14px] text-text outline-none transition-colors focus:border-signal disabled:opacity-60"
                 />
               </div>
               <div>
@@ -202,7 +239,8 @@ export default function OrderModal({
                   id="notes"
                   name="notes"
                   type="text"
-                  className="w-full rounded-lg border border-line bg-transparent px-3.5 py-2.5 text-[14px] text-text outline-none transition-colors focus:border-signal"
+                  disabled={isPending}
+                  className="w-full rounded-lg border border-line bg-transparent px-3.5 py-2.5 text-[14px] text-text outline-none transition-colors focus:border-signal disabled:opacity-60"
                   placeholder="e.g. L, Blue"
                 />
               </div>

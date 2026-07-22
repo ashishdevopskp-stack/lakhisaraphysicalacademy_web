@@ -14,7 +14,7 @@ import {
   FileText,
 } from "lucide-react";
 import Container from "../../components/Container";
-import { NotificationsSubNav } from "../page";
+
 
 const EASE = [0.22, 0.61, 0.36, 1] as const;
 
@@ -57,7 +57,7 @@ function CategoriesHero() {
           Notification <span className="text-gradient-brand">Categories</span>
         </h1>
         <div className="mt-8">
-          <NotificationsSubNav current="/notifications/categories" />
+          
         </div>
       </Container>
     </section>

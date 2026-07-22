@@ -1,17 +1,13 @@
-"use client";
-
-import { motion } from "framer-motion";
+import type { Metadata } from "next";
 import Container from "../../components/Container";
-
 import { GALLERY_GROUPS } from "@/app/lib/events-data";
+import { FadeInUp, StaggerList, StaggerItem } from "../_EventsMotion";
+import { EventsSubNav } from "../_shared";
 
-const EASE = [0.22, 0.61, 0.36, 1] as const;
-
-const fadeUp = {
-  initial: { opacity: 0, y: 16 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-80px" },
-  transition: { duration: 0.55, ease: EASE },
+export const metadata: Metadata = {
+  title: "Event Gallery | Lakhisarai Physical Academy",
+  description:
+    "Moments from our training camps, award ceremonies, and academy celebrations at Lakhisarai Physical Academy.",
 };
 
 function GalleryHero() {
@@ -26,12 +22,7 @@ function GalleryHero() {
         }}
       />
       <Container>
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: EASE }}
-          className="max-w-[62ch]"
-        >
+        <FadeInUp className="max-w-[62ch]">
           <p className="font-mono text-[13px] font-semibold uppercase tracking-[0.2em] text-signal">
             Events &amp; Activities
           </p>
@@ -39,13 +30,12 @@ function GalleryHero() {
             Event Gallery
           </h1>
           <p className="font-body mt-5 max-w-[54ch] text-[15px] leading-relaxed text-text-muted">
-            Moments from our training camps, award ceremonies, and academy
-            celebrations.
+            Moments from our training camps, award ceremonies, and academy celebrations.
           </p>
           <div className="mt-8">
-          
+            <EventsSubNav />
           </div>
-        </motion.div>
+        </FadeInUp>
       </Container>
     </section>
   );
@@ -55,21 +45,19 @@ function GalleryGrid() {
   return (
     <section className="py-14 sm:py-20">
       <Container>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          {GALLERY_GROUPS.map(({ label, icon: Icon }, i) => (
-            <motion.div
+        <StaggerList className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          {GALLERY_GROUPS.map(({ label, icon: Icon }) => (
+            <StaggerItem
               key={label}
-              {...fadeUp}
-              transition={{ ...fadeUp.transition, delay: i * 0.06 }}
               className="card-flat flex aspect-square flex-col items-center justify-center gap-3 text-center"
             >
               <span className="glass flex h-11 w-11 items-center justify-center rounded-full">
                 <Icon size={18} className="text-signal-strong" />
               </span>
               <p className="font-body px-3 text-[13px] font-medium text-text">{label}</p>
-            </motion.div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerList>
       </Container>
     </section>
   );

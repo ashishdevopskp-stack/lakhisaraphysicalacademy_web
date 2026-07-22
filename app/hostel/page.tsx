@@ -1,70 +1,22 @@
-"use client";
+// app/hostel/page.tsx
 
 import Image from "next/image";
-import { motion } from "framer-motion";
 import { Building2, MessageCircle, Phone } from "lucide-react";
 import Container from "../components/Container";
 import Button from "../components/Button";
+import { PHONE_NUMBER, whatsappHref, telHref } from "../lib/constants";
+import { SectionGlow, HostelSubNav } from "./_shared";
+import { FadeInUp, ScaleIn } from "./_HostelMotion";
 
-const EASE = [0.22, 0.61, 0.36, 1] as const;
-const WHATSAPP_NUMBER = "918863081082";
 const HOSTEL_ENQUIRY_MESSAGE =
   "Hello Lakhisarai Physical Academy, I would like to apply for hostel accommodation. Please share the details.";
-const HOSTEL_WHATSAPP_HREF = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-  HOSTEL_ENQUIRY_MESSAGE
-)}`;
 
-function SectionGlow() {
-  return (
-    <div
-      aria-hidden
-      className="pointer-events-none absolute inset-0 -z-10"
-      style={{
-        backgroundImage:
-          "radial-gradient(ellipse 1000px 550px at 10% 0%, rgba(37,99,235,0.10), transparent 60%), radial-gradient(ellipse 800px 500px at 95% 30%, rgba(34,197,94,0.08), transparent 55%)",
-      }}
-    />
-  );
-}
+export const metadata = {
+  title: "Hostel Facility | Lakhisarai Physical Academy",
+  description:
+    "Safe, comfortable & disciplined hostel accommodation for students, with meals, water, power backup and easy access to the training ground.",
+};
 
-/* =========================================================
-   Shared sub-navigation across all /hostel pages
-   ========================================================= */
-export const HOSTEL_NAV = [
-  { href: "/hostel", label: "Overview" },
-  { href: "/hostel/facilities", label: "Facilities" },
-  { href: "/hostel/gallery", label: "Gallery" },
-  { href: "/hostel/fees", label: "Fees" },
-  { href: "/hostel/rules", label: "Rules" },
-  { href: "/hostel/faq", label: "FAQ" },
-];
-
-export function HostelSubNav({ current }: { current: string }) {
-  return (
-    <nav aria-label="Hostel section pages" className="flex flex-wrap gap-2">
-      {HOSTEL_NAV.map((item) => {
-        const active = item.href === current;
-        return (
-          <a
-            key={item.href}
-            href={item.href}
-            className={
-              active
-                ? "pill pill-color-1 font-semibold"
-                : "font-body rounded-full border border-line px-3.5 py-1.5 text-[13px] text-text-muted transition-colors hover:border-line-strong hover:text-text"
-            }
-          >
-            {item.label}
-          </a>
-        );
-      })}
-    </nav>
-  );
-}
-
-/* =========================================================
-   Hub Hero
-   ========================================================= */
 function HostelHero() {
   return (
     <section id="top" className="relative overflow-hidden pb-16 pt-16 sm:pb-24 sm:pt-24">
@@ -72,12 +24,7 @@ function HostelHero() {
       <Container>
         <div className="grid items-center gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-16">
           {/* ---------------- Left: hostel photo ---------------- */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7, ease: EASE, delay: 0.15 }}
-            className="relative mx-auto w-full max-w-[420px] lg:max-w-none"
-          >
+          <ScaleIn delay={0.15} className="relative mx-auto w-full max-w-[420px] lg:max-w-none">
             {/* Soft color glow behind the photo */}
             <div
               aria-hidden
@@ -118,10 +65,10 @@ function HostelHero() {
               />
             </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: EASE, delay: 0.55 }}
+            <FadeInUp
+              y={12}
+              duration={0.5}
+              delay={0.55}
               className="card-flat absolute -bottom-5 left-1/2 w-[82%] -translate-x-1/2 px-5 py-3.5 text-center sm:-bottom-6"
             >
               <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-text-faint">
@@ -130,15 +77,11 @@ function HostelHero() {
               <p className="mt-0.5 text-[15px] font-semibold text-text">
                 Safe &amp; disciplined stay
               </p>
-            </motion.div>
-          </motion.div>
+            </FadeInUp>
+          </ScaleIn>
 
           {/* ---------------- Right: copy + CTAs ---------------- */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: EASE }}
-          >
+          <FadeInUp>
             <p className="font-mono text-[13px] font-semibold uppercase tracking-[0.2em] text-signal">
               Hostel
             </p>
@@ -164,30 +107,23 @@ function HostelHero() {
             </div>
 
             <div className="mt-9 flex flex-wrap items-center gap-3">
-              <Button href={HOSTEL_WHATSAPP_HREF} variant="primary" icon={Building2}>
+              <Button href={whatsappHref(HOSTEL_ENQUIRY_MESSAGE)} variant="primary" icon={Building2}>
                 Apply for Hostel
               </Button>
-              <Button
-                href={`https://wa.me/${WHATSAPP_NUMBER}`}
-                variant="secondary"
-                icon={MessageCircle}
-              >
+              <Button href={whatsappHref()} variant="secondary" icon={MessageCircle}>
                 WhatsApp Enquiry
               </Button>
-              <Button href={`tel:+${WHATSAPP_NUMBER}`} variant="secondary" icon={Phone}>
+              <Button href={telHref(PHONE_NUMBER)} variant="secondary" icon={Phone}>
                 Contact Now
               </Button>
             </div>
-          </motion.div>
+          </FadeInUp>
         </div>
       </Container>
     </section>
   );
 }
 
-/* =========================================================
-   Page content export
-   ========================================================= */
 export default function Hostel() {
   return <HostelHero />;
 }

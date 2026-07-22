@@ -1,19 +1,14 @@
-"use client";
+// app/blogs/topics/page.tsx
 
-import { motion } from "framer-motion";
 import Container from "../../components/Container";
-import { BlogSubNav } from "../page";
+import { BlogSubNav } from "../_shared";
+import { StaggerList, StaggerItem } from "../_BlogMotion";
 
-const EASE = [0.22, 0.61, 0.36, 1] as const;
-
-const fadeUp = {
-  initial: { opacity: 0, y: 16 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-80px" },
-  transition: { duration: 0.55, ease: EASE },
+export const metadata = {
+  title: "Popular Topics | Academy Blog",
+  description:
+    "Quick-jump into the academy blog's most-read topics — running tips, physical test prep, diet plans, motivation and more.",
 };
-
-const PILL_COLORS = ["pill-color-1", "pill-color-2", "pill-color-3", "pill-color-4", "pill-color-5"];
 
 const POPULAR_TOPICS = [
   "Running Tips",
@@ -25,6 +20,8 @@ const POPULAR_TOPICS = [
   "Motivation",
   "Recruitment News",
 ];
+
+const PILL_COLORS = ["pill-color-1", "pill-color-2", "pill-color-3", "pill-color-4", "pill-color-5"];
 
 function TopicsHero() {
   return (
@@ -48,19 +45,18 @@ function TopicsGrid() {
   return (
     <section className="py-12 sm:py-20">
       <Container>
-        <div className="flex flex-wrap gap-2.5">
+        <StaggerList className="flex flex-wrap gap-2.5" staggerDelay={0.03}>
           {POPULAR_TOPICS.map((topic, i) => (
-            <motion.a
-              key={topic}
-              href={`/blogs/articles?category=${encodeURIComponent(topic)}`}
-              {...fadeUp}
-              transition={{ ...fadeUp.transition, delay: (i % 8) * 0.03 }}
-              className={`pill ${PILL_COLORS[i % PILL_COLORS.length]} font-body text-[13px] transition-transform hover:scale-[1.03]`}
-            >
-              {topic}
-            </motion.a>
+            <StaggerItem key={topic} hover>
+              <a
+                href={`/blogs/articles?category=${encodeURIComponent(topic)}`}
+                className={`pill ${PILL_COLORS[i % PILL_COLORS.length]} font-body text-[13px] transition-transform hover:scale-[1.03]`}
+              >
+                {topic}
+              </a>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerList>
       </Container>
     </section>
   );

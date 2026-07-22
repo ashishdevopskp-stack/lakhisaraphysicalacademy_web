@@ -1,81 +1,24 @@
-"use client";
-
 import Image from "next/image";
-import { motion } from "framer-motion";
 import { ClipboardList, Phone, MessageCircle } from "lucide-react";
 import Container from "../components/Container";
 import Button from "../components/Button";
+import { SectionGlow, CoursesSubNav } from "./_shared";
+import { FadeInUp, ScaleIn } from "./_CoursesMotion";
+import { PHONE_NUMBER, whatsappHref, telHref } from "../lib/constants";
 
-const EASE = [0.22, 0.61, 0.36, 1] as const;
+export const metadata = {
+  title: "Courses & Training Programs | Lakhisarai Physical Academy",
+  description:
+    "Structured physical training programs for Army, Bihar Police, Daroga, SSC GD, CISF, CRPF, BSF and other government recruitment physical examinations.",
+};
 
-const PHONE_NUMBER = "918863081082";
-const WHATSAPP_MESSAGE = encodeURIComponent(
-  "Hi, I'd like to know more about the training programs at Lakhisarai Physical Academy."
-);
-
-function SectionGlow() {
-  return (
-    <div
-      aria-hidden
-      className="pointer-events-none absolute inset-0 -z-10"
-      style={{
-        backgroundImage:
-          "radial-gradient(ellipse 1000px 550px at 10% 0%, rgba(37,99,235,0.10), transparent 60%), radial-gradient(ellipse 800px 500px at 95% 30%, rgba(34,197,94,0.08), transparent 55%)",
-      }}
-    />
-  );
-}
-
-/* =========================================================
-   Shared sub-navigation across all /courses pages
-   ========================================================= */
-export const COURSES_NAV = [
-  { href: "/courses", label: "Overview" },
-  { href: "/courses/programs", label: "Training Programs" },
-  { href: "/courses/schedule", label: "Schedule" },
-  { href: "/courses/facilities", label: "Facilities" },
-  { href: "/courses/fees-admission", label: "Fees & Admission" },
-  { href: "/courses/faq", label: "FAQ" },
-];
-
-export function CoursesSubNav({ current }: { current: string }) {
-  return (
-    <nav aria-label="Courses section pages" className="flex flex-wrap gap-2">
-      {COURSES_NAV.map((item) => {
-        const active = item.href === current;
-        return (
-          <a
-            key={item.href}
-            href={item.href}
-            className={
-              active
-                ? "pill pill-color-1 font-semibold"
-                : "font-body rounded-full border border-line px-3.5 py-1.5 text-[13px] text-text-muted transition-colors hover:border-line-strong hover:text-text"
-            }
-          >
-            {item.label}
-          </a>
-        );
-      })}
-    </nav>
-  );
-}
-
-/* =========================================================
-   Hub Hero
-   ========================================================= */
-function CoursesHero() {
+export default function Courses() {
   return (
     <section id="top" className="relative overflow-hidden pb-16 pt-16 sm:pb-24 sm:pt-24">
       <SectionGlow />
       <Container>
         <div className="grid items-center gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
-          {/* ---------------- Left: copy + CTAs ---------------- */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: EASE }}
-          >
+          <FadeInUp>
             <p className="font-mono text-[13px] font-semibold uppercase tracking-[0.2em] text-signal">
               Courses &amp; Training Programs
             </p>
@@ -101,27 +44,16 @@ function CoursesHero() {
               <Button href="#admission" variant="primary" icon={ClipboardList}>
                 Apply for Admission
               </Button>
-              <Button
-                href={`https://wa.me/${PHONE_NUMBER}?text=${WHATSAPP_MESSAGE}`}
-                variant="secondary"
-                icon={MessageCircle}
-              >
+              <Button href={whatsappHref()} variant="secondary" icon={MessageCircle}>
                 WhatsApp Enquiry
               </Button>
-              <Button href={`tel:+${PHONE_NUMBER}`} variant="secondary" icon={Phone}>
+              <Button href={telHref(PHONE_NUMBER)} variant="secondary" icon={Phone}>
                 Call Now
               </Button>
             </div>
-          </motion.div>
+          </FadeInUp>
 
-          {/* ---------------- Right: training photo ---------------- */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7, ease: EASE, delay: 0.15 }}
-            className="relative mx-auto w-full max-w-[420px] lg:max-w-none"
-          >
-            {/* Soft color glow behind the photo */}
+          <ScaleIn delay={0.15} className="relative mx-auto w-full max-w-[420px] lg:max-w-none">
             <div
               aria-hidden
               className="absolute -inset-6 -z-10 rounded-[28px] opacity-70 blur-2xl"
@@ -131,7 +63,6 @@ function CoursesHero() {
               }}
             />
 
-            {/* Hidden SVG def for the organic clip-path, matching the homepage hero */}
             <svg width="0" height="0" className="absolute">
               <defs>
                 <clipPath id="coursesBlob" clipPathUnits="objectBoundingBox">
@@ -161,10 +92,8 @@ function CoursesHero() {
               />
             </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: EASE, delay: 0.55 }}
+            <FadeInUp
+              delay={0.55}
               className="card-flat absolute -bottom-5 left-1/2 w-[82%] -translate-x-1/2 px-5 py-3.5 text-center sm:-bottom-6"
             >
               <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-text-faint">
@@ -173,17 +102,10 @@ function CoursesHero() {
               <p className="mt-0.5 text-[15px] font-semibold text-text">
                 Built around each exam&rsquo;s standards
               </p>
-            </motion.div>
-          </motion.div>
+            </FadeInUp>
+          </ScaleIn>
         </div>
       </Container>
     </section>
   );
-}
-
-/* =========================================================
-   Page content export
-   ========================================================= */
-export default function Courses() {
-  return <CoursesHero />;
 }

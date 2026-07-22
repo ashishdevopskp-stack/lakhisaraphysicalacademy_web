@@ -13,28 +13,33 @@ import {
 } from "lucide-react";
 import Container from "./Container";
 import Button from "./Button";
-
-const PHONE_NUMBERS = ["8863081082", "7739776471"];
-const WHATSAPP_NUMBER = "918863081082";
+import {
+  PHONE_NUMBER,
+  PHONE_NUMBER_ALT,
+  EMAIL,
+  ADDRESS,
+  whatsappHref,
+  telHref,
+} from "../lib/constants";
 
 const QUICK_LINKS = [
   { label: "Home", href: "/" },
-  { label: "About Us", href: "/sections/about" },
-  { label: "Courses", href: "/sections/courses" },
-  { label: "Results", href: "/sections/result" },
-  { label: "Admission", href: "/sections/admission-form" },
-  { label: "Contact", href: "/sections/contact" },
+  { label: "About Us", href: "/about" },
+  { label: "Courses", href: "/courses" },
+  { label: "Results", href: "/result" },
+  { label: "Admission", href: "/admission" },
+  { label: "Contact", href: "/contact" },
 ];
 
 const EXPLORE_LINKS = [
-  { label: "Events", href: "/sections/events" },
-  { label: "Jobs", href: "/sections/jobs" },
-  { label: "Store", href: "/sections/store" },
-  { label: "Blog", href: "/sections/blogs" },
-  { label: "Videos", href: "/sections/youtube-video" },
-  { label: "Resources", href: "/sections/resources" },
-  { label: "Hostel", href: "/sections/hostel" },
-  { label: "Notifications", href: "/sections/notification" },
+  { label: "Events", href: "/events" },
+  { label: "Jobs", href: "/jobs" },
+  { label: "Store", href: "/store" },
+  { label: "Blog", href: "/blogs" },
+  { label: "Videos", href: "/youtube-video" },
+  { label: "Resources", href: "/resources" },
+  { label: "Hostel", href: "/hostel" },
+  { label: "Notifications", href: "/notification" },
 ];
 
 const PROGRAMS = [
@@ -51,11 +56,7 @@ const SOCIALS = [
   { label: "YouTube", icon: Youtube, href: "https://youtube.com" },
   { label: "Facebook", icon: Facebook, href: "https://facebook.com" },
   { label: "Instagram", icon: Instagram, href: "https://instagram.com" },
-  {
-    label: "WhatsApp",
-    icon: MessageCircle,
-    href: `https://wa.me/${WHATSAPP_NUMBER}`,
-  },
+  { label: "WhatsApp", icon: MessageCircle, href: whatsappHref() },
 ];
 
 function FooterHeading({ children }: { children: React.ReactNode }) {
@@ -89,14 +90,10 @@ export default function Footer() {
             </div>
 
             <div className="flex shrink-0 flex-wrap items-center gap-3">
-              <Button
-                href="/sections/admission-form"
-                variant="primary"
-                icon={ClipboardList}
-              >
+              <Button href="/admission" variant="primary" icon={ClipboardList}>
                 Apply Now
               </Button>
-              <Button href={`tel:${PHONE_NUMBERS[0]}`} variant="secondary" icon={Phone}>
+              <Button href={telHref()} variant="secondary" icon={Phone}>
                 Call Now
               </Button>
             </div>
@@ -196,26 +193,22 @@ export default function Footer() {
               <ul className="mt-4 flex flex-col gap-3.5">
                 <li className="flex items-start gap-2.5 text-[13.5px] text-text-muted">
                   <MapPin size={15} className="mt-0.5 shrink-0 text-signal" />
-                  K.R.K. Ground, Near Lakhisarai Railway Station, Nawada
-                  Sikandara Road, Lakhisarai, Bihar – 811311
+                  {ADDRESS}
                 </li>
                 <li className="flex items-center gap-2.5 text-[13.5px] text-text-muted">
                   <Phone size={15} className="shrink-0 text-signal" />
-                  <a href={`tel:${PHONE_NUMBERS[0]}`} className="hover:text-text">
-                    +91 {PHONE_NUMBERS[0]}
+                  <a href={telHref()} className="hover:text-text">
+                    +{PHONE_NUMBER}
                   </a>
                   <span className="text-text-muted">/</span>
-                  <a href={`tel:${PHONE_NUMBERS[1]}`} className="hover:text-text">
-                    +91 {PHONE_NUMBERS[1]}
+                  <a href={telHref(PHONE_NUMBER_ALT)} className="hover:text-text">
+                    +{PHONE_NUMBER_ALT}
                   </a>
                 </li>
                 <li className="flex items-center gap-2.5 text-[13.5px] text-text-muted">
                   <Mail size={15} className="shrink-0 text-signal" />
-                  <a
-                    href="mailto:ganeshkumar90067@gmail.com"
-                    className="hover:text-text"
-                  >
-                    ganeshkumar90067@gmail.com
+                  <a href={`mailto:${EMAIL}`} className="hover:text-text">
+                    {EMAIL}
                   </a>
                 </li>
                 <li className="flex items-start gap-2.5 text-[13.5px] text-text-muted">

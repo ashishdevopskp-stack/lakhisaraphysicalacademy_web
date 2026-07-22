@@ -1,57 +1,34 @@
-"use client";
+// app/store/Store.tsx
 
-import { useMemo, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  ShoppingBag,
-  Phone,
-  Search,
-  Star,
-  ChevronDown,
-} from "lucide-react";
-import OrderModal from "./OrderModal";
+import { ShoppingBag, Phone } from "lucide-react";
 import Container from "../components/Container";
 import Button from "../components/Button";
 import Badge from "../components/Badge";
-import {
-  CATEGORY_GROUPS,
-  OFFERS,
-  DELIVERY_ROWS,
-  FAQS,
-  AVAILABILITY_STYLES,
-  type Product,
-} from "../lib/store-data";
+import { telHref } from "@/app/lib/constants";
+import { CATEGORY_GROUPS, OFFERS, DELIVERY_ROWS, type Product } from "../lib/store-data";
+import { FadeInUp, ScrollFadeUp, StaggerList, StaggerItem } from "./_StoreMotion";
+import FeaturedProducts from "./_FeaturedProducts";
+import FAQSection from "./_FAQSection";
 
-const EASE = [0.22, 0.61, 0.36, 1] as const;
+function StoreGlow() {
+  return (
+    <div
+      aria-hidden
+      className="pointer-events-none absolute left-1/2 top-0 -z-10 h-[480px] w-[880px] -translate-x-1/2 rounded-full opacity-60 blur-3xl"
+      style={{
+        background:
+          "radial-gradient(ellipse 60% 60% at 50% 0%, rgba(20,184,166,0.16), transparent 70%)",
+      }}
+    />
+  );
+}
 
-const fadeUp = {
-  initial: { opacity: 0, y: 16 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-80px" },
-  transition: { duration: 0.55, ease: EASE },
-};
-
-/* =========================================================
-   1. Hero
-   ========================================================= */
 function StoreHero() {
   return (
     <section id="top" className="relative overflow-hidden pb-16 pt-14 sm:pb-24 sm:pt-20">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute left-1/2 top-0 -z-10 h-[480px] w-[880px] -translate-x-1/2 rounded-full opacity-60 blur-3xl"
-        style={{
-          background:
-            "radial-gradient(ellipse 60% 60% at 50% 0%, rgba(20,184,166,0.16), transparent 70%)",
-        }}
-      />
+      <StoreGlow />
       <Container>
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: EASE }}
-          className="max-w-[62ch]"
-        >
+        <FadeInUp className="max-w-[62ch]">
           <p className="font-mono text-[12px] font-semibold uppercase tracking-[0.22em] text-signal">
             Academy Store
           </p>
@@ -80,31 +57,28 @@ function StoreHero() {
               Contact Us
             </Button>
           </div>
-        </motion.div>
+        </FadeInUp>
       </Container>
     </section>
   );
 }
 
-/* =========================================================
-   2. Product Categories
-   ========================================================= */
 function ProductCategories() {
   return (
     <section className="py-16 sm:py-20">
       <Container>
-        <motion.h2 {...fadeUp} className="font-display text-[26px] font-bold sm:text-[32px]">
-          Product Categories
-        </motion.h2>
+        <ScrollFadeUp>
+          <h2 className="font-display text-[26px] font-bold sm:text-[32px]">
+            Product Categories
+          </h2>
+        </ScrollFadeUp>
 
-        <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {CATEGORY_GROUPS.map(({ label, icon: Icon, items }, i) => (
-            <motion.div
-              key={label}
-              {...fadeUp}
-              transition={{ ...fadeUp.transition, delay: (i % 6) * 0.04 }}
-              className="card-flat p-6"
-            >
+        <StaggerList
+          className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+          staggerDelay={0.04}
+        >
+          {CATEGORY_GROUPS.map(({ label, icon: Icon, items }) => (
+            <StaggerItem key={label} className="card-flat p-6">
               <div className="flex items-center gap-3">
                 <span className="glass flex h-9 w-9 shrink-0 items-center justify-center rounded-lg">
                   <Icon size={17} className="text-signal-strong" />
@@ -117,214 +91,30 @@ function ProductCategories() {
                   <Badge key={item}>{item}</Badge>
                 ))}
               </div>
-            </motion.div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerList>
       </Container>
     </section>
   );
 }
 
-/* =========================================================
-   3. Featured Products
-   ========================================================= */
-const PRODUCT_CATEGORY_LABELS = CATEGORY_GROUPS.map((c) => c.label);
-
-function FeaturedProducts({ products }: { products: Product[] }) {
-  const [category, setCategory] = useState<string>("All");
-  const [priceRange, setPriceRange] = useState<string>("All");
-  const [query, setQuery] = useState("");
-  const [orderingProduct, setOrderingProduct] = useState<Product | null>(null);
-
-  const categoryOptions = useMemo(() => ["All", ...PRODUCT_CATEGORY_LABELS], []);
-
-  const priceOptions = [
-    { label: "All Prices", value: "All" },
-    { label: "Under ₹300", value: "0-300" },
-    { label: "₹300 – ₹800", value: "300-800" },
-    { label: "Above ₹800", value: "800-99999" },
-  ];
-
-  const filtered = products.filter((p) => {
-    const matchesCategory = category === "All" || p.category === category;
-    const matchesQuery =
-      query.trim() === "" || p.name.toLowerCase().includes(query.toLowerCase());
-    let matchesPrice = true;
-    if (priceRange !== "All") {
-      const [min, max] = priceRange.split("-").map(Number);
-      matchesPrice = p.price >= min && p.price <= max;
-    }
-    return matchesCategory && matchesQuery && matchesPrice;
-  });
-
-  return (
-    <section id="products" className="py-16 sm:py-24">
-      <Container>
-        <motion.h2 {...fadeUp} className="font-display text-[28px] font-bold sm:text-[34px]">
-          Featured Products
-        </motion.h2>
-
-        <motion.div
-          {...fadeUp}
-          transition={{ ...fadeUp.transition, delay: 0.06 }}
-          className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center"
-        >
-          <div className="glass flex flex-1 items-center gap-2 rounded-lg px-4 py-2.5">
-            <Search size={16} className="shrink-0 text-text-faint" />
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search products"
-              className="w-full bg-transparent text-[14px] text-text outline-none placeholder:text-text-faint"
-            />
-          </div>
-
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="glass rounded-lg px-4 py-2.5 text-[14px] text-text outline-none"
-          >
-            {categoryOptions.map((c) => (
-              <option key={c} value={c}>
-                {c === "All" ? "All Categories" : c}
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={priceRange}
-            onChange={(e) => setPriceRange(e.target.value)}
-            className="glass rounded-lg px-4 py-2.5 text-[14px] text-text outline-none"
-          >
-            {priceOptions.map((p) => (
-              <option key={p.value} value={p.value}>
-                {p.label}
-              </option>
-            ))}
-          </select>
-        </motion.div>
-
-        <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {filtered.map((product, i) => {
-            const status = AVAILABILITY_STYLES[product.availability];
-            const StatusIcon = status.icon;
-            return (
-              <motion.div
-                key={product.name + i}
-                {...fadeUp}
-                transition={{ ...fadeUp.transition, delay: (i % 4) * 0.05 }}
-                className="card-flat flex flex-col p-5"
-              >
-                <div
-                  className="relative flex aspect-square items-center justify-center overflow-hidden rounded-lg border border-line"
-                  style={{
-                    background: product.imageUrl
-                      ? undefined
-                      : "radial-gradient(circle at 30% 20%, rgba(255,255,255,0.06) 0%, transparent 75%)",
-                  }}
-                >
-                  {product.imageUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={product.imageUrl}
-                      alt={product.name}
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <ShoppingBag size={26} className="text-text-faint" />
-                  )}
-                  {product.offer && (
-                    <span className="glass absolute left-2 top-2 rounded-full px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide text-signal-strong">
-                      {product.offer}
-                    </span>
-                  )}
-                </div>
-
-                <div className="mt-4 flex items-center justify-between gap-2">
-                  <Badge>{product.category}</Badge>
-                  {product.rating && (
-                    <span className="flex items-center gap-1 text-[12px] text-text-muted">
-                      <Star size={12} className="fill-accent-strong text-accent-strong" />
-                      {product.rating}
-                    </span>
-                  )}
-                </div>
-
-                <h3 className="font-display mt-3 text-[15px] font-semibold text-text">
-                  {product.name}
-                </h3>
-
-                <div className="mt-2 flex items-baseline gap-2">
-                  <span className="font-display text-[16px] font-semibold text-text">
-                    ₹{product.price}
-                  </span>
-                  {product.originalPrice && (
-                    <span className="text-[13px] text-text-faint line-through">
-                      ₹{product.originalPrice}
-                    </span>
-                  )}
-                </div>
-
-                <span
-                  className={`mt-2 flex items-center gap-1.5 text-[12px] font-medium ${status.className}`}
-                >
-                  <StatusIcon size={13} />
-                  {product.availability}
-                </span>
-
-                <div className="mt-5">
-                  <button
-                    type="button"
-                    onClick={() => setOrderingProduct(product)}
-                    disabled={product.availability === "Out of Stock"}
-                    className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-teal-600 px-3.5 py-2 text-[13px] font-medium text-white transition-colors hover:bg-teal-500 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    <ShoppingBag size={14} />
-                    Order Now
-                  </button>
-                </div>
-              </motion.div>
-            );
-          })}
-
-          {filtered.length === 0 && (
-            <p className="font-body col-span-full text-[14px] text-text-muted">
-              No products match these filters right now.
-            </p>
-          )}
-        </div>
-      </Container>
-
-      {orderingProduct && (
-        <OrderModal
-          product={orderingProduct}
-          onClose={() => setOrderingProduct(null)}
-        />
-      )}
-    </section>
-  );
-}
-
-/* =========================================================
-   4. Special Offers
-   ========================================================= */
 function SpecialOffers() {
   return (
     <section className="py-16 sm:py-24">
       <Container>
-        <motion.h2 {...fadeUp} className="font-display text-[28px] font-bold sm:text-[34px]">
-          Special Offers
-        </motion.h2>
+        <ScrollFadeUp>
+          <h2 className="font-display text-[28px] font-bold sm:text-[34px]">
+            Special Offers
+          </h2>
+        </ScrollFadeUp>
 
-        <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {OFFERS.map(({ label, description, icon: Icon }, i) => (
-            <motion.div
-              key={label}
-              {...fadeUp}
-              transition={{ ...fadeUp.transition, delay: i * 0.06 }}
-              className="card-flat p-6"
-            >
+        <StaggerList
+          className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4"
+          staggerDelay={0.06}
+        >
+          {OFFERS.map(({ label, description, icon: Icon }) => (
+            <StaggerItem key={label} className="card-flat p-6">
               <Icon size={20} className="text-accent-strong" />
               <h3 className="font-display mt-4 text-[15px] font-semibold text-text">
                 {label}
@@ -332,33 +122,27 @@ function SpecialOffers() {
               <p className="font-body mt-1.5 text-[13px] text-text-muted">
                 {description}
               </p>
-            </motion.div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerList>
       </Container>
     </section>
   );
 }
 
-/* =========================================================
-   5. Delivery & Pickup
-   ========================================================= */
 function DeliveryInfo() {
   return (
     <section className="py-16 sm:py-20">
       <Container>
-        <motion.h2 {...fadeUp} className="font-display text-[26px] font-bold sm:text-[32px]">
-          Delivery Information
-        </motion.h2>
+        <ScrollFadeUp>
+          <h2 className="font-display text-[26px] font-bold sm:text-[32px]">
+            Delivery Information
+          </h2>
+        </ScrollFadeUp>
 
-        <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
-          {DELIVERY_ROWS.map(({ icon: Icon, label, detail }, i) => (
-            <motion.div
-              key={label}
-              {...fadeUp}
-              transition={{ ...fadeUp.transition, delay: i * 0.06 }}
-              className="card-flat flex items-start gap-3 p-5"
-            >
+        <StaggerList className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3" staggerDelay={0.06}>
+          {DELIVERY_ROWS.map(({ icon: Icon, label, detail }) => (
+            <StaggerItem key={label} className="card-flat flex items-start gap-3 p-5">
               <span className="glass flex h-9 w-9 shrink-0 items-center justify-center rounded-lg">
                 <Icon size={16} className="text-signal-strong" />
               </span>
@@ -366,83 +150,19 @@ function DeliveryInfo() {
                 <p className="font-body text-[14px] font-medium text-text">{label}</p>
                 <p className="font-body mt-1 text-[13px] text-text-muted">{detail}</p>
               </div>
-            </motion.div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerList>
       </Container>
     </section>
   );
 }
 
-/* =========================================================
-   6. FAQ
-   ========================================================= */
-function FAQ() {
-  const [open, setOpen] = useState<number | null>(0);
-
-  return (
-    <section id="faq" className="py-16 sm:py-24">
-      <Container>
-        <motion.h2 {...fadeUp} className="font-display text-[28px] font-bold sm:text-[34px]">
-          Frequently Asked Questions
-        </motion.h2>
-
-        <div className="glass mt-8 flex max-w-[70ch] flex-col divide-y divide-line overflow-hidden rounded-2xl">
-          {FAQS.map((item, i) => {
-            const isOpen = open === i;
-            return (
-              <div key={item.q}>
-                <button
-                  type="button"
-                  onClick={() => setOpen(isOpen ? null : i)}
-                  className="flex w-full items-center justify-between gap-4 px-5 py-5 text-left"
-                  aria-expanded={isOpen}
-                >
-                  <span className="font-body text-[15px] font-medium text-text">
-                    {item.q}
-                  </span>
-                  <ChevronDown
-                    size={18}
-                    className={`shrink-0 text-text-faint transition-transform duration-300 ${
-                      isOpen ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
-                <AnimatePresence initial={false}>
-                  {isOpen && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3, ease: EASE }}
-                      className="overflow-hidden"
-                    >
-                      <p className="font-body px-5 pb-5 text-[14px] leading-relaxed text-text-muted">
-                        {item.a}
-                      </p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            );
-          })}
-        </div>
-      </Container>
-    </section>
-  );
-}
-
-/* =========================================================
-   7. Store CTA
-   ========================================================= */
 function StoreCTA() {
   return (
     <section className="py-16 sm:py-24">
       <Container>
-        <motion.div
-          {...fadeUp}
-          className="glass glass-sheen sheen-run relative overflow-hidden rounded-2xl px-6 py-14 text-center shadow-[var(--shadow-card)] sm:px-14"
-        >
+        <ScrollFadeUp className="glass glass-sheen sheen-run relative overflow-hidden rounded-2xl px-6 py-14 text-center shadow-[var(--shadow-card)] sm:px-14">
           <span className="ribbon-bar absolute inset-x-0 top-0 h-[4px]" aria-hidden />
           <ShoppingBag size={26} className="mx-auto text-signal-strong" />
           <h2 className="font-display mx-auto mt-4 max-w-[28ch] text-[28px] font-bold sm:text-[36px]">
@@ -454,31 +174,34 @@ function StoreCTA() {
             person.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <Button href="tel:8863081082" variant="secondary" icon={Phone}>
+            <Button href={telHref()} variant="secondary" icon={Phone}>
               Call Now
             </Button>
             <Button href="#products" variant="ghost" icon={ShoppingBag}>
               Explore Products
             </Button>
           </div>
-        </motion.div>
+        </ScrollFadeUp>
       </Container>
     </section>
   );
 }
 
-/* =========================================================
-   Page content export
-   ========================================================= */
-export default function Store({ products }: { products: Product[] }) {
+export default function Store({
+  products,
+  productsError = false,
+}: {
+  products: Product[];
+  productsError?: boolean;
+}) {
   return (
     <>
       <StoreHero />
       <ProductCategories />
-      <FeaturedProducts products={products} />
+      <FeaturedProducts products={products} productsError={productsError} />
       <SpecialOffers />
       <DeliveryInfo />
-      <FAQ />
+      <FAQSection />
       <StoreCTA />
     </>
   );

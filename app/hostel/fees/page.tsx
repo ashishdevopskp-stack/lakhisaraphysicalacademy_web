@@ -1,21 +1,19 @@
-"use client";
+// app/hostel/fees/page.tsx
 
-import { motion } from "framer-motion";
 import { Wallet, ClipboardList } from "lucide-react";
 import Container from "../../components/Container";
 import Button from "../../components/Button";
-import { HostelSubNav } from "../page";
+import { HostelSubNav } from "../_shared";
+import { StaggerList, StaggerItem, ScrollFadeUp } from "../_HostelMotion";
 
-const EASE = [0.22, 0.61, 0.36, 1] as const;
-
-const fadeUp = {
-  initial: { opacity: 0, y: 16 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-80px" },
-  transition: { duration: 0.55, ease: EASE },
+export const metadata = {
+  title: "Hostel Fees | Lakhisarai Physical Academy",
+  description:
+    "Hostel fee structure at Lakhisarai Physical Academy — monthly accommodation, security deposit and food charges.",
 };
 
-function SectionGlow() {
+/* Distinct from the shared SectionGlow — this page uses its own gradient values */
+function FeesGlow() {
   return (
     <div
       aria-hidden
@@ -37,7 +35,7 @@ const FEE_PLANS = [
 function FeesHero() {
   return (
     <section id="top" className="relative overflow-hidden pb-12 pt-16 sm:pt-24">
-      <SectionGlow />
+      <FeesGlow />
       <Container>
         <p className="font-mono text-[13px] font-semibold uppercase tracking-[0.2em] text-signal">
           Hostel
@@ -57,14 +55,9 @@ function FeesGrid() {
   return (
     <section className="py-12 sm:py-20">
       <Container>
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
-          {FEE_PLANS.map((fee, i) => (
-            <motion.div
-              key={fee.plan}
-              {...fadeUp}
-              transition={{ ...fadeUp.transition, delay: i * 0.06 }}
-              className="card-flat p-6"
-            >
+        <StaggerList className="grid grid-cols-1 gap-5 sm:grid-cols-3" staggerDelay={0.06}>
+          {FEE_PLANS.map((fee) => (
+            <StaggerItem key={fee.plan} className="card-flat p-6">
               <Wallet size={18} className="text-signal" />
               <p className="font-display mt-4 text-[14px] font-semibold text-text">
                 {fee.plan}
@@ -73,19 +66,15 @@ function FeesGrid() {
                 {fee.price}
               </p>
               <p className="font-body mt-1 text-[12px] text-text-muted">{fee.note}</p>
-            </motion.div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerList>
 
-        <motion.div
-          {...fadeUp}
-          transition={{ ...fadeUp.transition, delay: 0.2 }}
-          className="mt-8"
-        >
+        <ScrollFadeUp delay={0.2} className="mt-8">
           <Button href="/hostel#enquiry" variant="secondary" icon={ClipboardList}>
             View Fee Details
           </Button>
-        </motion.div>
+        </ScrollFadeUp>
       </Container>
     </section>
   );

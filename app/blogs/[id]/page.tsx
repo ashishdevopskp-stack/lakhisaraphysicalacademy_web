@@ -1,3 +1,5 @@
+// app/blogs/[id]/page.tsx
+
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import {
@@ -7,17 +9,30 @@ import { getBlog, incrementBlogViews } from "@/app/lib/action/blogs";
 import Container from "../../components/Container";
 import Button from "../../components/Button";
 import Badge from "../../components/Badge";
-import { BlogSubNav } from "../page";
+import { BlogSubNav } from "../_shared";
 
-export default async function BlogDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+type BlogDetailParams = { params: Promise<{ id: string }> };
+
+export async function generateMetadata({ params }: BlogDetailParams) {
+  const { id } = await params;
+  const blog = await getBlog(id);
+  if (!blog) return { title: "Article Not Found | Academy Blog" };
+
+  const description = (blog.subtitle ?? blog.content ?? "").slice(0, 155);
+
+  return {
+    title: `${blog.title} | Academy Blog`,
+    description,
+  };
+}
+
+export default async function BlogDetailPage({ params }: BlogDetailParams) {
   const { id } = await params;
   const blog = await getBlog(id);
   if (!blog) notFound();
 
+  // Note: runs on every view including refreshes/crawlers — pre-existing
+  // behavior, left unchanged since it's a data concern, not structural.
   await incrementBlogViews(id);
 
   return (

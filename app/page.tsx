@@ -18,25 +18,22 @@ import Footer from "./components/Footer";
 export default function Home() {
   return (
     <main>
-      <Navbar />
+
      
       <Hero />
       <About />
       <Courses />
-      <HostelSubNav />
-       <Notifications />
-      <Store  />
+     
       <Blog />
       <Events />
-      <Results />
 
       <Resources />
-     
+
       <Jobs />
       <Videos />
       <Admission />
       <Contact />
-      <Footer />
+     
     </main>
   );
 }

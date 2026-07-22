@@ -1,7 +1,8 @@
 import { redirect, notFound } from 'next/navigation'
 import { getCurrentUserRole } from '@/app/lib/action/auth'
 import { getResult, updateResult } from '@/app/lib/action/results'
-import { AdminSidebar } from '../../../products/page'
+import { createClient } from '@/app/lib/supabase/server'
+import { AdminSidebar } from '../../../_components/AdminSidebar'
 import { ResultForm } from '../../ResultForm'
 
 export default async function EditResultPage({
@@ -14,6 +15,10 @@ export default async function EditResultPage({
   const { id } = await params
   const { error } = await searchParams
 
+  const supabase = await createClient()
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  if (authError || !user) redirect('/admin/login')
+
   const role = await getCurrentUserRole()
   if (role !== 'admin') redirect('/')
 
@@ -21,16 +26,16 @@ export default async function EditResultPage({
   if (!result) notFound()
 
   return (
-    <div className="min-h-screen bg-[#0E0F13] text-[#EDEDEF] flex">
+    <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col lg:flex-row">
       <AdminSidebar active="Results" />
-      <main className="flex-1 p-8 max-w-2xl">
+      <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-2xl w-full">
         <h1 className="text-2xl font-semibold mb-1">Edit Result</h1>
-        <p className="text-sm text-[#9B9BA3] mb-8">
+        <p className="text-sm text-gray-500 mb-8">
           Update details for &ldquo;{result.name}&rdquo;.
         </p>
 
         {error && (
-          <p className="text-sm text-red-400 bg-red-950/40 border border-red-900 rounded-lg px-4 py-2.5 mb-6">
+          <p className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-4 py-2.5 mb-6">
             {error}
           </p>
         )}

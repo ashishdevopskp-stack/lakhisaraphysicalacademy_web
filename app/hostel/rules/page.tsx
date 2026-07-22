@@ -1,17 +1,14 @@
-"use client";
+// app/hostel/rules/page.tsx
 
-import { motion } from "framer-motion";
 import { Ban } from "lucide-react";
 import Container from "../../components/Container";
-import { HostelSubNav } from "../page";
+import { HostelSubNav } from "../_shared";
+import { StaggerList, StaggerItem } from "../_HostelMotion";
 
-const EASE = [0.22, 0.61, 0.36, 1] as const;
-
-const fadeUp = {
-  initial: { opacity: 0, y: 16 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-80px" },
-  transition: { duration: 0.55, ease: EASE },
+export const metadata = {
+  title: "Hostel Rules | Lakhisarai Physical Academy",
+  description:
+    "Hostel rules at Lakhisarai Physical Academy — discipline, cleanliness, timings and conduct expected from resident students.",
 };
 
 const RULES = [
@@ -45,19 +42,17 @@ function RulesGrid() {
   return (
     <section className="py-12 sm:py-20">
       <Container>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {RULES.map((rule, i) => (
-            <motion.div
-              key={rule}
-              {...fadeUp}
-              transition={{ ...fadeUp.transition, delay: (i % 3) * 0.06 }}
-              className="card-flat flex items-center gap-3 px-4 py-4"
-            >
+        <StaggerList
+          className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3"
+          staggerDelay={0.06}
+        >
+          {RULES.map((rule) => (
+            <StaggerItem key={rule} className="card-flat flex items-center gap-3 px-4 py-4">
               <Ban size={16} className="shrink-0 text-accent-strong" />
               <span className="font-body text-[13px] text-text">{rule}</span>
-            </motion.div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerList>
       </Container>
     </section>
   );
