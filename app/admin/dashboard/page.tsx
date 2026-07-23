@@ -1,20 +1,29 @@
 import { redirect } from 'next/navigation'
 import {
-  Package, ShoppingCart, FileText, Calendar, Award, BookOpen, Briefcase, PlayCircle, Activity, AlertTriangle,
+  Package, ShoppingCart, FileText, Calendar, Award, BookOpen, Briefcase, PlayCircle,
+  Activity, AlertTriangle, Image as ImageIcon, ClipboardList,
 } from 'lucide-react'
 import { getCurrentUserRole, logout } from '@/app/lib/action/auth'
 import { getProducts } from '@/app/lib/action/products'
 import { getOrders } from '@/app/lib/action/orders'
 import { getBlogs } from '@/app/lib/action/blogs'
-import { getEvents } from '@/app/lib/action/events'
+import { getEvents, getGalleryImages } from '@/app/lib/action/events'
 import { getResults } from '@/app/lib/action/results'
 import { getResources } from '@/app/lib/action/resources'
 import { getJobs } from '@/app/lib/action/jobs'
 import { getVideos } from '@/app/lib/action/videos'
+import { getAdmissions } from '@/app/lib/action/admissions'
 import { createClient } from '@/app/lib/supabase/server'
 import { AdminSidebar } from '../_components/AdminSidebar'
 import { StatCard } from '../_components/StatCard'
 import { ActivityFeed, type ActivityItem } from '../_components/ActivityFeed'
+import { RefreshButton } from '../_components/Refreshbutton'
+
+// This page is gated behind an admin-only auth check below. Force it to
+// render fresh on every request rather than risk Next serving a cached
+// RSC payload (with another admin's session context or stale stats) to
+// a different visitor.
+export const dynamic = 'force-dynamic'
 
 // Reads loosely (as Record<string, unknown>) on purpose — we don't know the
 // exact field names on every content type, and guessing wrong with strict
@@ -52,6 +61,13 @@ function toActivityItem(
   }
 }
 
+function greeting() {
+  const hour = new Date().getHours()
+  if (hour < 12) return 'Good morning'
+  if (hour < 17) return 'Good afternoon'
+  return 'Good evening'
+}
+
 export default async function AdminDashboardPage() {
   const supabase = await createClient()
   const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -60,30 +76,43 @@ export default async function AdminDashboardPage() {
   const role = await getCurrentUserRole()
   if (role !== 'admin') redirect('/')
 
-  let dataError: string | null = null
-  let products: Awaited<ReturnType<typeof getProducts>> = []
-  let orders: Awaited<ReturnType<typeof getOrders>> = []
-  let blogs: Awaited<ReturnType<typeof getBlogs>> = []
-  let events: Awaited<ReturnType<typeof getEvents>> = []
-  let results: Awaited<ReturnType<typeof getResults>> = []
-  let resources: Awaited<ReturnType<typeof getResources>> = []
-  let jobs: Awaited<ReturnType<typeof getJobs>> = []
-  let videos: Awaited<ReturnType<typeof getVideos>> = []
+  // Fetch everything in parallel, but with allSettled instead of Promise.all:
+  // one slow/broken source (e.g. videos table down) no longer wipes out data
+  // that fetched successfully. Each section degrades independently.
+  const [
+    productsR, ordersR, blogsR, eventsR, resultsR, resourcesR, jobsR, videosR, galleryR, admissionsR,
+  ] = await Promise.allSettled([
+    getProducts(),
+    getOrders(),
+    getBlogs(),
+    getEvents(),
+    getResults(),
+    getResources(),
+    getJobs(),
+    getVideos(),
+    getGalleryImages(),
+    getAdmissions(),
+  ])
 
-  try {
-    ;[products, orders, blogs, events, results, resources, jobs, videos] = await Promise.all([
-      getProducts(),
-      getOrders(),
-      getBlogs(),
-      getEvents(),
-      getResults(),
-      getResources(),
-      getJobs(),
-      getVideos(),
-    ])
-  } catch (err) {
-    console.error('Dashboard data fetch failed:', err)
-    dataError = 'Some dashboard data failed to load. Numbers below may be incomplete.'
+  const products = productsR.status === 'fulfilled' ? productsR.value : []
+  const orders = ordersR.status === 'fulfilled' ? ordersR.value : []
+  const blogs = blogsR.status === 'fulfilled' ? blogsR.value : []
+  const events = eventsR.status === 'fulfilled' ? eventsR.value : []
+  const results = resultsR.status === 'fulfilled' ? resultsR.value : []
+  const resources = resourcesR.status === 'fulfilled' ? resourcesR.value : []
+  const jobs = jobsR.status === 'fulfilled' ? jobsR.value : []
+  const videos = videosR.status === 'fulfilled' ? videosR.value : []
+  const gallery = galleryR.status === 'fulfilled' ? galleryR.value : []
+  const admissions = admissionsR.status === 'fulfilled' ? admissionsR.value : []
+
+  const failedSources = [
+    ['products', productsR], ['orders', ordersR], ['blogs', blogsR], ['events', eventsR],
+    ['results', resultsR], ['resources', resourcesR], ['jobs', jobsR], ['videos', videosR],
+    ['gallery', galleryR], ['admissions', admissionsR],
+  ].filter(([, r]) => (r as PromiseSettledResult<unknown>).status === 'rejected').map(([name]) => name as string)
+
+  if (failedSources.length > 0) {
+    console.error('Dashboard data fetch failed for:', failedSources.join(', '))
   }
 
   const inStock = products.filter((p) => p.availability === 'In Stock').length
@@ -96,6 +125,7 @@ export default async function AdminDashboardPage() {
   const newJobs = jobs.filter((j) => j.status === 'New').length
   const ongoingJobs = jobs.filter((j) => j.status === 'Ongoing').length
   const publishedVideos = videos.filter((v) => v.status === 'Published').length
+  const pendingAdmissions = admissions.filter((a) => a.status === 'pending').length
 
   const stats = [
     { label: 'Total Products', value: products.length, delta: `${inStock} in stock`, href: '/admin/products', icon: Package, tint: 'indigo' as const },
@@ -104,10 +134,12 @@ export default async function AdminDashboardPage() {
     { label: 'Pending Orders', value: pendingOrders, delta: `${orders.length} total orders`, href: '/admin/orders', icon: ShoppingCart, tint: 'amber' as const },
     { label: 'Total Blogs', value: blogs.length, delta: `${blogs.reduce((sum, b) => sum + b.views, 0).toLocaleString('en-IN')} views`, href: '/admin/blogs', icon: FileText, tint: 'indigo' as const },
     { label: 'Total Events', value: events.length, delta: `${openEvents} open for registration`, href: '/admin/events', icon: Calendar, tint: 'green' as const },
+    { label: 'Gallery Images', value: gallery.length, delta: 'across all events', href: '/admin/events/gallery', icon: ImageIcon, tint: 'green' as const },
     { label: 'Total Results', value: results.length, delta: `${selectedResults} selected`, href: '/admin/results', icon: Award, tint: 'indigo' as const },
     { label: 'Total Resources', value: resources.length, delta: `${totalResourceDownloads.toLocaleString('en-IN')} downloads`, href: '/admin/resources', icon: BookOpen, tint: 'indigo' as const },
     { label: 'Total Jobs', value: jobs.length, delta: `${newJobs} new · ${ongoingJobs} ongoing`, href: '/admin/jobs', icon: Briefcase, tint: 'green' as const },
     { label: 'Total Videos', value: videos.length, delta: `${publishedVideos} published`, href: '/admin/videos', icon: PlayCircle, tint: 'indigo' as const },
+    { label: 'Total Admissions', value: admissions.length, delta: `${pendingAdmissions} pending`, href: '/admin/admissions', icon: ClipboardList, tint: pendingAdmissions > 0 ? 'amber' as const : 'indigo' as const },
   ]
 
   const activity: ActivityItem[] = [
@@ -118,10 +150,14 @@ export default async function AdminDashboardPage() {
     ...results.map((r) => toActivityItem(r, 'result', '/admin/results', ['title'], ['status'])),
     ...jobs.map((j) => toActivityItem(j, 'job', '/admin/jobs', ['title'], ['status'])),
     ...videos.map((v) => toActivityItem(v, 'video', '/admin/videos', ['title'], ['status'])),
+    ...gallery.map((g) => toActivityItem(g, 'gallery', '/admin/events/gallery', ['label'], [])),
+    ...admissions.map((a) => toActivityItem(a, 'admission', '/admin/admissions', ['student_name'], ['status'])),
   ]
     .filter((item) => item.date !== null)
     .sort((a, b) => new Date(b.date as string).getTime() - new Date(a.date as string).getTime())
     .slice(0, 5)
+
+  const firstName = user.email?.split('@')[0] ?? 'Admin'
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col lg:flex-row">
@@ -130,25 +166,31 @@ export default async function AdminDashboardPage() {
       <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-6xl w-full">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-2xl font-semibold mb-1">Dashboard</h1>
-            <p className="text-sm text-gray-500">
-              Signed in as <span className="text-gray-900 font-medium">{user.email?.split('@')[0] ?? 'Admin'}</span>
-            </p>
+            <h1 className="text-2xl font-semibold mb-1">
+              {greeting()}, <span className="text-indigo-600">{firstName}</span>
+            </h1>
+            <p className="text-sm text-gray-500">Here&apos;s what&apos;s happening across your site right now.</p>
           </div>
-          <form action={logout}>
-            <button
-              type="submit"
-              className="text-sm px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 font-medium hover:bg-gray-50 hover:border-gray-400 transition-colors"
-            >
-              Sign out
-            </button>
-          </form>
+          <div className="flex items-center gap-2">
+            <RefreshButton />
+            <form action={logout}>
+              <button
+                type="submit"
+                className="text-sm px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 font-medium hover:bg-gray-50 hover:border-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 transition-colors"
+              >
+                Sign out
+              </button>
+            </form>
+          </div>
         </div>
 
-        {dataError && (
+        {failedSources.length > 0 && (
           <div className="flex items-start gap-2.5 text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 mb-6">
-            <AlertTriangle size={16} className="shrink-0 mt-0.5" />
-            <p>{dataError}</p>
+            <AlertTriangle size={16} className="shrink-0 mt-0.5" aria-hidden="true" />
+            <p>
+              Couldn&apos;t load {failedSources.join(', ')} right now — other numbers below are still live.
+              Try refreshing in a moment.
+            </p>
           </div>
         )}
 
@@ -161,7 +203,7 @@ export default async function AdminDashboardPage() {
         <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-4 sm:p-6">
           <div className="flex items-center gap-2 mb-2">
             <span className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
-              <Activity size={16} />
+              <Activity size={16} aria-hidden="true" />
             </span>
             <div>
               <h2 className="text-sm font-semibold text-gray-900">Recent Activity</h2>

@@ -1,29 +1,14 @@
+// app/layout.tsx
 import type { Metadata, Viewport } from "next";
 import { Inter, Poppins, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "./components/ThemeProvider";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
+import LoadingProvider from "./components/LoadingProvider";
+import LayoutChrome from "./components/LayoutChrome";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
-  variable: "--font-poppins",
-  display: "swap",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["500", "600"],
-  variable: "--font-jetbrains-mono",
-  display: "swap",
-});
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
+const poppins = Poppins({ subsets: ["latin"], weight: ["500", "600", "700"], variable: "--font-poppins", display: "swap" });
+const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], weight: ["500", "600"], variable: "--font-jetbrains-mono", display: "swap" });
 
 export const metadata: Metadata = {
   title: {
@@ -40,10 +25,6 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-// Runs before paint, so the page never flashes the wrong theme. Defaults
-// to "system" if the visitor hasn't chosen light/dark explicitly, and
-// resolves it against the OS preference right here — synchronously —
-// before React ever mounts.
 const themeInitScript = `
   (function() {
     try {
@@ -71,9 +52,9 @@ export default function RootLayout({
       </head>
       <body>
         <ThemeProvider>
-          {/* <Navbar /> */}
-          <main>{children}</main>
-          {/* <Footer /> */}
+          <LoadingProvider>
+            <LayoutChrome>{children}</LayoutChrome>
+          </LoadingProvider>
         </ThemeProvider>
       </body>
     </html>

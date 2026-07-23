@@ -4,6 +4,7 @@ export const brand = {
 };
 
 export const nav = [
+  { label: "Home", href: "/" },
   { label: "About", href: "/about" },
   { label: "Courses", href: "/courses" },
   { label: "Hostel", href: "/hostel" },
@@ -15,7 +16,7 @@ export const nav = [
   { label: "Notifications", href: "/notification" },
   { label: "Jobs", href: "/jobs" },
   { label: "Videos", href: "/youtube-video" },
-  { label: "Admission", href: "/admission" },
+  { label: "Admission", href: "/admission-form" },
 ];
 
 export const ABOUT_NAV = [

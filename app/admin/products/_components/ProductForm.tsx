@@ -1,9 +1,72 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
+import { useFormStatus } from 'react-dom'
 import type { DbProduct } from '@/app/lib/action/products'
 
 const MAX_IMAGE_MB = 5
+const IMAGE_MAX_DIMENSION = 1600 // px, longest side
+
+function Spinner() {
+  return (
+    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+    </svg>
+  )
+}
+
+function SubmitButton({ label, blocked }: { label: string; blocked: boolean }) {
+  const { pending } = useFormStatus()
+  const disabled = pending || blocked
+  return (
+    <button
+      type="submit"
+      disabled={disabled}
+      className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 disabled:cursor-not-allowed text-white rounded-lg py-2.5 text-sm font-medium transition-colors flex items-center justify-center gap-2"
+    >
+      {pending && <Spinner />}
+      {pending ? 'Saving…' : label}
+    </button>
+  )
+}
+
+/** Resizes + re-encodes an image in the browser to cut upload size before it hits the server. */
+async function compressImage(file: File): Promise<File> {
+  if (file.type === 'image/svg+xml' || file.type === 'image/gif') return file
+
+  const bitmap = await createImageBitmap(file).catch(() => null)
+  if (!bitmap) return file
+
+  let { width, height } = bitmap
+  if (Math.max(width, height) > IMAGE_MAX_DIMENSION) {
+    const scale = IMAGE_MAX_DIMENSION / Math.max(width, height)
+    width = Math.round(width * scale)
+    height = Math.round(height * scale)
+  }
+
+  const canvas = document.createElement('canvas')
+  canvas.width = width
+  canvas.height = height
+  const ctx = canvas.getContext('2d')
+  if (!ctx) return file
+  ctx.drawImage(bitmap, 0, 0, width, height)
+
+  const tryEncode = (type: string, quality: number) =>
+    new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, type, quality))
+
+  let blob = await tryEncode('image/webp', 0.8)
+  let ext = 'webp'
+  if (!blob) {
+    blob = await tryEncode('image/jpeg', 0.82)
+    ext = 'jpg'
+  }
+  if (!blob) return file
+  if (blob.size >= file.size) return file
+
+  const newName = file.name.replace(/\.[^.]+$/, '') + `.${ext}`
+  return new File([blob], newName, { type: blob.type })
+}
 
 export function ProductForm({
   action,
@@ -15,9 +78,13 @@ export function ProductForm({
   initialData?: DbProduct
 }) {
   const [fileError, setFileError] = useState<string | null>(null)
+  const [isCompressing, setIsCompressing] = useState(false)
+  const [compressedInfo, setCompressedInfo] = useState<string | null>(null)
+  const imageInputRef = useRef<HTMLInputElement>(null)
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
+    setCompressedInfo(null)
     if (!file) {
       setFileError(null)
       return
@@ -33,7 +100,28 @@ export function ProductForm({
       return
     }
     setFileError(null)
+    setIsCompressing(true)
+    try {
+      const compressed = await compressImage(file)
+      if (compressed !== file && imageInputRef.current) {
+        const dt = new DataTransfer()
+        dt.items.add(compressed)
+        imageInputRef.current.files = dt.files
+        const savedPct = Math.round((1 - compressed.size / file.size) * 100)
+        setCompressedInfo(
+          savedPct > 0
+            ? `Compressed to ${(compressed.size / 1024 / 1024).toFixed(2)}MB (${savedPct}% smaller).`
+            : `Using original (${(file.size / 1024 / 1024).toFixed(2)}MB).`
+        )
+      }
+    } catch {
+      setCompressedInfo(null)
+    } finally {
+      setIsCompressing(false)
+    }
   }
+
+  const blocked = Boolean(fileError || isCompressing)
 
   return (
     <form action={action} className="space-y-5">
@@ -54,6 +142,7 @@ export function ProductForm({
           {initialData ? 'Replace Image (optional)' : 'Product Image'}
         </label>
         <input
+          ref={imageInputRef}
           id="image"
           name="image"
           type="file"
@@ -62,7 +151,17 @@ export function ProductForm({
           className="w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-gray-100 file:text-sm file:text-gray-700 hover:file:bg-gray-200 file:cursor-pointer cursor-pointer"
         />
         {fileError && <p className="text-xs text-red-600 mt-1.5">{fileError}</p>}
-        <p className="text-xs text-gray-400 mt-1.5">JPG, PNG, or WebP. Max {MAX_IMAGE_MB}MB.</p>
+        {isCompressing && (
+          <p className="text-xs text-gray-500 mt-1.5 flex items-center gap-1.5">
+            <Spinner /> Compressing image…
+          </p>
+        )}
+        {!isCompressing && compressedInfo && (
+          <p className="text-xs text-green-600 mt-1.5">{compressedInfo}</p>
+        )}
+        <p className="text-xs text-gray-400 mt-1.5">
+          JPG, PNG, or WebP. Max {MAX_IMAGE_MB}MB — large images are auto-compressed before upload.
+        </p>
       </div>
 
       <div>
@@ -144,12 +243,7 @@ export function ProductForm({
         />
       </div>
 
-      <button
-        type="submit"
-        className="w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg py-2.5 text-sm font-medium transition-colors"
-      >
-        {submitLabel}
-      </button>
+      <SubmitButton label={submitLabel} blocked={blocked} />
     </form>
   )
 }

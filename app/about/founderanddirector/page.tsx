@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { ClipboardList, Phone, MessageCircle, Trophy, Mail, MapPin } from "lucide-react";
 import Container from "../../components/Container";
 import Button from "../../components/Button";
@@ -72,30 +73,29 @@ export default function FounderAndDirector() {
               </div>
             </FadeInUp>
 
-            <ScaleIn delay={0.15} className="relative order-first mx-auto aspect-[4/5] w-full max-w-[320px] lg:order-last">
-              <div
-                aria-hidden
-                className="absolute -inset-5 -z-10 rounded-[28px] opacity-70 blur-2xl"
-                style={{
-                  backgroundImage:
-                    "linear-gradient(135deg, rgba(59,130,246,0.34), rgba(20,184,166,0.26), rgba(245,166,35,0.24))",
-                }}
-              />
-              <div className="glass glass-sheen absolute inset-4 flex flex-col items-center justify-center overflow-hidden rounded-[16px] shadow-[var(--shadow-card)]">
-                <span className="font-mono text-[12px] uppercase tracking-[0.2em] text-text-faint">
-                  Founder Photo
-                </span>
-                <span className="mt-4 flex h-24 w-24 items-center justify-center rounded-full border border-line-strong bg-bg font-mono text-[28px] font-bold text-signal-strong">
-                  GS
-                </span>
-                <span className="font-display mt-4 text-[13px] font-medium text-text-muted">
-                  Ganesh Sir
-                </span>
-              </div>
-              <div className="absolute -bottom-3 -right-3 flex h-14 w-14 items-center justify-center rounded-full border border-signal-strong bg-signal text-on-signal shadow-[0_4px_14px_rgba(37,99,235,0.4)]">
-                <Trophy size={22} />
-              </div>
-            </ScaleIn>
+<ScaleIn delay={0.15} className="relative order-first mx-auto aspect-[4/5] w-full max-w-[320px] lg:order-last">
+  <div
+    aria-hidden
+    className="absolute -inset-5 -z-10 rounded-[28px] opacity-70 blur-2xl"
+    style={{
+      backgroundImage:
+        "linear-gradient(135deg, rgba(59,130,246,0.34), rgba(20,184,166,0.26), rgba(245,166,35,0.24))",
+    }}
+  />
+  <div className="glass glass-sheen absolute inset-4 overflow-hidden rounded-[16px] shadow-[var(--shadow-card)]">
+    <Image
+      src="/ganeshsir.png"
+      alt="Ganesh Sir"
+      fill
+      sizes="(min-width: 1024px) 320px, 80vw"
+      className="object-cover"
+      priority
+    />
+  </div>
+  <div className="absolute -bottom-3 -right-3 flex h-14 w-14 items-center justify-center rounded-full border border-signal-strong bg-signal text-on-signal shadow-[0_4px_14px_rgba(37,99,235,0.4)]">
+    <Trophy size={22} />
+  </div>
+</ScaleIn>
           </div>
         </Container>
       </section>

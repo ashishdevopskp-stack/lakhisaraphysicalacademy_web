@@ -70,17 +70,18 @@ export function TokenBulkForm({ hostels, mealPlans }: { hostels: Hostel[]; mealP
         selectedSlots,
         validMonths,
       })
+
       setTokens(
         rows.map((row: any) => ({
           tokenNo: String(row.token_number).padStart(2, '0'),
           serial: row.serial_number,
-          date: new Date(row.date_of_allotment).toLocaleDateString('en-GB'),
+          issueDate: new Date(row.date_of_allotment).toLocaleDateString('en-GB'),
+          expiryDate: new Date(row.expiry_date).toLocaleDateString('en-GB'),
           studentName: row.students?.name ?? '',
           hostelName: row.students?.hostels?.name ?? 'Hostel',
           roomNumber: row.students?.rooms?.room_number ?? '',
           bedNumber: row.students?.bed_number,
           slots: row.selected_slots ?? selectedSlots,
-          validMonths,
         }))
       )
     })
@@ -89,7 +90,7 @@ export function TokenBulkForm({ hostels, mealPlans }: { hostels: Hostel[]; mealP
   async function exportPDF() {
     if (tokens.length === 0) return
     setExporting(true)
-    const html2canvas = (await import('html2canvas')).default
+    const html2canvas = (await import('html2canvas-pro')).default
     const { jsPDF } = await import('jspdf')
 
     const pdf = new jsPDF({ unit: 'pt', format: 'a4' })
@@ -106,6 +107,9 @@ export function TokenBulkForm({ hostels, mealPlans }: { hostels: Hostel[]; mealP
 
     let idx = 0
     for (const el of Array.from(cardEls)) {
+      // bank cards are pinned to a fixed 600px width (see below), so this
+      // capture is always consistent quality regardless of the device
+      // that triggered the export.
       const canvas = await html2canvas(el as HTMLElement, { scale: 2, backgroundColor: '#fdf6ee' })
       const img = canvas.toDataURL('image/png')
       const posInPage = idx % perPage
@@ -128,8 +132,8 @@ export function TokenBulkForm({ hostels, mealPlans }: { hostels: Hostel[]; mealP
 
   return (
     <div className="space-y-6">
-      <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-4 sm:p-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Hostel</label>
             <select
@@ -179,7 +183,7 @@ export function TokenBulkForm({ hostels, mealPlans }: { hostels: Hostel[]; mealP
       </div>
 
       {matched && matched.length > 0 && (
-        <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 space-y-5">
+        <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-4 sm:p-6 space-y-5">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Meal Plan</label>
             <select
@@ -211,7 +215,7 @@ export function TokenBulkForm({ hostels, mealPlans }: { hostels: Hostel[]; mealP
             </div>
           )}
 
-          <div className="grid sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Valid For (months)</label>
               <input
@@ -229,7 +233,7 @@ export function TokenBulkForm({ hostels, mealPlans }: { hostels: Hostel[]; mealP
                 {[1, 2, 4, 6, 8].map((n) => <option key={n} value={n}>{n}</option>)}
               </select>
             </div>
-            <div className="flex items-end gap-2">
+            <div className="flex flex-wrap items-end gap-2">
               <button
                 onClick={generateTokens} disabled={pending}
                 className="px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 disabled:opacity-50"
@@ -252,16 +256,18 @@ export function TokenBulkForm({ hostels, mealPlans }: { hostels: Hostel[]; mealP
       {tokens.length > 0 && (
         <div>
           <p className="text-sm text-gray-500 mb-3">{tokens.length} tokens generated — preview below.</p>
-          <div className="flex flex-wrap gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {tokens.slice(0, 6).map((t) => <TokenCard key={t.serial} data={t} />)}
           </div>
           {tokens.length > 6 && <p className="text-xs text-gray-400 mt-2">+{tokens.length - 6} more included in the PDF export.</p>}
         </div>
       )}
 
+      {/* hidden export bank — each card pinned to a fixed 600px width so
+         the exported PDF is always the same quality regardless of screen size */}
       <div id="token-bulk-bank" style={{ position: 'fixed', left: -9999, top: 0 }}>
         {tokens.map((t) => (
-          <div key={t.serial} className="bulk-card">
+          <div key={t.serial} className="bulk-card" style={{ width: 600 }}>
             <TokenCard data={t} />
           </div>
         ))}

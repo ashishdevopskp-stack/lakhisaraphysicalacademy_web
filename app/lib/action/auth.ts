@@ -1,5 +1,6 @@
 'use server'
 
+import { cache } from 'react'
 import { createClient } from '../supabase/server'
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
@@ -17,10 +18,16 @@ function validateCredentials(email: FormDataEntryValue | null, password: FormDat
   return null
 }
 
-
 const attempts = new Map<string, { count: number; resetAt: number }>()
 const MAX_ATTEMPTS = 5
 const WINDOW_MS = 15 * 60 * 1000
+const MAX_TRACKED_KEYS = 5000 // hard ceiling so this Map can't grow unbounded
+
+function pruneExpiredAttempts(now: number) {
+  for (const [key, entry] of attempts) {
+    if (now > entry.resetAt) attempts.delete(key)
+  }
+}
 
 async function checkRateLimit(email: string): Promise<boolean> {
   const hdrs = await headers()
@@ -30,6 +37,7 @@ async function checkRateLimit(email: string): Promise<boolean> {
 
   const entry = attempts.get(key)
   if (!entry || now > entry.resetAt) {
+    if (attempts.size >= MAX_TRACKED_KEYS) pruneExpiredAttempts(now)
     attempts.set(key, { count: 1, resetAt: now + WINDOW_MS })
     return true
   }
@@ -41,9 +49,25 @@ async function checkRateLimit(email: string): Promise<boolean> {
 }
 
 function clearRateLimit(email: string) {
-  // Best-effort cleanup on success; key still includes IP so this only
-  // clears this exact IP+email pairing, which is fine.
+  // Best-effort: since the key is IP+email, we can't clear it here without
+  // the IP in scope. Left as a no-op on purpose — the window will expire
+  // naturally, and that's fine for a login success path.
 }
+
+/**
+ * Single source of truth for "who is the current user" within one request.
+ * `cache()` dedupes calls with the same arguments during a single render/
+ * request pass — so calling this 5 times across 5 different admin pages
+ * (or once here + once in getCurrentUserRole) only hits Supabase's Auth
+ * API once instead of five times. This is very likely why you were
+ * hitting `over_request_rate_limit`.
+ */
+export const getAuthUser = cache(async () => {
+  const supabase = await createClient()
+  const { data, error } = await supabase.auth.getUser()
+  if (error || !data.user) return null
+  return data.user
+})
 
 // Admin login → verifies role = 'admin' before letting them in
 export async function adminLogin(formData: FormData) {
@@ -69,7 +93,20 @@ export async function adminLogin(formData: FormData) {
     password: password as string,
   })
 
-  if (error || !data.user) {
+  if (error) {
+    // Surface Supabase's own rate limit distinctly so it's not confused
+    // with "wrong password" — this is what you're hitting right now.
+    if (error.status === 429 || error.code === 'over_request_rate_limit') {
+      console.error('adminLogin: Supabase auth rate limit hit', error)
+      redirect(
+        '/admin/login?error=' +
+          encodeURIComponent('Too many login attempts right now. Please wait a few minutes and try again.')
+      )
+    }
+    redirect('/admin/login?error=' + encodeURIComponent('Invalid email or password'))
+  }
+
+  if (!data.user) {
     redirect('/admin/login?error=' + encodeURIComponent('Invalid email or password'))
   }
 
@@ -104,16 +141,17 @@ export async function logout() {
   redirect('/admin/login')
 }
 
+/**
+ * Uses the cached getAuthUser() instead of calling supabase.auth.getUser()
+ * directly — so pages that already fetched the user this request don't
+ * trigger a second Auth API call just to check the role.
+ */
 export async function getCurrentUserRole() {
   try {
+    const user = await getAuthUser()
+    if (!user) return null
+
     const supabase = await createClient()
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser()
-
-    if (userError || !user) return null
-
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('role')
@@ -126,8 +164,6 @@ export async function getCurrentUserRole() {
     }
     return profile?.role ?? 'user'
   } catch (err) {
-    // Fail closed — an unexpected error (network, etc.) should never be
-    // treated as "authenticated" by any caller of this function.
     console.error('getCurrentUserRole: unexpected error', err)
     return null
   }

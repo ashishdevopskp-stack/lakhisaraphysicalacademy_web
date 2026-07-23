@@ -1,8 +1,10 @@
 import Link from 'next/link'
 import { Plus, Layers, Utensils, CheckCircle2, Clock, XCircle } from 'lucide-react'
-import { getTokens, getTokenStats, cancelToken } from '@/app/lib/action/tokens'
+import { getTokens, getTokenStats } from '@/app/lib/action/tokens'
 import { AdminSidebar } from '../_components/AdminSidebar'
 import { StatCard } from '../_components/StatCard'
+import { TokenRowActions } from '../_components/TokenRowActions'
+import type { TokenCardData } from '../_components/TokenCard'
 
 const STATUS_STYLE: Record<string, string> = {
   active: 'bg-green-50 text-green-700 border-green-200',
@@ -14,11 +16,6 @@ const STATUS_STYLE: Record<string, string> = {
 export default async function TokenListPage() {
   const [tokens, stats] = await Promise.all([getTokens(), getTokenStats()])
 
-  async function cancel(formData: FormData) {
-    'use server'
-    await cancelToken(String(formData.get('id')))
-  }
-
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col lg:flex-row">
       <AdminSidebar active="Bhojan Token" />
@@ -29,7 +26,7 @@ export default async function TokenListPage() {
             <h1 className="text-2xl font-semibold mb-1">Bhojan Tokens</h1>
             <p className="text-sm text-gray-500">Mess tokens generated for hostel students.</p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
             <Link
               href="/admin/token/new"
               className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
@@ -52,8 +49,10 @@ export default async function TokenListPage() {
           <StatCard label="Cancelled" value={stats.cancelled} delta="manually voided" href="/admin/token" icon={XCircle} tint="red" />
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
-          <table className="w-full text-sm">
+        {/* Table wrapper: scrolls sideways on narrow screens instead of
+           squeezing columns unreadably small or breaking the layout. */}
+        <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-x-auto">
+          <table className="w-full text-sm min-w-[720px]">
             <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
               <tr>
                 <th className="text-left px-4 py-3 font-medium">Token #</th>
@@ -66,35 +65,48 @@ export default async function TokenListPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {tokens.map((t) => (
-                <tr key={t.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 font-medium text-gray-900">
-                    {String(t.token_number).padStart(2, '0')}
-                    <span className="text-gray-400 font-normal ml-1">· S/N {t.serial_number}</span>
-                  </td>
-                  <td className="px-4 py-3 text-gray-700">{t.students?.name ?? '—'}</td>
-                  <td className="px-4 py-3 text-gray-600">
-                    {t.students?.hostels?.name ?? '—'} · Room {t.students?.rooms?.room_number ?? '—'}
-                  </td>
-                  <td className="px-4 py-3 text-gray-600">{t.meal_plans?.name ?? '—'}</td>
-                  <td className="px-4 py-3 text-gray-600">{t.expiry_date}</td>
-                  <td className="px-4 py-3">
-                    <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium border ${STATUS_STYLE[t.status]}`}>
-                      {t.status}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    {t.status === 'active' && (
-                      <form action={cancel}>
-                        <input type="hidden" name="id" value={t.id} />
-                        <button type="submit" className="text-xs font-medium text-red-600 hover:underline">
-                          Cancel
-                        </button>
-                      </form>
-                    )}
-                  </td>
-                </tr>
-              ))}
+              {tokens.map((t) => {
+                const hostelName = t.students?.hostels?.name ?? t.manual_hostel_name ?? 'Hostel'
+                const roomNumber = t.students?.rooms?.room_number ?? t.manual_room_number ?? '—'
+                const bedNumber = t.students?.bed_number ?? t.manual_bed_number ?? null
+                const studentName = t.students?.name ?? t.manual_name ?? '—'
+
+                const card: TokenCardData = {
+                  tokenNo: String(t.token_number).padStart(2, '0'),
+                  serial: t.serial_number,
+                  issueDate: new Date(t.date_of_allotment).toLocaleDateString('en-GB'),
+                  expiryDate: new Date(t.expiry_date).toLocaleDateString('en-GB'),
+                  studentName,
+                  hostelName,
+                  roomNumber,
+                  bedNumber,
+                  slots: t.selected_slots ?? [],
+                }
+
+                return (
+                  <tr key={t.id} className="hover:bg-gray-50">
+                    <td className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap">
+                      {String(t.token_number).padStart(2, '0')}
+                      <span className="text-gray-400 font-normal ml-1">· S/N {t.serial_number}</span>
+                    </td>
+                    <td className="px-4 py-3 text-gray-700 whitespace-nowrap">{studentName}</td>
+                    <td className="px-4 py-3 text-gray-600 whitespace-nowrap">
+                      {hostelName} · Room {roomNumber}
+                      {bedNumber ? `-${bedNumber}` : ''}
+                    </td>
+                    <td className="px-4 py-3 text-gray-600 whitespace-nowrap">{t.meal_plans?.name ?? '—'}</td>
+                    <td className="px-4 py-3 text-gray-600 whitespace-nowrap">{t.expiry_date}</td>
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium border ${STATUS_STYLE[t.status]}`}>
+                        {t.status}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <TokenRowActions id={t.id} status={t.status} card={card} />
+                    </td>
+                  </tr>
+                )
+              })}
               {tokens.length === 0 && (
                 <tr>
                   <td colSpan={7} className="px-4 py-10 text-center text-gray-400">
