@@ -325,7 +325,7 @@ export default function EventsClient({
   return (
     <>
       <EventsHero />
-      <EventCategories active={category} onSelect={setCategory} />
+
       <UpcomingBannerSection event={nextEvent} />
       <EventsGrid events={events} category={category} onCategory={setCategory} />
       <EventGallery gallery={gallery} />

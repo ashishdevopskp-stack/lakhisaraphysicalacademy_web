@@ -31,7 +31,6 @@ export default function Home() {
 
       <Jobs />
       <Videos />
-      <Admission />
       <Contact />
      
     </main>

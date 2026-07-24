@@ -55,20 +55,28 @@
 
   --shadow-card: 0 8px 28px rgba(15, 23, 42, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.6);
   --shadow-card-hover: 0 12px 36px rgba(15, 23, 42, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+
+  /* Floating shadow — softer, more diffuse, used for the GSAP breathing effect */
+  --shadow-float-rest: 0 14px 30px rgba(15, 23, 42, 0.10), 0 2px 8px rgba(15, 23, 42, 0.06);
+  --shadow-float-peak: 0 26px 50px rgba(15, 23, 42, 0.16), 0 6px 14px rgba(15, 23, 42, 0.08);
 }
 
-@property --blob1-x { syntax: '<percentage>'; inherits: false; initial-value: 12%; }
-@property --blob1-y { syntax: '<percentage>'; inherits: false; initial-value: -4%; }
-@property --blob2-x { syntax: '<percentage>'; inherits: false; initial-value: 92%; }
-@property --blob2-y { syntax: '<percentage>'; inherits: false; initial-value: 12%; }
-@property --blob3-x { syntax: '<percentage>'; inherits: false; initial-value: 46%; }
-@property --blob3-y { syntax: '<percentage>'; inherits: false; initial-value: 104%; }
+/* Blob position custom properties — animated by GSAP (BackgroundFX.tsx). */
+@property --blob1-x { syntax: '<percentage>'; inherits: false; initial-value: 50%; }
+@property --blob1-y { syntax: '<percentage>'; inherits: false; initial-value: -6%; }
+@property --blob2-x { syntax: '<percentage>'; inherits: false; initial-value: 94%; }
+@property --blob2-y { syntax: '<percentage>'; inherits: false; initial-value: 18%; }
+@property --blob3-x { syntax: '<percentage>'; inherits: false; initial-value: 4%; }
+@property --blob3-y { syntax: '<percentage>'; inherits: false; initial-value: 96%; }
+@property --grain-x { syntax: '<percentage>'; inherits: false; initial-value: 0%; }
+@property --grain-y { syntax: '<percentage>'; inherits: false; initial-value: 0%; }
 
-@keyframes liquidDrift {
-  0%   { --blob1-x: 12%; --blob1-y: -4%;  --blob2-x: 92%; --blob2-y: 12%;  --blob3-x: 46%; --blob3-y: 104%; }
-  33%  { --blob1-x: 22%; --blob1-y: 6%;   --blob2-x: 80%; --blob2-y: 26%;  --blob3-x: 58%; --blob3-y: 92%; }
-  66%  { --blob1-x: 6%;  --blob1-y: 14%;  --blob2-x: 88%; --blob2-y: 4%;   --blob3-x: 38%; --blob3-y: 98%; }
-  100% { --blob1-x: 12%; --blob1-y: -4%;  --blob2-x: 92%; --blob2-y: 12%;  --blob3-x: 46%; --blob3-y: 104%; }
+/* CSS fallback keyframes — only runs if JS/GSAP hasn't taken over yet, or
+   is disabled. GSAP overrides these same custom properties once mounted. */
+@keyframes liquidDriftFallback {
+  0%   { --blob1-x: 50%; --blob1-y: -6%; --blob2-x: 94%; --blob2-y: 18%; --blob3-x: 4%;  --blob3-y: 96%; }
+  50%  { --blob1-x: 42%; --blob1-y: 4%;  --blob2-x: 82%; --blob2-y: 30%; --blob3-x: 14%; --blob3-y: 86%; }
+  100% { --blob1-x: 50%; --blob1-y: -6%; --blob2-x: 94%; --blob2-y: 18%; --blob3-x: 4%;  --blob3-y: 96%; }
 }
 
 @layer base {
@@ -96,16 +104,23 @@
 
     --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.16);
     --shadow-card-hover: 0 12px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+    --shadow-float-rest: 0 16px 34px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-float-peak: 0 30px 58px rgba(0, 0, 0, 0.6), 0 6px 16px rgba(0, 0, 0, 0.35);
   }
 
   body {
+    position: relative;
     background-color: var(--color-bg);
+    /* Center-anchored "floodlight over the parade ground": one dominant
+       glow near top-center, two quieter supporting blobs lower down, plus
+       a soft vignette so the frame edges recede and the center holds focus. */
     background-image:
-      radial-gradient(620px 420px at var(--blob1-x) var(--blob1-y), rgba(59, 130, 246, 0.10), transparent 62%),
-      radial-gradient(680px 460px at var(--blob2-x) var(--blob2-y), rgba(245, 166, 35, 0.08), transparent 58%),
-      radial-gradient(560px 420px at var(--blob3-x) var(--blob3-y), rgba(20, 184, 166, 0.08), transparent 62%);
+      radial-gradient(760px 620px at var(--blob1-x) var(--blob1-y), rgba(59, 130, 246, 0.16), transparent 64%),
+      radial-gradient(640px 480px at var(--blob2-x) var(--blob2-y), rgba(245, 166, 35, 0.10), transparent 60%),
+      radial-gradient(600px 460px at var(--blob3-x) var(--blob3-y), rgba(20, 184, 166, 0.09), transparent 62%),
+      radial-gradient(120% 120% at 50% 8%, transparent 45%, rgba(10, 14, 22, 0.05) 100%);
     background-attachment: fixed;
-    animation: liquidDrift 28s ease-in-out infinite;
+    animation: liquidDriftFallback 32s ease-in-out infinite;
     color: var(--color-text);
     font-family: var(--font-body);
     -webkit-font-smoothing: antialiased;
@@ -115,9 +130,17 @@
 
   html[data-theme="dark"] body {
     background-image:
-      radial-gradient(620px 420px at var(--blob1-x) var(--blob1-y), rgba(59, 130, 246, 0.20), transparent 62%),
-      radial-gradient(680px 460px at var(--blob2-x) var(--blob2-y), rgba(245, 166, 35, 0.13), transparent 58%),
-      radial-gradient(560px 420px at var(--blob3-x) var(--blob3-y), rgba(20, 184, 166, 0.13), transparent 62%);
+      radial-gradient(760px 620px at var(--blob1-x) var(--blob1-y), rgba(59, 130, 246, 0.26), transparent 64%),
+      radial-gradient(640px 480px at var(--blob2-x) var(--blob2-y), rgba(245, 166, 35, 0.16), transparent 60%),
+      radial-gradient(600px 460px at var(--blob3-x) var(--blob3-y), rgba(20, 184, 166, 0.15), transparent 62%),
+      radial-gradient(120% 120% at 50% 8%, transparent 40%, rgba(0, 0, 0, 0.35) 100%);
+  }
+
+  /* Once GSAP mounts (BackgroundFX.tsx adds this to <html>), it owns the
+     custom properties every frame — the CSS fallback animation is redundant
+     and would fight it, so switch it off. */
+  html[data-gsap-bg="active"] body {
+    animation: none;
   }
 
   h1 {
@@ -364,6 +387,38 @@
       var(--color-olive) 66%,
       var(--color-olive) 100%
     );
+  }
+
+  /* ============ FLOATING SHADOW SYSTEM ============
+     Opt-in class for cards/panels you want to gently "hover" in place.
+     GSAP (BackgroundFX.tsx) tweens --float-lift + box-shadow between the
+     rest/peak values below; this is the static resting state and the
+     no-JS/reduced-motion fallback. */
+  .float-card {
+    box-shadow: var(--shadow-float-rest);
+    transform: translateY(0);
+    will-change: transform, box-shadow;
+  }
+
+  /* Grain / noise overlay — fixed above the gradient, below content.
+     Adds a subtle film-grain texture so the soft gradient doesn't look
+     like a flat digital blur. Intensity is intentionally faint. */
+  .grain-overlay {
+    position: fixed;
+    inset: -10%;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.05;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    background-repeat: repeat;
+    background-position: var(--grain-x) var(--grain-y);
+    transform: translateZ(0);
+  }
+
+  html[data-theme="dark"] .grain-overlay {
+    opacity: 0.08;
+    mix-blend-mode: soft-light;
   }
 }
 

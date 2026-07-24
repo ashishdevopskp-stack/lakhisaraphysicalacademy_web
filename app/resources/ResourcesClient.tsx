@@ -273,7 +273,6 @@ export default function ResourcesClient({ resources }: { resources: ResourceItem
   return (
     <>
       <ResourcesHero />
-      <ResourceCategories />
       <ResourceGrid resources={resources} />
       <StayUpdatedCTA />
     </>

@@ -52,14 +52,14 @@ export default async function TokenListPage() {
         {/* Table wrapper: scrolls sideways on narrow screens instead of
            squeezing columns unreadably small or breaking the layout. */}
         <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-x-auto">
-          <table className="w-full text-sm min-w-[720px]">
+          <table className="w-full text-sm min-w-[680px]">
             <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
               <tr>
                 <th className="text-left px-4 py-3 font-medium">Token #</th>
                 <th className="text-left px-4 py-3 font-medium">Student</th>
                 <th className="text-left px-4 py-3 font-medium">Hostel / Room</th>
-                <th className="text-left px-4 py-3 font-medium">Meal Plan</th>
-                <th className="text-left px-4 py-3 font-medium">Expiry</th>
+                <th className="text-left px-4 py-3 font-medium">Valid From</th>
+                <th className="text-left px-4 py-3 font-medium">Valid Till</th>
                 <th className="text-left px-4 py-3 font-medium">Status</th>
                 <th className="text-right px-4 py-3 font-medium">Actions</th>
               </tr>
@@ -94,8 +94,12 @@ export default async function TokenListPage() {
                       {hostelName} · Room {roomNumber}
                       {bedNumber ? `-${bedNumber}` : ''}
                     </td>
-                    <td className="px-4 py-3 text-gray-600 whitespace-nowrap">{t.meal_plans?.name ?? '—'}</td>
-                    <td className="px-4 py-3 text-gray-600 whitespace-nowrap">{t.expiry_date}</td>
+                    <td className="px-4 py-3 text-gray-600 whitespace-nowrap">
+                      {new Date(t.date_of_allotment).toLocaleDateString('en-GB')}
+                    </td>
+                    <td className="px-4 py-3 text-gray-600 whitespace-nowrap">
+                      {new Date(t.expiry_date).toLocaleDateString('en-GB')}
+                    </td>
                     <td className="px-4 py-3 whitespace-nowrap">
                       <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium border ${STATUS_STYLE[t.status]}`}>
                         {t.status}

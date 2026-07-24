@@ -5,6 +5,7 @@ import "./globals.css";
 import { ThemeProvider } from "./components/ThemeProvider";
 import LoadingProvider from "./components/LoadingProvider";
 import LayoutChrome from "./components/LayoutChrome";
+import BackgroundFX from "./components/BackgroundFX";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const poppins = Poppins({ subsets: ["latin"], weight: ["500", "600", "700"], variable: "--font-poppins", display: "swap" });
@@ -53,6 +54,7 @@ export default function RootLayout({
       <body>
         <ThemeProvider>
           <LoadingProvider>
+            <BackgroundFX />
             <LayoutChrome>{children}</LayoutChrome>
           </LoadingProvider>
         </ThemeProvider>

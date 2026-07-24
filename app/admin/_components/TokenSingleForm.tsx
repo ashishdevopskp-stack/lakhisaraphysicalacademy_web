@@ -5,7 +5,6 @@ import { generateSingleToken, generateManualToken } from '@/app/lib/action/token
 import { TokenCard, type TokenCardData } from './TokenCard'
 import type { Student, Hostel } from '@/app/lib/action/students'
 
-type MealPlan = { id: string; name: string; slots: string[] }
 type Mode = 'existing' | 'manual'
 
 const inputClass =
@@ -17,11 +16,9 @@ const CAPTURE_TARGET_WIDTH = 1800
 
 export function TokenSingleForm({
   students,
-  mealPlans,
   hostels,
 }: {
   students: Student[]
-  mealPlans: MealPlan[]
   hostels: Hostel[]
 }) {
   const [mode, setMode] = useState<Mode>('existing')
@@ -33,27 +30,19 @@ export function TokenSingleForm({
   const [manualRoom, setManualRoom] = useState('')
   const [manualBed, setManualBed] = useState('')
 
-  const [mealPlanId, setMealPlanId] = useState(mealPlans[0]?.id ?? '')
-  const [selectedSlots, setSelectedSlots] = useState<string[]>(mealPlans[0]?.slots ?? [])
-  const [validMonths, setValidMonths] = useState(1)
+  const [validFrom, setValidFrom] = useState('')
+  const [validTill, setValidTill] = useState('')
+
   const [saved, setSaved] = useState<TokenCardData | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [pending, startTransition] = useTransition()
   const [busy, setBusy] = useState<'print' | 'download' | null>(null)
   const cardRef = useRef<HTMLDivElement>(null)
 
-  const plan = mealPlans.find((p) => p.id === mealPlanId)
   const canGenerate =
-    !!mealPlanId && selectedSlots.length > 0 && (mode === 'existing' ? !!studentId : manualName.trim().length > 0)
-
-  function onPlanChange(id: string) {
-    setMealPlanId(id)
-    setSelectedSlots(mealPlans.find((mp) => mp.id === id)?.slots ?? [])
-  }
-
-  function toggleSlot(slot: string) {
-    setSelectedSlots((prev) => (prev.includes(slot) ? prev.filter((s) => s !== slot) : [...prev, slot]))
-  }
+    !!validFrom &&
+    !!validTill &&
+    (mode === 'existing' ? !!studentId : manualName.trim().length > 0)
 
   function toCardData(row: any): TokenCardData {
     const hostelName = row.students?.hostels?.name ?? row.manual_hostel_name ?? 'Hostel'
@@ -69,7 +58,7 @@ export function TokenSingleForm({
       hostelName,
       roomNumber,
       bedNumber,
-      slots: row.selected_slots ?? selectedSlots,
+      slots: row.selected_slots ?? [],
     }
   }
 
@@ -80,15 +69,14 @@ export function TokenSingleForm({
       try {
         const row =
           mode === 'existing'
-            ? await generateSingleToken({ studentId, mealPlanId, selectedSlots, validMonths })
+            ? await generateSingleToken({ studentId, validFrom, validTill })
             : await generateManualToken({
                 name: manualName,
                 hostelName: manualHostel,
                 roomNumber: manualRoom,
                 bedNumber: manualBed,
-                mealPlanId,
-                selectedSlots,
-                validMonths,
+                validFrom,
+                validTill,
               })
         setSaved(toCardData(row))
       } catch (err) {
@@ -258,49 +246,26 @@ export function TokenSingleForm({
           </div>
         )}
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Meal Plan</label>
-          <select value={mealPlanId} onChange={(e) => onPlanChange(e.target.value)} className={inputClass}>
-            {mealPlans.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {plan && (
+        <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Time Slots</label>
-            <div className="flex flex-wrap gap-2">
-              {plan.slots.map((slot) => (
-                <button
-                  key={slot}
-                  type="button"
-                  onClick={() => toggleSlot(slot)}
-                  className={
-                    'px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ' +
-                    (selectedSlots.includes(slot)
-                      ? 'bg-indigo-600 text-white border-indigo-600'
-                      : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50')
-                  }
-                >
-                  {slot}
-                </button>
-              ))}
-            </div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Valid From</label>
+            <input
+              type="date"
+              value={validFrom}
+              onChange={(e) => setValidFrom(e.target.value)}
+              className={inputClass}
+            />
           </div>
-        )}
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Valid For (months)</label>
-          <input
-            type="number"
-            min={1}
-            value={validMonths}
-            onChange={(e) => setValidMonths(parseInt(e.target.value) || 1)}
-            className="w-24 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Valid Till</label>
+            <input
+              type="date"
+              value={validTill}
+              min={validFrom || undefined}
+              onChange={(e) => setValidTill(e.target.value)}
+              className={inputClass}
+            />
+          </div>
         </div>
 
         <div className="flex flex-wrap gap-3 pt-2">

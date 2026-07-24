@@ -55,7 +55,7 @@ const NAV: NavItem[] = [
       { label: 'Add Blog', href: '/admin/blogs/new' },
     ],
   },
-   { label: 'Admissions', href: '/admin/admissions', icon: ClipboardList },
+  //  { label: 'Admissions', href: '/admin/admissions', icon: ClipboardList },
   {
     label: 'Events', href: '/admin/events', icon: Calendar,
     children: [

@@ -27,13 +27,6 @@ export type TokenRow = {
 
 const TOKEN_SELECT = '*, students(name, bed_number, hostels(name), rooms(room_number)), meal_plans(name)'
 
-export async function getMealPlans() {
-  const supabase = await createClient()
-  const { data, error } = await supabase.from('meal_plans').select('*').order('name')
-  if (error) throw error
-  return data ?? []
-}
-
 export async function getTokens() {
   const supabase = await createClient()
   const { data, error } = await supabase
@@ -58,12 +51,6 @@ function serialFor(n: number) {
   return String(1000 + n).padStart(4, '0')
 }
 
-function addMonths(date: Date, months: number) {
-  const d = new Date(date)
-  d.setMonth(d.getMonth() + months)
-  return d.toISOString().slice(0, 10)
-}
-
 async function nextSerial(supabase: Awaited<ReturnType<typeof createClient>>) {
   const { count } = await supabase.from('tokens').select('*', { count: 'exact', head: true })
   return count ?? 0
@@ -71,19 +58,19 @@ async function nextSerial(supabase: Awaited<ReturnType<typeof createClient>>) {
 
 export async function generateSingleToken(params: {
   studentId: string
-  mealPlanId: string
-  selectedSlots: string[]
-  validMonths: number
+  validFrom: string
+  validTill: string
 }) {
   if (!params.studentId) throw new Error('Select a student')
+  if (!params.validFrom || !params.validTill) throw new Error('Valid From and Valid Till are required')
   const supabase = await createClient()
   const base = await nextSerial(supabase)
   const payload = {
     student_id: params.studentId,
-    meal_plan_id: params.mealPlanId,
-    selected_slots: params.selectedSlots,
+    selected_slots: [] as string[],
     serial_number: serialFor(base),
-    expiry_date: addMonths(new Date(), params.validMonths),
+    date_of_allotment: params.validFrom,
+    expiry_date: params.validTill,
     status: 'active' as const,
   }
   const { data, error } = await supabase.from('tokens').insert(payload).select(TOKEN_SELECT).single()
@@ -92,18 +79,18 @@ export async function generateSingleToken(params: {
   return data as unknown as TokenRow
 }
 
-// NEW: generate a token for a walk-in / not-yet-registered student, no students row required
+// generate a token for a walk-in / not-yet-registered student, no students row required
 export async function generateManualToken(params: {
   name: string
   hostelName?: string
   roomNumber?: string
   bedNumber?: string
-  mealPlanId: string
-  selectedSlots: string[]
-  validMonths: number
+  validFrom: string
+  validTill: string
 }) {
   const name = params.name.trim()
   if (!name) throw new Error('Student name is required')
+  if (!params.validFrom || !params.validTill) throw new Error('Valid From and Valid Till are required')
   const supabase = await createClient()
   const base = await nextSerial(supabase)
   const payload = {
@@ -112,10 +99,10 @@ export async function generateManualToken(params: {
     manual_hostel_name: params.hostelName?.trim() || null,
     manual_room_number: params.roomNumber?.trim() || null,
     manual_bed_number: params.bedNumber?.trim() || null,
-    meal_plan_id: params.mealPlanId,
-    selected_slots: params.selectedSlots,
+    selected_slots: [] as string[],
     serial_number: serialFor(base),
-    expiry_date: addMonths(new Date(), params.validMonths),
+    date_of_allotment: params.validFrom,
+    expiry_date: params.validTill,
     status: 'active' as const,
   }
   const { data, error } = await supabase.from('tokens').insert(payload).select(TOKEN_SELECT).single()
@@ -126,20 +113,19 @@ export async function generateManualToken(params: {
 
 export async function bulkGenerateTokens(params: {
   studentIds: string[]
-  mealPlanId: string
-  selectedSlots: string[]
-  validMonths: number
+  validFrom: string
+  validTill: string
 }) {
+  if (!params.validFrom || !params.validTill) throw new Error('Valid From and Valid Till are required')
   const supabase = await createClient()
   const base = await nextSerial(supabase)
-  const expiry = addMonths(new Date(), params.validMonths)
 
   const rows = params.studentIds.map((studentId, i) => ({
     student_id: studentId,
-    meal_plan_id: params.mealPlanId,
-    selected_slots: params.selectedSlots,
+    selected_slots: [] as string[],
     serial_number: serialFor(base + i),
-    expiry_date: expiry,
+    date_of_allotment: params.validFrom,
+    expiry_date: params.validTill,
     status: 'active' as const,
   }))
 
@@ -155,7 +141,6 @@ export async function cancelToken(id: string) {
   if (error) throw error
   revalidatePath('/admin/token')
 }
-
 
 export async function deleteToken(id: string) {
   const supabase = await createClient()

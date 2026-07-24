@@ -1,76 +1,38 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { getStudentsFiltered, getRoomsByHostel } from '@/app/lib/action/students'
+import { getStudents } from '@/app/lib/action/students'
 import { bulkGenerateTokens } from '@/app/lib/action/tokens'
 import { TokenCard, type TokenCardData } from './TokenCard'
 
-type Hostel = { id: string; name: string }
-type Room = { id: string; room_number: string }
-type MealPlan = { id: string; name: string; slots: string[] }
-type StudentPick = {
-  id: string
-  name: string
-  hostels?: { name: string } | null
-  rooms?: { room_number: string } | null
-  bed_number: string | null
-}
+const CARDS_PER_PAGE = 2
 
-export function TokenBulkForm({ hostels, mealPlans }: { hostels: Hostel[]; mealPlans: MealPlan[] }) {
-  const [hostelId, setHostelId] = useState('')
-  const [rooms, setRooms] = useState<Room[]>([])
-  const [roomId, setRoomId] = useState('')
-  const [batch, setBatch] = useState('')
-  const [mealPlanId, setMealPlanId] = useState(mealPlans[0]?.id ?? '')
-  const [selectedSlots, setSelectedSlots] = useState<string[]>(mealPlans[0]?.slots ?? [])
-  const [validMonths, setValidMonths] = useState(1)
-  const [perPage, setPerPage] = useState(2)
+export function TokenBulkForm() {
+  const [validFrom, setValidFrom] = useState('')
+  const [validTill, setValidTill] = useState('')
 
-  const [matched, setMatched] = useState<StudentPick[] | null>(null)
+  const [matchedCount, setMatchedCount] = useState<number | null>(null)
   const [tokens, setTokens] = useState<TokenCardData[]>([])
   const [pending, startTransition] = useTransition()
   const [exporting, setExporting] = useState(false)
 
-  const plan = mealPlans.find((p) => p.id === mealPlanId)
-
-  function onHostelChange(id: string) {
-    setHostelId(id)
-    setRoomId('')
-    if (!id) { setRooms([]); return }
-    getRoomsByHostel(id).then(setRooms)
-  }
-
-  function onPlanChange(id: string) {
-    setMealPlanId(id)
-    setSelectedSlots(mealPlans.find((p) => p.id === id)?.slots ?? [])
-  }
-
-  function toggleSlot(slot: string) {
-    setSelectedSlots((prev) => (prev.includes(slot) ? prev.filter((s) => s !== slot) : [...prev, slot]))
-  }
-
-  function findStudents() {
-    startTransition(async () => {
-      const students = await getStudentsFiltered({
-        hostelId: hostelId || undefined,
-        roomId: roomId || undefined,
-        batch: batch || undefined,
-      })
-      setMatched(students)
-      setTokens([])
-    })
-  }
-
   function generateTokens() {
-    if (!matched || matched.length === 0 || !mealPlanId) return
+    if (!validFrom || !validTill) return
     startTransition(async () => {
+      const students = await getStudents()
+      if (students.length === 0) {
+        setMatchedCount(0)
+        setTokens([])
+        return
+      }
+
       const rows = await bulkGenerateTokens({
-        studentIds: matched.map((s) => s.id),
-        mealPlanId,
-        selectedSlots,
-        validMonths,
+        studentIds: students.map((s) => s.id),
+        validFrom,
+        validTill,
       })
 
+      setMatchedCount(students.length)
       setTokens(
         rows.map((row: any) => ({
           tokenNo: String(row.token_number).padStart(2, '0'),
@@ -81,7 +43,7 @@ export function TokenBulkForm({ hostels, mealPlans }: { hostels: Hostel[]; mealP
           hostelName: row.students?.hostels?.name ?? 'Hostel',
           roomNumber: row.students?.rooms?.room_number ?? '',
           bedNumber: row.students?.bed_number,
-          slots: row.selected_slots ?? selectedSlots,
+          slots: row.selected_slots ?? [],
         }))
       )
     })
@@ -97,10 +59,9 @@ export function TokenBulkForm({ hostels, mealPlans }: { hostels: Hostel[]; mealP
     const pageW = pdf.internal.pageSize.getWidth()
     const pageH = pdf.internal.pageSize.getHeight()
     const margin = 24
-    const cols = perPage <= 2 ? 1 : 2
-    const rows = Math.ceil(perPage / cols)
-    const cellW = (pageW - margin * 2) / cols
-    const cellH = (pageH - margin * 2) / rows
+    // fixed: 2 cards per page, stacked vertically
+    const cellW = pageW - margin * 2
+    const cellH = (pageH - margin * 2) / CARDS_PER_PAGE
 
     const bank = document.getElementById('token-bulk-bank')!
     const cardEls = bank.querySelectorAll('.bulk-card')
@@ -112,15 +73,14 @@ export function TokenBulkForm({ hostels, mealPlans }: { hostels: Hostel[]; mealP
       // that triggered the export.
       const canvas = await html2canvas(el as HTMLElement, { scale: 2, backgroundColor: '#fdf6ee' })
       const img = canvas.toDataURL('image/png')
-      const posInPage = idx % perPage
+      const posInPage = idx % CARDS_PER_PAGE
       if (idx > 0 && posInPage === 0) pdf.addPage()
 
-      const col = posInPage % cols
-      const row = Math.floor(posInPage / cols)
+      const row = posInPage
       const ratio = canvas.height / canvas.width
       let w = cellW - 12, h = w * ratio
       if (h > cellH - 12) { h = cellH - 12; w = h / ratio }
-      const x = margin + col * cellW + (cellW - w) / 2
+      const x = margin + (cellW - w) / 2
       const y = margin + row * cellH + (cellH - h) / 2
       pdf.addImage(img, 'PNG', x, y, w, h)
       idx++
@@ -132,126 +92,55 @@ export function TokenBulkForm({ hostels, mealPlans }: { hostels: Hostel[]; mealP
 
   return (
     <div className="space-y-6">
-      <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-4 sm:p-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-4 sm:p-6 space-y-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Hostel</label>
-            <select
-              value={hostelId} onChange={(e) => onHostelChange(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            >
-              <option value="">All Hostels</option>
-              {hostels.map((h) => <option key={h.id} value={h.id}>{h.name}</option>)}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Room</label>
-            <select
-              value={roomId} onChange={(e) => setRoomId(e.target.value)} disabled={!hostelId}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm disabled:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            >
-              <option value="">All Rooms</option>
-              {rooms.map((r) => <option key={r.id} value={r.id}>{r.room_number}</option>)}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Batch</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Valid From</label>
             <input
-              value={batch} onChange={(e) => setBatch(e.target.value)}
-              placeholder="e.g. 2026-A"
+              type="date"
+              value={validFrom}
+              onChange={(e) => setValidFrom(e.target.value)}
               className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
-
-          <div className="flex items-end">
-            <button
-              onClick={findStudents} disabled={pending}
-              className="w-full px-4 py-2 rounded-lg bg-gray-900 text-white text-sm font-medium hover:bg-gray-800 disabled:opacity-50"
-            >
-              {pending ? 'Searching…' : 'Find Students'}
-            </button>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Valid Till</label>
+            <input
+              type="date"
+              value={validTill}
+              min={validFrom || undefined}
+              onChange={(e) => setValidTill(e.target.value)}
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            />
           </div>
         </div>
 
-        {matched && (
-          <p className="text-sm text-gray-600 mt-4">
-            <b>{matched.length}</b> student{matched.length !== 1 ? 's' : ''} matched.
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            onClick={generateTokens}
+            disabled={pending || !validFrom || !validTill}
+            className="px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 disabled:opacity-50"
+          >
+            {pending ? 'Generating…' : 'Generate All Tokens'}
+          </button>
+          {tokens.length > 0 && (
+            <button
+              onClick={exportPDF}
+              disabled={exporting}
+              className="px-4 py-2 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+            >
+              {exporting ? 'Building PDF…' : 'Download All as PDF'}
+            </button>
+          )}
+        </div>
+
+        {matchedCount !== null && (
+          <p className="text-sm text-gray-600">
+            <b>{matchedCount}</b> student{matchedCount !== 1 ? 's' : ''} found
+            {tokens.length > 0 ? ` — ${tokens.length} tokens generated.` : '.'}
           </p>
         )}
       </div>
-
-      {matched && matched.length > 0 && (
-        <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-4 sm:p-6 space-y-5">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Meal Plan</label>
-            <select
-              value={mealPlanId} onChange={(e) => onPlanChange(e.target.value)}
-              className="w-full sm:w-64 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            >
-              {mealPlans.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
-            </select>
-          </div>
-
-          {plan && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Time Slots</label>
-              <div className="flex flex-wrap gap-2">
-                {plan.slots.map((slot) => (
-                  <button
-                    key={slot} type="button" onClick={() => toggleSlot(slot)}
-                    className={
-                      'px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ' +
-                      (selectedSlots.includes(slot)
-                        ? 'bg-indigo-600 text-white border-indigo-600'
-                        : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50')
-                    }
-                  >
-                    {slot}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Valid For (months)</label>
-              <input
-                type="number" min={1} value={validMonths}
-                onChange={(e) => setValidMonths(parseInt(e.target.value) || 1)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Cards Per PDF Page</label>
-              <select
-                value={perPage} onChange={(e) => setPerPage(parseInt(e.target.value))}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              >
-                {[1, 2, 4, 6, 8].map((n) => <option key={n} value={n}>{n}</option>)}
-              </select>
-            </div>
-            <div className="flex flex-wrap items-end gap-2">
-              <button
-                onClick={generateTokens} disabled={pending}
-                className="px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 disabled:opacity-50"
-              >
-                {pending ? 'Generating…' : `Generate ${matched.length} Tokens`}
-              </button>
-              {tokens.length > 0 && (
-                <button
-                  onClick={exportPDF} disabled={exporting}
-                  className="px-4 py-2 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-                >
-                  {exporting ? 'Building PDF…' : 'Download All as PDF'}
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
 
       {tokens.length > 0 && (
         <div>

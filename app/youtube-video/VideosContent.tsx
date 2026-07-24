@@ -357,7 +357,6 @@ export default function VideosContent({ videos }: { videos: DbVideo[] }) {
   return (
     <>
       <VideosHero />
-      <VideoCategories />
       <VideoGrid videos={videos} />
       <SubscribeCTA />
     </>

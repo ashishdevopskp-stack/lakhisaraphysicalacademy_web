@@ -16,7 +16,6 @@ export const nav = [
   { label: "Notifications", href: "/notification" },
   { label: "Jobs", href: "/jobs" },
   { label: "Videos", href: "/youtube-video" },
-  { label: "Admission", href: "/admission-form" },
 ];
 
 export const ABOUT_NAV = [
@@ -25,7 +24,6 @@ export const ABOUT_NAV = [
   { href: "/about/ourstory", label: "Our Story" },
   { href: "/about/whatwetrain", label: "What We Train" },
   { href: "/about/facilities", label: "Facilities" },
-  { href: "/about/achievements", label: "Achievements" },
 ];
 
 export const COURSES_NAV = [

@@ -403,7 +403,6 @@ export default function JobsClient({ jobs }: { jobs: JobItem[] }) {
   return (
     <>
       <JobsHero />
-      <JobCategories />
       <JobListings jobs={jobs} />
       {/* <GuidanceVideos />
       <RelatedBlogs />
