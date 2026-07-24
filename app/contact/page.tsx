@@ -226,9 +226,9 @@ function AcademyTimings() {
    ========================================================= */
 function ConnectWithUs() {
   const links = [
-    { label: "YouTube", icon: Youtube, href: "https://youtube.com" },
-    { label: "Facebook", icon: Facebook, href: "https://facebook.com" },
-    { label: "Instagram", icon: Instagram, href: "https://instagram.com" },
+    { label: "YouTube", icon: Youtube, href: "https://www.youtube.com/@lakhisaraiphysicalacademy?si=S80l_B7Z0lWTtZSU" },
+    { label: "Facebook", icon: Facebook, href: "https://www.facebook.com/trainer.ganesh.2025?rdid=VKCg5epDr9XWKwf5&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1SsmvbtHrj%2F" },
+    { label: "Instagram", icon: Instagram, href: "https://www.instagram.com/lakhisarai_physical_academy?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" },
     { label: "WhatsApp", icon: MessageCircle, href: whatsappHref() },
   ];
 

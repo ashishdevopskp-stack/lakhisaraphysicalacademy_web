@@ -148,7 +148,7 @@ function StayUpdatedCTA() {
                 Join WhatsApp Channel
               </Button>
               {/* TODO: replace with your actual YouTube channel/video URL */}
-              <Button href="https://youtube.com" variant="primary" icon={Video}>
+              <Button href="https://www.youtube.com/@lakhisaraiphysicalacademy?si=S80l_B7Z0lWTtZSU" variant="primary" icon={Video}>
                 Subscribe on YouTube
               </Button>
             </div>

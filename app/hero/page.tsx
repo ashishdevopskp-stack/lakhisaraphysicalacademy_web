@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { ClipboardList, Phone, MessageCircle, ArrowRight } from "lucide-react";
+import { ClipboardList, Phone, MessageCircle, ArrowRight, Smartphone } from "lucide-react";
 import Container from "../components/Container";
 import EnrollForm from "../components/EnrollForm";
 
@@ -12,6 +12,8 @@ const PILL_COLORS = ["pill-color-1", "pill-color-2", "pill-color-3", "pill-color
 const EASE = [0.22, 0.61, 0.36, 1] as const;
 
 const PHONE_NUMBER = "918863081082";
+const PLAY_STORE_URL =
+  "https://play.google.com/store/apps/details?id=com.lakhisarai.physical_academy";
 
 const pillContainer = {
   hidden: {},
@@ -137,11 +139,39 @@ export default function Hero() {
               </a>
             </motion.div>
 
+            {/* App download strip — its own row so it reads as a distinct, secondary action */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: EASE, delay: 0.45 }}
+              className="mt-4"
+            >
+              <a
+                href={PLAY_STORE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center gap-3 rounded-full border border-line bg-surface/80 py-2 pl-2 pr-4 shadow-[var(--shadow-card)] backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-signal/40 hover:shadow-[var(--shadow-card-hover)]"
+              >
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-signal/10 text-signal transition-colors duration-200 group-hover:bg-signal group-hover:text-white">
+                  <Smartphone className="h-4 w-4" />
+                </span>
+                <span className="flex flex-col leading-tight">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-text-faint">
+                    Available on Google Play
+                  </span>
+                  <span className="text-[13px] font-semibold text-text">
+                    Download Our App
+                  </span>
+                </span>
+                <ArrowRight className="h-4 w-4 text-text-faint transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-signal" />
+              </a>
+            </motion.div>
+
             {/* Trust strip — quick reassurance under the CTAs */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, ease: EASE, delay: 0.5 }}
+              transition={{ duration: 0.5, ease: EASE, delay: 0.55 }}
               className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-text-faint"
             >
               <span className="flex items-center gap-1.5">
@@ -186,6 +216,24 @@ export default function Hero() {
                 aria-hidden
                 className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/40 to-transparent"
               />
+
+              {/* Floating "on Google Play" badge — top corner of the photo, clickable */}
+              <motion.a
+                href={PLAY_STORE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, ease: EASE, delay: 0.65 }}
+                className="absolute right-3 top-3 flex items-center gap-2 rounded-full bg-black/55 py-1.5 pl-1.5 pr-3 text-white backdrop-blur-md transition-transform duration-200 hover:-translate-y-0.5 hover:bg-black/70"
+              >
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/15">
+                  <Smartphone className="h-3.5 w-3.5" />
+                </span>
+                <span className="text-[11px] font-semibold leading-none">
+                  Get the App
+                </span>
+              </motion.a>
             </div>
 
             <motion.div

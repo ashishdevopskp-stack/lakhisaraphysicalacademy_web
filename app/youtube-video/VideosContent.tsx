@@ -76,7 +76,7 @@ function VideosHero() {
             <Button href="#videos" variant="primary" icon={PlayCircle}>
               Watch Videos
             </Button>
-            <Button href="https://youtube.com" variant="secondary" icon={Youtube}>
+            <Button href="https://www.youtube.com/@lakhisaraiphysicalacademy?si=S80l_B7Z0lWTtZSU" variant="secondary" icon={Youtube}>
               Subscribe on YouTube
             </Button>
             <Button href={`https://wa.me/${PHONE_NUMBER}`} variant="whatsapp" icon={MessageCircle}>
@@ -336,7 +336,7 @@ function SubscribeCTA() {
               training sessions and recruitment updates.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <Button href="https://youtube.com" variant="primary" icon={Youtube}>
+              <Button href="https://www.youtube.com/@lakhisaraiphysicalacademy?si=S80l_B7Z0lWTtZSU" variant="primary" icon={Youtube}>
                 Subscribe on YouTube
               </Button>
               <Button href={`https://wa.me/${PHONE_NUMBER}`} variant="whatsapp" icon={MessageCircle}>
