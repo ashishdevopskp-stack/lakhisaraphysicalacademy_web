@@ -107,9 +107,16 @@ export function JobManagementView({ initialJobs }: { initialJobs: DbJob[] }) {
             className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 hover:bg-orange-50/20 transition-colors"
           >
             <div className="flex items-start gap-4 min-w-0">
-              <div className="h-12 w-12 rounded-2xl bg-orange-50 border border-orange-200 flex items-center justify-center shrink-0 text-[#ea580c] font-bold">
-                <Briefcase size={22} />
-              </div>
+              {job.thumbnail_url ? (
+                <div className="h-12 w-12 rounded-2xl border border-orange-200 overflow-hidden shrink-0">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={job.thumbnail_url} alt={job.title} className="h-full w-full object-cover" />
+                </div>
+              ) : (
+                <div className="h-12 w-12 rounded-2xl bg-orange-50 border border-orange-200 flex items-center justify-center shrink-0 text-[#ea580c] font-bold">
+                  <Briefcase size={22} />
+                </div>
+              )}
               <div className="min-w-0 space-y-1">
                 <div className="flex flex-wrap items-center gap-2">
                   <h3 className="font-display text-base font-black text-slate-900">

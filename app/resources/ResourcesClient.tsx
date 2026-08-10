@@ -176,15 +176,26 @@ function ResourceGrid({ resources }: { resources: ResourceItem[] }) {
           <StaggerList className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {filtered.map((resource) => (
               <StaggerItem key={resource.id} className="card-flat flex flex-col p-5">
-                <div
-                  className="flex aspect-[4/3] items-center justify-center rounded-lg border border-line"
-                  style={{
-                    background:
-                      "radial-gradient(circle at 30% 20%, rgba(255,255,255,0.06) 0%, transparent 75%)",
-                  }}
-                >
-                  <FileText size={26} className="text-text-faint" />
-                </div>
+                {resource.thumbnailUrl ? (
+                  <div className="relative overflow-hidden rounded-lg border border-line aspect-[4/3]">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={resource.thumbnailUrl}
+                      alt={resource.title}
+                      className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                    />
+                  </div>
+                ) : (
+                  <div
+                    className="flex aspect-[4/3] items-center justify-center rounded-lg border border-line"
+                    style={{
+                      background:
+                        "radial-gradient(circle at 30% 20%, rgba(255,255,255,0.06) 0%, transparent 75%)",
+                    }}
+                  >
+                    <FileText size={26} className="text-text-faint" />
+                  </div>
+                )}
 
                 <div className="mt-4 flex items-center justify-between gap-2">
                   <Badge>{resource.category}</Badge>

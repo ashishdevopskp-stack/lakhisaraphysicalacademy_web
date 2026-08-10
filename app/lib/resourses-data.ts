@@ -43,6 +43,7 @@ export interface ResourceItem {
   hasVideo: boolean;
   fileUrl: string | null;
   videoUrl: string | null;
+  thumbnailUrl: string | null;
 }
 
 export function mapDbResourceToResourceItem(db: DbResource): ResourceItem {
@@ -60,5 +61,6 @@ export function mapDbResourceToResourceItem(db: DbResource): ResourceItem {
     hasVideo: db.has_video,
     fileUrl: db.file_url,
     videoUrl: db.video_url,
+    thumbnailUrl: db.thumbnail_url,
   };
 }
