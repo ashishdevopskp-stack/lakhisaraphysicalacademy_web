@@ -166,15 +166,16 @@ function AboutHero() {
 
               <div className="pt-2 flex flex-wrap items-center gap-3">
                 <a
-                  href={`https://wa.me/${PHONE_NUMBER}?text=${WHATSAPP_MESSAGE}`}
+                  href={`https://wa.me/917903594008?text=${encodeURIComponent("Hi Coach Mahesh Sir, I would like to ask a question regarding physical training.")}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-orange text-xs py-2.5 px-5"
+                  className="btn-orange text-xs py-3 px-6 font-black rounded-full shadow-lg flex items-center gap-2"
                 >
-                  <MessageCircle size={15} />
-                  <span>Ask Coach Mahesh Sir</span>
+                  <MessageCircle size={16} />
+                  <span>Ask Coach Mahesh Sir (+91 7903594008)</span>
                 </a>
               </div>
+
             </div>
           </div>
         </div>
