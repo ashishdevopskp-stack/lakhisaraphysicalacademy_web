@@ -172,7 +172,7 @@ export default function Footer() {
 
               <div className="flex flex-wrap items-center gap-3 shrink-0">
                 <a
-                  href="/admission-form"
+                  href={telHref()}
                   className="btn-orange shadow-lg shadow-orange-500/25 hover:scale-105 transition-all"
                 >
                   <ClipboardList className="h-4 w-4" />

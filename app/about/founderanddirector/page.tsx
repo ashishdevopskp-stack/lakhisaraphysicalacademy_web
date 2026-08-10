@@ -64,7 +64,7 @@ export default function FounderAndDirector() {
                 <Button href={telHref(PHONE_NUMBER)} variant="primary" icon={Phone}>
                   Contact Now
                 </Button>
-                <Button href="#admission" variant="secondary" icon={ClipboardList}>
+                <Button href={telHref(PHONE_NUMBER)} variant="secondary" icon={ClipboardList}>
                   Apply for Admission
                 </Button>
                 <Button href={whatsappHref()} variant="whatsapp" icon={MessageCircle}>

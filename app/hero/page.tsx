@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import {
   ClipboardList,
@@ -14,16 +13,13 @@ import {
   CheckCircle2,
   Calendar,
   Flag,
-  Flame,
   MessageCircle,
 } from "lucide-react";
 import Container from "../components/Container";
-import EnrollForm from "../components/EnrollForm";
 
 const PHONE_NUMBER = "917739776471";
 
 export default function Hero() {
-  const [enrollOpen, setEnrollOpen] = useState(false);
 
   return (
     <section id="top" className="pb-12 pt-3 sm:pb-20 sm:pt-5 overflow-hidden">
@@ -54,15 +50,14 @@ export default function Hero() {
 
               {/* Action Pill CTAs */}
               <div className="mt-8 flex flex-wrap items-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => setEnrollOpen(true)}
+                <a
+                  href={`tel:+${PHONE_NUMBER}`}
                   className="btn-orange"
                 >
                   <ClipboardList className="h-4 w-4" />
                   <span>Apply for Admission</span>
                   <ArrowRight className="h-4 w-4" />
-                </button>
+                </a>
 
                 <a
                   href={`tel:+${PHONE_NUMBER}`}
@@ -153,13 +148,12 @@ export default function Hero() {
                   </div>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={() => setEnrollOpen(true)}
+                <a
+                  href={`tel:+${PHONE_NUMBER}`}
                   className="w-full mt-4 btn-orange text-center justify-center text-sm py-2.5"
                 >
                   Join Physical Batch Now
-                </button>
+                </a>
               </div>
             </div>
 
@@ -279,8 +273,6 @@ export default function Hero() {
           </div>
         </div>
       </Container>
-
-      <EnrollForm open={enrollOpen} onClose={() => setEnrollOpen(false)} />
     </section>
   );
 }

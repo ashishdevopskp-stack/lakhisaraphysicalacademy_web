@@ -39,7 +39,7 @@ export default function Courses() {
             </div>
 
             <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Button href="/admission-form" variant="primary" icon={ClipboardList}>
+              <Button href={telHref()} variant="primary" icon={ClipboardList}>
                 Apply for Admission
               </Button>
               <Button href={whatsappHref()} variant="secondary" icon={MessageCircle}>
