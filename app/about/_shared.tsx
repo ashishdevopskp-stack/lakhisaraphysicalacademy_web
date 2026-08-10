@@ -37,7 +37,6 @@ export const ABOUT_NAV = [
   { href: "/about/ourstory", label: "Our Story" },
   { href: "/about/whatwetrain", label: "What We Train" },
   { href: "/about/facilities", label: "Facilities" },
-  { href: "/about/achievements", label: "Achievements" },
 ];
 
 export function AboutSubNav({ current }: { current: string }) {
