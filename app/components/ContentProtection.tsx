@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { ShieldAlert, Lock, EyeOff } from "lucide-react";
+import { Lock, EyeOff } from "lucide-react";
 
 export default function ContentProtection() {
   const [isWindowBlurred, setIsWindowBlurred] = useState(false);
@@ -107,15 +107,6 @@ export default function ContentProtection() {
           </div>
         </div>
       )}
-
-      {/* Invisible Security Watermark Grid to Deter Screen Recording */}
-      <div className="pointer-events-none fixed inset-0 z-[9999] opacity-[0.035] select-none overflow-hidden flex flex-wrap gap-12 p-8 text-[11px] font-black uppercase text-slate-900 tracking-widest rotate-[-15deg]">
-        {[...Array(30)].map((_, i) => (
-          <span key={i} className="whitespace-nowrap">
-            Lakhisarai Physical Academy • Protected Content • +91 7739776471
-          </span>
-        ))}
-      </div>
     </>
   );
 }
