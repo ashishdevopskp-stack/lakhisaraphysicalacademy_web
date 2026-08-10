@@ -5,11 +5,10 @@ import { useFormStatus } from 'react-dom'
 import type { DbBlog } from '@/app/lib/action/blogs'
 import { BLOG_CATEGORY_LABELS } from '@/app/lib/blogs-data'
 
-const MAX_IMAGE_MB = 5
-const MAX_IMAGE_COMPRESSED_TARGET_MB = 1.5 // we try to get under this after compression
-const MAX_PDF_MB = 10
+const MAX_IMAGE_MB = 10
+const MAX_PDF_MB = 15
 const URL_PATTERN = /^https?:\/\//
-const IMAGE_MAX_DIMENSION = 1600 // px, longest side
+const IMAGE_MAX_DIMENSION = 1600
 
 function Spinner() {
   return (
@@ -27,21 +26,20 @@ function SubmitButton({ label, blocked }: { label: string; blocked: boolean }) {
     <button
       type="submit"
       disabled={disabled}
-      className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 disabled:cursor-not-allowed text-white rounded-lg py-2.5 text-sm font-medium transition-colors flex items-center justify-center gap-2"
+      className="btn-orange w-full py-3.5 text-sm font-black tracking-wide shadow-xl shadow-orange-500/20 disabled:opacity-50 flex items-center justify-center gap-2"
     >
       {pending && <Spinner />}
-      {pending ? 'Saving…' : label}
+      {pending ? 'Saving & Publishing…' : label}
     </button>
   )
 }
 
-/** Resizes + re-encodes an image in the browser to cut upload size before it hits the server. */
-async function compressImage(file: File): Promise<File> {
-  // Skip formats that don't benefit / can break canvas decode (e.g. animated gifs, svg)
+async function compressImageToWebp(file: File): Promise<File> {
+  if (!file.type.startsWith('image/')) return file
   if (file.type === 'image/svg+xml' || file.type === 'image/gif') return file
 
   const bitmap = await createImageBitmap(file).catch(() => null)
-  if (!bitmap) return file // fall back to original if decode fails
+  if (!bitmap) return file
 
   let { width, height } = bitmap
   if (Math.max(width, height) > IMAGE_MAX_DIMENSION) {
@@ -57,23 +55,15 @@ async function compressImage(file: File): Promise<File> {
   if (!ctx) return file
   ctx.drawImage(bitmap, 0, 0, width, height)
 
-  // Try WebP first, fall back to JPEG if the browser can't encode it
   const tryEncode = (type: string, quality: number) =>
     new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, type, quality))
 
-  let blob = await tryEncode('image/webp', 0.8)
-  let ext = 'webp'
-  if (!blob) {
-    blob = await tryEncode('image/jpeg', 0.82)
-    ext = 'jpg'
-  }
-  if (!blob) return file // give up, use original
+  let blob = await tryEncode('image/webp', 0.82)
+  if (!blob) blob = await tryEncode('image/jpeg', 0.82)
+  if (!blob || blob.size >= file.size) return file
 
-  // If compression somehow made it bigger (rare, e.g. tiny already-optimized images), keep original
-  if (blob.size >= file.size) return file
-
-  const newName = file.name.replace(/\.[^.]+$/, '') + `.${ext}`
-  return new File([blob], newName, { type: blob.type })
+  const newName = file.name.replace(/\.[^.]+$/, '') + '.webp'
+  return new File([blob], newName, { type: 'image/webp' })
 }
 
 export function BlogForm({
@@ -96,6 +86,19 @@ export function BlogForm({
   const imageInputRef = useRef<HTMLInputElement>(null)
   const pdfUrlInputRef = useRef<HTMLInputElement>(null)
 
+  // Custom Category state
+  const isCategoryKnown = BLOG_CATEGORY_LABELS.includes(initialData?.category as any)
+  const [selectedCategory, setSelectedCategory] = useState<string>(
+    initialData?.category
+      ? isCategoryKnown
+        ? initialData.category
+        : '__custom__'
+      : BLOG_CATEGORY_LABELS[0]
+  )
+  const [customCategoryInput, setCustomCategoryInput] = useState<string>(
+    initialData?.category && !isCategoryKnown ? initialData.category : ''
+  )
+
   async function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     setCompressedInfo(null)
@@ -104,32 +107,29 @@ export function BlogForm({
       return
     }
     if (!file.type.startsWith('image/')) {
-      setFileError('Please choose an image file.')
-      e.target.value = ''
+      setFileError('Please choose a valid image file.')
       return
     }
     if (file.size > MAX_IMAGE_MB * 1024 * 1024) {
       setFileError(`Image must be under ${MAX_IMAGE_MB}MB.`)
-      e.target.value = ''
       return
     }
     setFileError(null)
     setIsCompressing(true)
     try {
-      const compressed = await compressImage(file)
+      const compressed = await compressImageToWebp(file)
       if (compressed !== file && imageInputRef.current) {
         const dt = new DataTransfer()
         dt.items.add(compressed)
         imageInputRef.current.files = dt.files
+        const origSizeKb = (file.size / 1024).toFixed(0)
+        const compSizeKb = (compressed.size / 1024).toFixed(0)
         const savedPct = Math.round((1 - compressed.size / file.size) * 100)
         setCompressedInfo(
-          savedPct > 0
-            ? `Compressed to ${(compressed.size / 1024 / 1024).toFixed(2)}MB (${savedPct}% smaller).`
-            : `Using original (${(file.size / 1024 / 1024).toFixed(2)}MB).`
+          `⚡ Auto-compressed to WebP (${compSizeKb} KB from ${origSizeKb} KB — ${savedPct}% smaller)`
         )
       }
     } catch {
-      // Compression failing is non-fatal — original file still gets uploaded.
       setCompressedInfo(null)
     } finally {
       setIsCompressing(false)
@@ -153,7 +153,6 @@ export function BlogForm({
       return
     }
     setPdfFileError(null)
-    // If a file is chosen, clear the URL field so we don't send both.
     if (pdfUrlInputRef.current) pdfUrlInputRef.current.value = ''
     setPdfUrlError(null)
   }
@@ -167,6 +166,9 @@ export function BlogForm({
     }
   }
 
+  const finalCategory =
+    selectedCategory === '__custom__' ? customCategoryInput.trim() || 'General' : selectedCategory
+
   const blocked = Boolean(
     fileError || pdfFileError || videoUrlError || pdfUrlError || isCompressing
   )
@@ -174,201 +176,186 @@ export function BlogForm({
   return (
     <form
       action={(formData) => {
-        // Wrapping in a transition just keeps the UI responsive while the
-        // server action (which includes uploads) runs.
+        formData.set('category', finalCategory)
         startTransition(() => {
           action(formData)
         })
       }}
-      className="space-y-5"
+      className="space-y-6"
     >
       {initialData?.image_url && (
-        <div>
-          <p className="text-sm font-medium mb-2 text-gray-700">Current Cover Image</p>
+        <div className="p-3 bg-slate-50 border border-slate-200 rounded-2xl">
+          <p className="text-xs font-bold text-slate-500 mb-2">Current Cover Image</p>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={initialData.image_url}
             alt={initialData.title}
-            className="w-24 h-24 rounded-lg object-cover border border-gray-200"
+            className="w-24 h-24 rounded-xl object-cover border border-slate-200"
           />
         </div>
       )}
 
-      <div>
-        <label htmlFor="image" className="block text-sm font-medium mb-1.5 text-gray-700">
-          {initialData ? 'Replace Cover Image (optional)' : 'Cover Image'}
+      {/* Cover Image Upload Zone */}
+      <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-3">
+        <label htmlFor="image" className="block text-xs font-black uppercase tracking-wider text-slate-800">
+          {initialData ? 'Replace Cover Image (Optional)' : 'Blog Cover Image'}
         </label>
         <input
           ref={imageInputRef}
           id="image"
           name="image"
           type="file"
-          accept="image/*"
+          accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.bmp,.heic"
           onChange={handleImageChange}
-          className="w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-gray-100 file:text-sm file:text-gray-700 hover:file:bg-gray-200 file:cursor-pointer cursor-pointer"
+          className="w-full text-xs text-slate-500 file:mr-3 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:bg-slate-100 file:text-xs file:font-black file:text-slate-700 hover:file:bg-slate-200 file:cursor-pointer cursor-pointer"
         />
-        {fileError && <p className="text-xs text-red-600 mt-1.5">{fileError}</p>}
-        {isCompressing && (
-          <p className="text-xs text-gray-500 mt-1.5 flex items-center gap-1.5">
-            <Spinner /> Compressing image…
+        {fileError && <p className="text-xs font-bold text-red-600">{fileError}</p>}
+        {isCompressing && <p className="text-xs font-bold text-slate-500">⚡ Converting cover image to WebP…</p>}
+        {!isCompressing && compressedInfo && (
+          <p className="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-200 inline-block">
+            {compressedInfo}
           </p>
         )}
-        {!isCompressing && compressedInfo && (
-          <p className="text-xs text-green-600 mt-1.5">{compressedInfo}</p>
-        )}
-        <p className="text-xs text-gray-400 mt-1.5">
-          JPG, PNG, or WebP. Max {MAX_IMAGE_MB}MB — large images are auto-compressed before upload.
+        <p className="text-[11px] text-slate-400">
+          All image formats supported. Images are auto-compressed to WebP format in KB to keep loading instant.
         </p>
       </div>
 
-      <div>
-        <label htmlFor="title" className="block text-sm font-medium mb-1.5 text-gray-700">Title</label>
-        <input
-          id="title" name="title" type="text" required maxLength={200}
-          defaultValue={initialData?.title}
-          placeholder="e.g. How to Improve Your 1.6 KM Run Time"
-          className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg px-3.5 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-colors"
-        />
-      </div>
-
-      <div>
-        <label htmlFor="subtitle" className="block text-sm font-medium mb-1.5 text-gray-700">
-          Subtitle <span className="text-gray-400">(optional)</span>
-        </label>
-        <input
-          id="subtitle" name="subtitle" type="text" maxLength={300}
-          defaultValue={initialData?.subtitle ?? undefined}
-          className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg px-3.5 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-colors"
-        />
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {/* Title & Subtitle */}
+      <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-4">
         <div>
-          <label htmlFor="author" className="block text-sm font-medium mb-1.5 text-gray-700">Author</label>
-          <input
-            id="author" name="author" type="text" required maxLength={100}
-            defaultValue={initialData?.author}
-            className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg px-3.5 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-colors"
-          />
-        </div>
-        <div>
-          <label htmlFor="category" className="block text-sm font-medium mb-1.5 text-gray-700">Category</label>
-          <select
-            id="category" name="category" required
-            defaultValue={initialData?.category ?? BLOG_CATEGORY_LABELS[0]}
-            className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg px-3.5 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-colors"
-          >
-            {BLOG_CATEGORY_LABELS.map((c) => (
-              <option key={c} value={c}>{c}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div>
-          <label htmlFor="publishDate" className="block text-sm font-medium mb-1.5 text-gray-700">Publish Date</label>
-          <input
-            id="publishDate" name="publishDate" type="date"
-            defaultValue={initialData?.publish_date ?? new Date().toISOString().slice(0, 10)}
-            className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg px-3.5 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-colors"
-          />
-        </div>
-        <div>
-          <label htmlFor="readingTime" className="block text-sm font-medium mb-1.5 text-gray-700">
-            Reading Time <span className="text-gray-400">(optional)</span>
+          <label htmlFor="title" className="block text-xs font-black uppercase tracking-wider text-slate-800 mb-2">
+            Blog Title <span className="text-red-500">*</span>
           </label>
           <input
-            id="readingTime" name="readingTime" type="text" maxLength={30}
-            defaultValue={initialData?.reading_time ?? undefined}
-            placeholder="e.g. 6 min read"
-            className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg px-3.5 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-colors"
+            id="title"
+            name="title"
+            type="text"
+            required
+            maxLength={200}
+            defaultValue={initialData?.title}
+            placeholder="e.g. How to Improve Your 1600m Running Timing"
+            className="w-full bg-white border border-slate-200 text-slate-900 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-[#ea580c] focus:ring-4 focus:ring-orange-500/10 transition-all"
+          />
+        </div>
+
+        <div>
+          <label htmlFor="subtitle" className="block text-xs font-black uppercase tracking-wider text-slate-800 mb-2">
+            Subtitle / Summary <span className="text-slate-400">(Optional)</span>
+          </label>
+          <input
+            id="subtitle"
+            name="subtitle"
+            type="text"
+            maxLength={300}
+            defaultValue={initialData?.subtitle ?? undefined}
+            className="w-full bg-white border border-slate-200 text-slate-900 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:border-[#ea580c] focus:ring-4 focus:ring-orange-500/10 transition-all"
           />
         </div>
       </div>
 
-      <div>
-        <label htmlFor="content" className="block text-sm font-medium mb-1.5 text-gray-700">
-          Content <span className="text-gray-400">(optional)</span>
-        </label>
-        <textarea
-          id="content" name="content" rows={6}
-          defaultValue={initialData?.content ?? undefined}
-          placeholder="Full article body"
-          className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg px-3.5 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-colors resize-y"
-        />
-      </div>
+      {/* Author & Category Dropdown with Custom Mention */}
+      <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="author" className="block text-xs font-black uppercase tracking-wider text-slate-800 mb-2">
+              Author
+            </label>
+            <input
+              id="author"
+              name="author"
+              type="text"
+              required
+              maxLength={100}
+              defaultValue={initialData?.author ?? 'Ganesh Sir'}
+              className="w-full bg-white border border-slate-200 text-slate-900 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-[#ea580c] focus:ring-4 focus:ring-orange-500/10 transition-all"
+            />
+          </div>
 
-      <div>
-        <label htmlFor="videoUrl" className="block text-sm font-medium mb-1.5 text-gray-700">
-          Video URL <span className="text-gray-400">(optional)</span>
-        </label>
-        <input
-          id="videoUrl"
-          name="videoUrl"
-          type="url"
-          placeholder="https://..."
-          defaultValue={initialData?.video_url ?? undefined}
-          onBlur={(e) => validateUrl(e.target.value, setVideoUrlError)}
-          className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg px-3.5 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-colors"
-        />
-        {videoUrlError && <p className="text-xs text-red-600 mt-1.5">{videoUrlError}</p>}
-      </div>
+          <div>
+            <label htmlFor="category" className="block text-xs font-black uppercase tracking-wider text-slate-800 mb-2">
+              Blog Category
+            </label>
+            <select
+              id="category"
+              name="catSelect"
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="w-full bg-white border border-slate-200 text-slate-900 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-[#ea580c] focus:ring-4 focus:ring-orange-500/10 transition-all cursor-pointer"
+            >
+              {BLOG_CATEGORY_LABELS.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+              <option value="__custom__">➕ Custom (Mention)...</option>
+            </select>
+          </div>
+        </div>
 
-      <div className="border border-gray-200 rounded-lg p-4 space-y-3">
-        <p className="text-sm font-medium text-gray-700">PDF Attachment <span className="text-gray-400 font-normal">(optional)</span></p>
-
-        {initialData?.pdf_url && (
-          <a
-            href={initialData.pdf_url}
-            target="_blank"
-            rel="noreferrer"
-            className="text-xs text-indigo-600 hover:underline block"
-          >
-            Current PDF ↗
-          </a>
+        {/* Custom Mention Input Box */}
+        {selectedCategory === '__custom__' && (
+          <div className="p-4 rounded-2xl bg-orange-50/50 border border-orange-200 space-y-2 animate-[fadeIn_0.15s_ease-out]">
+            <label htmlFor="customCategoryInput" className="block text-xs font-black uppercase tracking-wider text-[#ea580c]">
+              Enter Custom Category Name (Mention):
+            </label>
+            <input
+              id="customCategoryInput"
+              type="text"
+              required
+              value={customCategoryInput}
+              onChange={(e) => setCustomCategoryInput(e.target.value)}
+              placeholder="e.g. Special Army Fitness, Medical Tips, High Jump Guide"
+              className="w-full bg-white border border-slate-300 text-slate-900 rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:border-[#ea580c] focus:ring-2 focus:ring-orange-500/20"
+            />
+          </div>
         )}
+      </div>
 
-        <div>
-          <label htmlFor="pdfFile" className="block text-xs font-medium mb-1.5 text-gray-600">
-            Upload a PDF
-          </label>
-          <input
-            id="pdfFile"
-            name="pdfFile"
-            type="file"
-            accept="application/pdf"
-            onChange={handlePdfFileChange}
-            className="w-full text-sm text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-gray-100 file:text-sm file:text-gray-700 hover:file:bg-gray-200 file:cursor-pointer cursor-pointer"
-          />
-          {pdfFileError && <p className="text-xs text-red-600 mt-1.5">{pdfFileError}</p>}
-          <p className="text-xs text-gray-400 mt-1.5">Max {MAX_PDF_MB}MB.</p>
+      {/* Date & Reading Time */}
+      <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="publishDate" className="block text-xs font-black uppercase tracking-wider text-slate-800 mb-2">
+              Publish Date
+            </label>
+            <input
+              id="publishDate"
+              name="publishDate"
+              type="date"
+              defaultValue={initialData?.publish_date ?? new Date().toISOString().slice(0, 10)}
+              className="w-full bg-white border border-slate-200 text-slate-900 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-[#ea580c] focus:ring-4 focus:ring-orange-500/10 transition-all"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="readingTime" className="block text-xs font-black uppercase tracking-wider text-slate-800 mb-2">
+              Reading Time
+            </label>
+            <input
+              id="readingTime"
+              name="readingTime"
+              type="text"
+              maxLength={30}
+              defaultValue={initialData?.reading_time ?? '5 min read'}
+              placeholder="e.g. 5 min read"
+              className="w-full bg-white border border-slate-200 text-slate-900 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-[#ea580c] focus:ring-4 focus:ring-orange-500/10 transition-all"
+            />
+          </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <div className="flex-1 h-px bg-gray-200" />
-          <span className="text-xs text-gray-400">or link one</span>
-          <div className="flex-1 h-px bg-gray-200" />
-        </div>
-
         <div>
-          <label htmlFor="pdfUrl" className="block text-xs font-medium mb-1.5 text-gray-600">
-            PDF URL
+          <label htmlFor="content" className="block text-xs font-black uppercase tracking-wider text-slate-800 mb-2">
+            Blog Article Body / Content
           </label>
-          <input
-            ref={pdfUrlInputRef}
-            id="pdfUrl"
-            name="pdfUrl"
-            type="url"
-            placeholder="https://..."
-            defaultValue={initialData?.pdf_url ?? undefined}
-            onBlur={(e) => validateUrl(e.target.value, setPdfUrlError)}
-            className="w-full bg-white border border-gray-300 text-gray-900 rounded-lg px-3.5 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-colors"
+          <textarea
+            id="content"
+            name="content"
+            rows={7}
+            defaultValue={initialData?.content ?? undefined}
+            placeholder="Full article content body"
+            className="w-full bg-white border border-slate-200 text-slate-900 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:border-[#ea580c] focus:ring-4 focus:ring-orange-500/10 transition-all resize-y"
           />
-          {pdfUrlError && <p className="text-xs text-red-600 mt-1.5">{pdfUrlError}</p>}
-          <p className="text-xs text-gray-400 mt-1.5">
-            Uploading a file above takes priority over this link.
-          </p>
         </div>
       </div>
 

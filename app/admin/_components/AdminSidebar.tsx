@@ -70,10 +70,10 @@ const NAV: NavItem[] = [
     ],
   },
   {
-    label: 'Results', href: '/admin/results', icon: Award,
+    label: 'Placed Achievements', href: '/admin/results', icon: Award,
     children: [
-      { label: 'All Results', href: '/admin/results' },
-      { label: 'Add Result', href: '/admin/results/new' },
+      { label: 'All Placed Students', href: '/admin/results' },
+      { label: 'Add Placed Student', href: '/admin/results/new' },
     ],
   },
   {

@@ -1,15 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Image from "next/image";
-import { Trophy, Award, CheckCircle2, Star, Flag } from "lucide-react";
+import { Trophy, Award, CheckCircle2, Star, Flag, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import { getCloudinaryUrl } from "../lib/cloudinary";
 
 export interface CandidateResult {
   id: string;
   name: string;
   post: string;
-  exam: "Bihar Police" | "Army Agniveer" | "SSC GD" | "RPF" | "Other";
+  exam: string;
   year: string;
   rankOrRoll?: string;
   imageUrl: string;
@@ -81,44 +81,80 @@ const RESULTS: CandidateResult[] = [
 
 export default function ResultsWall() {
   const [selectedExam, setSelectedExam] = useState<string>("All");
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const filteredResults = RESULTS.filter(
     (r) => selectedExam === "All" || r.exam === selectedExam
   );
 
+  const scrollLeft = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: -340, behavior: "smooth" });
+    }
+  };
+
+  const scrollRight = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: 340, behavior: "smooth" });
+    }
+  };
+
   return (
-    <section id="hall-of-fame" className="py-16 bg-white/70 border-y border-slate-200/80">
+    <section id="placed-achievements" className="py-16 sm:py-20 bg-gradient-to-b from-slate-50 via-white to-slate-50 border-y border-slate-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 text-[#138808] border border-emerald-300 text-xs font-black mb-3">
-            <Flag className="w-3.5 h-3.5 text-[#138808]" />
-            <span>Hall of Fame &amp; Successful Soldiers Wall</span>
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 text-[#138808] border border-emerald-300 text-xs font-black mb-3">
+              <Sparkles className="w-3.5 h-3.5 text-[#138808]" />
+              <span>Placed Achievements • 1200+ Selections</span>
+            </div>
+
+            <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
+              Placed Achievements <span className="text-[#ea580c]">(हमारे चयनित जाँबाज)</span>
+            </h2>
+            <p className="mt-2 text-slate-600 font-medium text-sm sm:text-base max-w-xl">
+              Meet our proud academy alumni selected in Indian Army, Bihar Police, SI, SSC GD, and RPF examinations.
+            </p>
           </div>
 
-          <h2 className="text-3xl sm:text-4xl font-black text-slate-900">
-            हमारे चयनित जाँबाज (Selection Wall)
-          </h2>
-          <p className="mt-2 text-slate-700 font-medium text-sm sm:text-base max-w-2xl mx-auto">
-            1200+ से अधिक चयनित जवानों ने यहीं से तय किया देश सेवा का गौरवशाली सफर।
-          </p>
-
-          {/* Exam Filter Tabs Bar */}
-          <div className="mt-6 flex flex-wrap justify-center gap-2">
-            {["All", "Bihar Police", "Army Agniveer", "SSC GD", "RPF"].map((tab) => (
-              <button
-                key={tab}
-                type="button"
-                onClick={() => setSelectedExam(tab)}
-                className={`pill-tab ${selectedExam === tab ? "pill-tab-active" : ""}`}
-              >
-                {tab === "All" ? "सभी परिणाम (All Results)" : tab}
-              </button>
-            ))}
+          {/* Carousel Arrows & Filter Strip */}
+          <div className="flex items-center gap-3 shrink-0">
+            <button
+              onClick={scrollLeft}
+              aria-label="Scroll left"
+              className="p-3 rounded-2xl bg-white border border-slate-200 text-slate-700 hover:border-orange-500 hover:text-[#ea580c] shadow-sm transition-all active:scale-95"
+            >
+              <ChevronLeft size={20} />
+            </button>
+            <button
+              onClick={scrollRight}
+              aria-label="Scroll right"
+              className="p-3 rounded-2xl bg-white border border-slate-200 text-slate-700 hover:border-orange-500 hover:text-[#ea580c] shadow-sm transition-all active:scale-95"
+            >
+              <ChevronRight size={20} />
+            </button>
           </div>
         </div>
 
-        {/* Achievers Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Filter Pills */}
+        <div className="mb-8 flex flex-wrap gap-2">
+          {["All", "Bihar Police", "Army Agniveer", "SSC GD", "RPF"].map((tab) => (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setSelectedExam(tab)}
+              className={`pill-tab ${selectedExam === tab ? "pill-tab-active" : ""}`}
+            >
+              {tab === "All" ? "सभी परिणाम (All Selections)" : tab}
+            </button>
+          ))}
+        </div>
+
+        {/* Horizontal Scroll Carousel */}
+        <div
+          ref={scrollRef}
+          className="flex items-stretch gap-6 overflow-x-auto scrollbar-none pb-4 pt-2 snap-x snap-mandatory"
+        >
           {filteredResults.map((candidate, idx) => {
             const borderClass =
               idx % 3 === 0
@@ -130,19 +166,18 @@ export default function ResultsWall() {
             return (
               <div
                 key={candidate.id}
-                className={`bento-card ${borderClass} p-5 flex flex-col justify-between`}
+                className={`snap-start shrink-0 w-[300px] sm:w-[340px] bento-card ${borderClass} p-5 flex flex-col justify-between shadow-xl hover:-translate-y-1 transition-all duration-300`}
               >
                 <div>
-                  <div className="relative w-full h-56 rounded-2xl overflow-hidden mb-4 bg-slate-100 ring-2 ring-slate-200">
+                  <div className="relative w-full h-60 rounded-2xl overflow-hidden mb-4 bg-slate-100 ring-2 ring-slate-200/80">
                     <Image
-                      src={getCloudinaryUrl(candidate.imageUrl, { width: 450, height: 400, crop: "fill" })}
+                      src={getCloudinaryUrl(candidate.imageUrl, { width: 450, height: 450, crop: "fill" })}
                       alt={candidate.name}
                       fill
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="object-cover"
+                      sizes="340px"
+                      className="object-cover transition-transform duration-500 hover:scale-105"
                     />
-                    {/* Badge Pill Top Right */}
-                    <span className="absolute top-3 right-3 px-3 py-1 bg-[#ea580c] text-white font-extrabold text-xs rounded-full shadow-md">
+                    <span className="absolute top-3 right-3 px-3 py-1 bg-[#ea580c] text-white font-extrabold text-xs rounded-full shadow-lg backdrop-blur-md">
                       {candidate.exam}
                     </span>
                   </div>
@@ -175,7 +210,7 @@ export default function ResultsWall() {
 
                 <div className="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-600">
                   <span className="flex items-center gap-1 text-[#ea580c] font-black">
-                    <Award className="w-3.5 h-3.5 text-[#ea580c]" /> Verified Graduate
+                    <Award className="w-3.5 h-3.5 text-[#ea580c]" /> Placed Hero
                   </span>
                   <span className="font-bold text-slate-700">Lakhisarai</span>
                 </div>

@@ -1,16 +1,10 @@
 import { redirect } from 'next/navigation'
 import { getCurrentUserRole } from '@/app/lib/action/auth'
-import { getOrders, deleteOrder } from '@/app/lib/action/orders'
+import { getOrders } from '@/app/lib/action/orders'
 import { createClient } from '@/app/lib/supabase/server'
 import { AdminSidebar } from '../_components/AdminSidebar'
-import { OrderStatusForm } from './OrderStatusForm'
-
-const STATUS_STYLES: Record<string, string> = {
-  pending: 'bg-amber-50 text-amber-700 border border-amber-200',
-  confirmed: 'bg-blue-50 text-blue-700 border border-blue-200',
-  delivered: 'bg-green-50 text-green-700 border border-green-200',
-  cancelled: 'bg-gray-100 text-gray-600 border border-gray-200',
-}
+import { OrderManagementView } from './_components/OrderManagementView'
+import { ShoppingCart } from 'lucide-react'
 
 export default async function AdminOrdersPage() {
   const supabase = await createClient()
@@ -23,59 +17,31 @@ export default async function AdminOrdersPage() {
   const orders = await getOrders()
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col lg:flex-row">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col lg:flex-row">
       <AdminSidebar active="Orders" />
 
-      <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-5xl w-full">
-        <div className="mb-8">
-          <h1 className="text-2xl font-semibold mb-1">Orders</h1>
-          <p className="text-sm text-gray-500">Orders placed by students from the store page.</p>
+      <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-5xl w-full mx-auto">
+        {/* Top Header Bar matching Screenshot */}
+        <div className="flex items-center justify-between pb-5 mb-6 border-b border-slate-200">
+          <div>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 text-xs font-black mb-2">
+              <ShoppingCart size={14} />
+              <span>Store Order Management</span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+              Order Management
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">
+              Manage incoming student store orders, update fulfillment statuses, and direct contact.
+            </p>
+          </div>
+
+          <span className="px-3.5 py-1.5 rounded-full bg-emerald-600 text-white text-xs font-black shadow-md">
+            {orders.length} Total Orders
+          </span>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
-          {orders.length === 0 ? (
-            <div className="p-10 text-center">
-              <p className="text-sm text-gray-500">No orders yet.</p>
-            </div>
-          ) : (
-            <div>
-              {orders.map((order) => (
-                <div
-                  key={order.id}
-                  className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 px-4 sm:px-5 py-4 border-b last:border-b-0 border-gray-100"
-                >
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium text-gray-900">
-                      {order.product_name} × {order.quantity}
-                    </p>
-                    <p className="text-sm text-gray-500 mt-0.5">
-                      {order.customer_name} · {order.phone}
-                    </p>
-                    <p className="text-xs text-gray-400 mt-1 max-w-md">{order.address}</p>
-                    {order.notes && (
-                      <p className="text-xs text-gray-400 mt-1">Note: {order.notes}</p>
-                    )}
-                    <p className="text-xs text-gray-400 mt-1">
-                      {new Date(order.created_at).toLocaleString('en-IN')}
-                    </p>
-                  </div>
-
-                  <div className="flex flex-row sm:flex-col items-start sm:items-end justify-between sm:justify-start gap-2 shrink-0">
-                    <span className={`text-xs px-2.5 py-1 rounded-full ${STATUS_STYLES[order.status] ?? STATUS_STYLES.cancelled}`}>
-                      {order.status}
-                    </span>
-                    <OrderStatusForm id={order.id} status={order.status} />
-                    <form action={deleteOrder.bind(null, order.id)}>
-                      <button type="submit" className="text-xs text-red-600 hover:text-red-700 transition-colors">
-                        Delete
-                      </button>
-                    </form>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        <OrderManagementView initialOrders={orders} />
       </main>
     </div>
   )
