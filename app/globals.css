@@ -28,8 +28,11 @@
   --color-chakra: #000080;
   --color-chakra-light: #1e3a8a;
 
-  /* 3. India Green (Hara) */
+  /* 3. India Green (Hara) & Army Olive */
   --color-india-green: #138808;
+  --color-army-olive: #2b4c2b;
+  --color-army-dark: #112615;
+  --color-army-khaki: #8b9a65;
   --color-accent: #15803d;
   --color-accent-strong: #166534;
   --color-accent-dim: #f0fdf4;
@@ -55,6 +58,7 @@
   --shadow-bento-hover: 0 12px 30px -4px rgba(15, 23, 42, 0.09), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
   --shadow-orange: 0 8px 20px -3px rgba(234, 88, 12, 0.25);
   --shadow-green: 0 8px 20px -3px rgba(19, 136, 8, 0.25);
+  --shadow-army: 0 8px 25px -4px rgba(27, 58, 32, 0.4);
 }
 
 @layer base {
@@ -109,6 +113,13 @@
     );
   }
 
+  /* Army Camo Dark Background Texture */
+  .army-camo-bg {
+    background: radial-gradient(circle at 15% 15%, rgba(139, 154, 101, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(19, 136, 8, 0.12) 0%, transparent 40%),
+                linear-gradient(135deg, #162c16 0%, #0d1a0d 50%, #152b15 100%);
+  }
+
   /* Bento Card Surface with Tiranga Top Border */
   .bento-card {
     background-color: var(--color-bg-card);
@@ -140,6 +151,13 @@
     background-color: #ffffff;
     border: 1px solid #bfdbfe;
     border-top: 4px solid #000080;
+  }
+
+  .bento-card-army {
+    background-color: #172d17;
+    border: 1px solid #2d5430;
+    border-top: 4px solid #8b9a65;
+    color: #ffffff;
   }
 
   /* Saffron Primary Pill Button */
@@ -184,6 +202,29 @@
   }
   .btn-green:hover {
     background-color: #0f6c06;
+    transform: translateY(-1px);
+  }
+
+  /* Tactical Army Button */
+  .btn-army {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background-color: #2b4c2b;
+    color: #e2f0d9;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-full);
+    border: 1px solid #487348;
+    box-shadow: var(--shadow-army);
+    transition: all 0.15s ease;
+    cursor: pointer;
+  }
+  .btn-army:hover {
+    background-color: #1e381e;
+    color: #ffffff;
     transform: translateY(-1px);
   }
 
@@ -242,7 +283,7 @@
     box-shadow: var(--shadow-green);
   }
 
-  /* Tiranga Badges */
+  /* Tiranga & Army Badges */
   .badge-saffron {
     background-color: #fff7ed;
     color: #c2410c;
@@ -260,5 +301,11 @@
     color: #000080;
     border: 1px solid #bfdbfe;
     font-weight: 700;
+  }
+  .badge-army {
+    background-color: #224223;
+    color: #d4a359;
+    border: 1px solid #3d633f;
+    font-weight: 800;
   }
 }
