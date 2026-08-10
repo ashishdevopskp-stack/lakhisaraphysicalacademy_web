@@ -46,10 +46,10 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 px-3 pt-3 pb-3 sm:px-6 sm:pt-4 sm:pb-4">
       <div className="mx-auto max-w-7xl">
-        {/* Navbar Container with 3-Stripe Indian Flag Accent Top Line */}
-        <div className="relative overflow-hidden rounded-full border border-slate-200/90 bg-white/95 px-4 py-2.5 shadow-md backdrop-blur-md sm:px-6 sm:py-3">
+        {/* Navbar Container without overflow-hidden so More dropdown pops out visibly */}
+        <div className="relative rounded-full border border-slate-200/90 bg-white/95 px-4 py-2.5 shadow-md backdrop-blur-md sm:px-6 sm:py-3 z-50">
           {/* Prominent Indian Flag Tiranga Line on Top */}
-          <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-[#ff9933] via-slate-200 to-[#138808]" />
+          <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-[#ff9933] via-slate-200 to-[#138808] rounded-t-full" />
 
           <div className="flex items-center justify-between gap-2 sm:gap-4">
             {/* Brand Logo & Name */}
@@ -91,20 +91,23 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={() => setMoreOpen(!moreOpen)}
-                  className="flex items-center gap-1 px-3 py-1.5 text-[14px] font-extrabold text-slate-700 rounded-full hover:text-[#ea580c] hover:bg-white transition-all"
+                  className="flex items-center gap-1 px-3.5 py-1.5 text-[14px] font-extrabold text-slate-700 rounded-full hover:text-[#ea580c] hover:bg-white transition-all cursor-pointer"
                 >
                   <span>More</span>
-                  <ChevronDown size={15} className={`transition-transform duration-200 ${moreOpen ? "rotate-180" : ""}`} />
+                  <ChevronDown size={15} className={`transition-transform duration-200 ${moreOpen ? "rotate-180 text-[#ea580c]" : ""}`} />
                 </button>
 
                 {moreOpen && (
-                  <div className="absolute right-0 mt-2.5 w-48 rounded-2xl border border-slate-200 bg-white p-2 shadow-2xl border-t-4 border-t-[#ff9933] z-50">
+                  <div className="absolute right-0 top-full mt-3 w-52 rounded-2xl border border-slate-200 bg-white p-2 shadow-2xl border-t-4 border-t-[#ff9933] z-50 animate-[fadeIn_0.15s_ease-out]">
+                    <div className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-slate-400 border-b border-slate-100 mb-1">
+                      More Navigation
+                    </div>
                     {SECONDARY_NAV.map((item) => (
                       <Link
                         key={item.href}
                         href={item.href}
                         onClick={() => setMoreOpen(false)}
-                        className="block px-3.5 py-2.5 text-xs font-extrabold text-slate-700 hover:bg-orange-50 hover:text-[#ea580c] rounded-xl transition-colors"
+                        className="block px-3.5 py-2 text-xs font-extrabold text-slate-700 hover:bg-orange-50 hover:text-[#ea580c] rounded-xl transition-colors"
                       >
                         {item.label}
                       </Link>
@@ -149,7 +152,7 @@ export default function Navbar() {
 
         {/* Mobile Dropdown Panel with All Links in Requested Order */}
         {mobileOpen && (
-          <div className="mt-2.5 max-h-[80vh] overflow-y-auto rounded-3xl border-t-4 border-t-[#ff9933] border-b-4 border-b-[#138808] border-x border-slate-200 bg-white p-5 shadow-2xl xl:hidden">
+          <div className="mt-2.5 max-h-[80vh] overflow-y-auto rounded-3xl border-t-4 border-t-[#ff9933] border-b-4 border-b-[#138808] border-x border-slate-200 bg-white p-5 shadow-2xl xl:hidden z-50">
             <div className="flex flex-col gap-1">
               {[...PRIMARY_NAV, ...SECONDARY_NAV].map((item) => (
                 <Link
