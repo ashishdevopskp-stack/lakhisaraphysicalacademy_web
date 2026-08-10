@@ -27,7 +27,7 @@ export const HOSTEL_NAV = [
 
 export function HostelSubNav({ current }: { current: string }) {
   return (
-    <nav aria-label="Hostel section pages" className="flex flex-wrap gap-2">
+    <nav aria-label="Hostel section pages" className="flex flex-wrap items-center gap-2 py-1">
       {HOSTEL_NAV.map((item) => {
         const active = item.href === current;
         return (
@@ -36,8 +36,8 @@ export function HostelSubNav({ current }: { current: string }) {
             href={item.href}
             className={
               active
-                ? "pill pill-color-1 font-semibold"
-                : "font-body rounded-full border border-line px-3.5 py-1.5 text-[13px] text-text-muted transition-colors hover:border-line-strong hover:text-text"
+                ? "rounded-full bg-[#ea580c] px-4 py-2 text-xs font-extrabold text-white shadow-md shadow-orange-500/25 transition-all hover:bg-[#c2410c] hover:scale-105"
+                : "rounded-full border border-slate-200 bg-white/90 px-4 py-2 text-xs font-extrabold text-slate-700 shadow-sm transition-all hover:border-orange-500/40 hover:bg-orange-50/50 hover:text-[#ea580c]"
             }
           >
             {item.label}
