@@ -99,16 +99,19 @@ export function StaggerItem({
   children,
   className,
   hover = false,
+  onClick,
 }: {
   children: ReactNode;
   className?: string;
   hover?: boolean;
+  onClick?: () => void;
 }) {
   return (
     <motion.div
       variants={itemUp}
       whileHover={hover ? { y: -3 } : undefined}
       className={className}
+      onClick={onClick}
     >
       {children}
     </motion.div>

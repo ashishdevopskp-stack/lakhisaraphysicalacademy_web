@@ -92,7 +92,29 @@ function JobsHero() {
 /* =========================================================
    2. Job Categories
    ========================================================= */
-function JobCategories() {
+function JobCategories({
+  selectedCategory,
+  onSelectCategory,
+  jobs = [],
+}: {
+  selectedCategory: string;
+  onSelectCategory: (cat: string) => void;
+  jobs?: JobItem[];
+}) {
+  const combinedList = useMemo(() => {
+    const defaultLabels = new Set(CATEGORIES.map((c) => c.label));
+    const extraDbCategories = jobs
+      .map((j) => j.category)
+      .filter((c) => Boolean(c) && !defaultLabels.has(c));
+
+    const extras = Array.from(new Set(extraDbCategories)).map((c) => ({
+      label: c,
+      icon: Bell,
+    }));
+
+    return [...CATEGORIES, ...extras];
+  }, [jobs]);
+
   return (
     <section className="py-16 sm:py-24">
       <Container>
@@ -108,15 +130,29 @@ function JobCategories() {
         </ScrollFadeUp>
 
         <StaggerList className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
-          {CATEGORIES.map(({ label, icon: Icon }) => (
-            <StaggerItem
-              key={label}
-              className="card-flat flex flex-col items-center gap-2 px-3 py-5 text-center"
-            >
-              <Icon size={20} className="text-signal-strong" />
-              <span className="font-body text-[12px] text-text-muted">{label}</span>
-            </StaggerItem>
-          ))}
+          {combinedList.map(({ label, icon: Icon }) => {
+            const isSelected = selectedCategory === label;
+            return (
+              <StaggerItem
+                key={label}
+                onClick={() => {
+                  onSelectCategory(isSelected ? "All" : label);
+                  const el = document.getElementById("listings");
+                  if (el) el.scrollIntoView({ behavior: "smooth" });
+                }}
+                className={`card-flat flex flex-col items-center gap-2 px-3 py-5 text-center transition-all cursor-pointer ${
+                  isSelected
+                    ? "bg-[#ea580c] text-white border-orange-600 shadow-md scale-[1.02]"
+                    : "hover:border-orange-300"
+                }`}
+              >
+                <Icon size={20} className={isSelected ? "text-white" : "text-signal-strong"} />
+                <span className={`font-body text-[12px] font-bold ${isSelected ? "text-white" : "text-text-muted"}`}>
+                  {label}
+                </span>
+              </StaggerItem>
+            );
+          })}
         </StaggerList>
       </Container>
     </section>
@@ -126,16 +162,29 @@ function JobCategories() {
 /* =========================================================
    3. Latest Job Listings (data-driven)
    ========================================================= */
-function JobListings({ jobs }: { jobs: JobItem[] }) {
-  const [category, setCategory] = useState<string>("All");
+function JobListings({
+  jobs,
+  selectedCategory,
+  onSelectCategory,
+}: {
+  jobs: JobItem[];
+  selectedCategory: string;
+  onSelectCategory: (cat: string) => void;
+}) {
   const [status, setStatus] = useState<string>("All");
   const [query, setQuery] = useState("");
 
-  const categoryOptions = useMemo(() => ["All", ...JOB_CATEGORY_LABELS], []);
+  const categoryOptions = useMemo(() => {
+    const jobCategories = jobs.map((j) => j.category).filter(Boolean);
+    const combined = Array.from(new Set(["All", ...JOB_CATEGORY_LABELS, ...jobCategories]));
+    return combined;
+  }, [jobs]);
+
   const statusOptions = ["All", "New", "Ongoing", "Closed"];
 
   const filtered = jobs.filter((job) => {
-    const matchesCategory = category === "All" || job.category === category;
+    const matchesCategory = selectedCategory === "All" || job.category === selectedCategory;
+
     const matchesStatus = status === "All" || job.status === status;
     const matchesQuery =
       query.trim() === "" ||
@@ -176,9 +225,9 @@ function JobListings({ jobs }: { jobs: JobItem[] }) {
           </div>
 
           <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="font-body rounded-lg border border-line bg-bg px-4 py-2.5 text-[14px] text-text outline-none"
+            value={selectedCategory}
+            onChange={(e) => onSelectCategory(e.target.value)}
+            className="font-body rounded-lg border border-line bg-bg px-4 py-2.5 text-[14px] text-text outline-none cursor-pointer"
           >
             {categoryOptions.map((c) => (
               <option key={c} value={c}>
@@ -412,13 +461,21 @@ function JobAlertCTA() {
    app/jobs/page.tsx (server component)
    ========================================================= */
 export default function JobsClient({ jobs }: { jobs: JobItem[] }) {
+  const [selectedCategory, setSelectedCategory] = useState<string>("All");
+
   return (
     <>
       <JobsHero />
-      <JobListings jobs={jobs} />
-      {/* <GuidanceVideos />
-      <RelatedBlogs />
-      <JobAlertCTA /> */}
+      <JobCategories
+        selectedCategory={selectedCategory}
+        onSelectCategory={setSelectedCategory}
+        jobs={jobs}
+      />
+      <JobListings
+        jobs={jobs}
+        selectedCategory={selectedCategory}
+        onSelectCategory={setSelectedCategory}
+      />
     </>
   );
 }

@@ -23,7 +23,10 @@ export default function ArticleListing({
   const [category, setCategory] = useState<string>(initialCategory);
   const [query, setQuery] = useState("");
 
-  const categoryOptions = useMemo(() => ["All", ...BLOG_CATEGORY_LABELS], []);
+  const categoryOptions = useMemo(() => {
+    const dbCategories = blogs.map((b) => b.category).filter(Boolean);
+    return Array.from(new Set(["All", ...BLOG_CATEGORY_LABELS, ...dbCategories]));
+  }, [blogs]);
 
   const filtered = blogs.filter((blog) => {
     const matchesCategory = category === "All" || blog.category === category;

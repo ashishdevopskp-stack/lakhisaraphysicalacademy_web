@@ -98,7 +98,23 @@ const CATEGORIES = [
   { label: "Motivation", icon: Sparkles },
 ] as const;
 
-function VideoCategories() {
+function VideoCategories({
+  selectedCategory,
+  onSelectCategory,
+  extraCategories = [],
+}: {
+  selectedCategory: string;
+  onSelectCategory: (cat: string) => void;
+  extraCategories?: string[];
+}) {
+  const combinedList = useMemo(() => {
+    const defaultLabels = new Set<string>(CATEGORIES.map((c) => c.label));
+    const extras = extraCategories
+      .filter((c) => Boolean(c) && !defaultLabels.has(c))
+      .map((c) => ({ label: c, icon: Sparkles }));
+    return [...CATEGORIES, ...extras];
+  }, [extraCategories]);
+
   return (
     <section className="py-12 sm:py-16 bg-slate-50 border-y border-slate-200/80">
       <Container>
@@ -114,20 +130,35 @@ function VideoCategories() {
         </ScrollFadeUp>
 
         <StaggerList className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-5">
-          {CATEGORIES.map(({ label, icon: Icon }) => (
-            <StaggerItem
-              key={label}
-              className="bento-card flex flex-col items-center gap-2 px-3 py-4 text-center hover:border-orange-300 transition-all cursor-pointer"
-            >
-              <Icon size={20} className="text-[#ea580c]" />
-              <span className="font-body text-[13px] font-bold text-slate-800">{label}</span>
-            </StaggerItem>
-          ))}
+          {combinedList.map(({ label, icon: Icon }) => {
+            const isSelected = selectedCategory === label;
+            return (
+              <StaggerItem
+                key={label}
+                onClick={() => {
+                  onSelectCategory(isSelected ? "All" : label);
+                  const el = document.getElementById("videos");
+                  if (el) el.scrollIntoView({ behavior: "smooth" });
+                }}
+                className={`bento-card flex flex-col items-center gap-2 px-3 py-4 text-center transition-all cursor-pointer ${
+                  isSelected
+                    ? "bg-[#ea580c] text-white border-orange-600 shadow-md scale-[1.02]"
+                    : "hover:border-orange-300"
+                }`}
+              >
+                <Icon size={20} className={isSelected ? "text-white" : "text-[#ea580c]"} />
+                <span className={`font-body text-[13px] font-bold ${isSelected ? "text-white" : "text-slate-800"}`}>
+                  {label}
+                </span>
+              </StaggerItem>
+            );
+          })}
         </StaggerList>
       </Container>
     </section>
   );
 }
+
 
 const VIDEO_CATEGORY_LABELS = CATEGORIES.map((c) => c.label);
 
@@ -139,15 +170,26 @@ function formatDate(dateStr: string) {
   });
 }
 
-function VideoGrid({ videos }: { videos: DbVideo[] }) {
-  const [category, setCategory] = useState("All");
+function VideoGrid({
+  videos,
+  selectedCategory,
+  onSelectCategory,
+}: {
+  videos: DbVideo[];
+  selectedCategory: string;
+  onSelectCategory: (cat: string) => void;
+}) {
   const [query, setQuery] = useState("");
   const [activePlayVideo, setActivePlayVideo] = useState<DbVideo | null>(null);
 
-  const categoryOptions = useMemo(() => ["All", ...VIDEO_CATEGORY_LABELS], []);
+  const categoryOptions = useMemo(() => {
+    const dbCategories = videos.map((v) => v.category).filter(Boolean);
+    const combined = Array.from(new Set(["All", ...VIDEO_CATEGORY_LABELS, ...dbCategories]));
+    return combined;
+  }, [videos]);
 
   const filtered = videos.filter((v) => {
-    const matchesCategory = category === "All" || v.category === category;
+    const matchesCategory = selectedCategory === "All" || v.category === selectedCategory;
     const matchesQuery =
       query.trim() === "" || v.title.toLowerCase().includes(query.toLowerCase());
     return matchesCategory && matchesQuery;
@@ -187,8 +229,8 @@ function VideoGrid({ videos }: { videos: DbVideo[] }) {
           </div>
 
           <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
+            value={selectedCategory}
+            onChange={(e) => onSelectCategory(e.target.value)}
             className="font-body rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-[14px] font-bold text-slate-800 outline-none cursor-pointer"
           >
             {categoryOptions.map((c) => (
@@ -198,6 +240,7 @@ function VideoGrid({ videos }: { videos: DbVideo[] }) {
             ))}
           </select>
         </ScrollFadeUp>
+
 
         {/* Featured Video */}
         {featured && (
@@ -414,11 +457,25 @@ function SubscribeCTA() {
 }
 
 export default function VideosContent({ videos }: { videos: DbVideo[] }) {
+  const [selectedCategory, setSelectedCategory] = useState("All");
+
+  const extraCategories = useMemo(() => {
+    return Array.from(new Set(videos.map((v) => v.category).filter(Boolean)));
+  }, [videos]);
+
   return (
     <>
       <VideosHero />
-      <VideoCategories />
-      <VideoGrid videos={videos} />
+      <VideoCategories
+        selectedCategory={selectedCategory}
+        onSelectCategory={setSelectedCategory}
+        extraCategories={extraCategories}
+      />
+      <VideoGrid
+        videos={videos}
+        selectedCategory={selectedCategory}
+        onSelectCategory={setSelectedCategory}
+      />
       <SubscribeCTA />
     </>
   );
