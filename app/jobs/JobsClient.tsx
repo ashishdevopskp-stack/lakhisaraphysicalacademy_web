@@ -209,6 +209,17 @@ function JobListings({ jobs }: { jobs: JobItem[] }) {
           <StaggerList className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {filtered.map((job, i) => (
               <StaggerItem key={job.id} className="card-flat flex flex-col p-6">
+                {job.thumbnailUrl && (
+                  <div className="relative mb-4 w-full overflow-hidden rounded-2xl border border-slate-200/80 bg-slate-950 shadow-md">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={job.thumbnailUrl}
+                      alt={job.title}
+                      className="w-full h-auto max-h-48 object-cover transition-transform duration-300 hover:scale-105"
+                    />
+                  </div>
+                )}
+
                 <div className="flex items-center justify-between gap-3">
                   <span className={`pill ${PILL_COLORS[i % PILL_COLORS.length]}`}>
                     {job.category}
@@ -221,6 +232,7 @@ function JobListings({ jobs }: { jobs: JobItem[] }) {
                 <h3 className="font-display mt-4 text-[16px] font-semibold text-text">
                   {job.title}
                 </h3>
+
                 {job.subtitle && (
                   <p className="font-body mt-1 text-[13px] text-text-muted">{job.subtitle}</p>
                 )}

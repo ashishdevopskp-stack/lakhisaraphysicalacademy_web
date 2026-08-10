@@ -4,6 +4,7 @@ import { useState, useRef } from 'react'
 import type { DbResult } from '@/app/lib/action/results'
 import { DEPARTMENTS, STATUS_OPTIONS } from '@/app/lib/results-data'
 import { Sparkles, CheckCircle2, User, Award } from 'lucide-react'
+import ThumbnailRatioSelector from "@/app/admin/_components/ThumbnailRatioSelector"
 
 const MAX_IMAGE_MB = 10
 const IMAGE_MAX_DIMENSION = 1600
@@ -82,17 +83,13 @@ export function ResultForm({
     }
 
     if (file.size > MAX_IMAGE_MB * 1024 * 1024) {
-      setFileError(`Image file size must be under ${MAX_IMAGE_MB}MB.`)
+      setFileError(`Image must be under ${MAX_IMAGE_MB}MB.`)
       return
     }
-
     setFileError(null)
+    setPreviewUrl(URL.createObjectURL(file))
+
     setIsCompressing(true)
-
-    // Local thumbnail preview
-    const objectUrl = URL.createObjectURL(file)
-    setPreviewUrl(objectUrl)
-
     try {
       const compressed = await compressImageToWebp(file)
       if (compressed !== file && photoInputRef.current) {
@@ -101,10 +98,7 @@ export function ResultForm({
         photoInputRef.current.files = dt.files
         const origSizeKb = (file.size / 1024).toFixed(0)
         const compSizeKb = (compressed.size / 1024).toFixed(0)
-        const savedPct = Math.round((1 - compressed.size / file.size) * 100)
-        setCompressedInfo(
-          `⚡ Auto-compressed to WebP (${compSizeKb} KB from ${origSizeKb} KB — ${savedPct}% smaller)`
-        )
+        setCompressedInfo(`WebP: ${compSizeKb} KB (from ${origSizeKb} KB)`)
       }
     } catch {
       setCompressedInfo(null)
@@ -114,7 +108,7 @@ export function ResultForm({
   }
 
   const finalDepartment =
-    selectedDept === '__custom__' ? customDeptInput.trim() || 'Other Government Jobs' : selectedDept
+    selectedDept === '__custom__' ? customDeptInput.trim() || 'Other' : selectedDept
 
   return (
     <form
@@ -125,6 +119,13 @@ export function ResultForm({
       className="space-y-6"
     >
       {initialData?.id && <input type="hidden" name="id" value={initialData.id} />}
+
+      {/* Thumbnail & Aspect Ratio Selector */}
+      <ThumbnailRatioSelector
+        defaultThumbnailUrl={initialData?.photo_url}
+        defaultAspectRatio={"3:4"}
+        label="Student Photo & Aspect Ratio"
+      />
 
       {/* Photo Upload Zone with WebP Auto-Compress */}
       <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-4">

@@ -4,6 +4,7 @@ import { useState, useRef, useTransition } from 'react'
 import { useFormStatus } from 'react-dom'
 import type { DbBlog } from '@/app/lib/action/blogs'
 import { BLOG_CATEGORY_LABELS } from '@/app/lib/blogs-data'
+import ThumbnailRatioSelector from "@/app/admin/_components/ThumbnailRatioSelector"
 
 const MAX_IMAGE_MB = 10
 const MAX_PDF_MB = 15
@@ -99,52 +100,43 @@ export function BlogForm({
     initialData?.category && !isCategoryKnown ? initialData.category : ''
   )
 
-  async function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
-    setCompressedInfo(null)
     if (!file) {
       setFileError(null)
-      return
-    }
-    if (!file.type.startsWith('image/')) {
-      setFileError('Please choose a valid image file.')
+      setCompressedInfo(null)
       return
     }
     if (file.size > MAX_IMAGE_MB * 1024 * 1024) {
-      setFileError(`Image must be under ${MAX_IMAGE_MB}MB.`)
+      setFileError(`Cover image must be under ${MAX_IMAGE_MB}MB.`)
+      e.target.value = ''
+      setCompressedInfo(null)
       return
     }
     setFileError(null)
+
     setIsCompressing(true)
-    try {
-      const compressed = await compressImageToWebp(file)
-      if (compressed !== file && imageInputRef.current) {
-        const dt = new DataTransfer()
-        dt.items.add(compressed)
-        imageInputRef.current.files = dt.files
-        const origSizeKb = (file.size / 1024).toFixed(0)
-        const compSizeKb = (compressed.size / 1024).toFixed(0)
-        const savedPct = Math.round((1 - compressed.size / file.size) * 100)
-        setCompressedInfo(
-          `⚡ Auto-compressed to WebP (${compSizeKb} KB from ${origSizeKb} KB — ${savedPct}% smaller)`
-        )
-      }
-    } catch {
-      setCompressedInfo(null)
-    } finally {
-      setIsCompressing(false)
-    }
+    compressImageToWebp(file)
+      .then((compressed) => {
+        if (compressed !== file && imageInputRef.current) {
+          const container = new DataTransfer()
+          container.items.add(compressed)
+          imageInputRef.current.files = container.files
+          setCompressedInfo(
+            `Compressed: ${(file.size / 1024).toFixed(0)}KB ➔ ${(compressed.size / 1024).toFixed(0)}KB (WebP)`
+          )
+        } else {
+          setCompressedInfo(`Original size: ${(file.size / 1024).toFixed(0)}KB`)
+        }
+      })
+      .catch(() => setCompressedInfo(null))
+      .finally(() => setIsCompressing(false))
   }
 
   function handlePdfFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) {
       setPdfFileError(null)
-      return
-    }
-    if (file.type !== 'application/pdf') {
-      setPdfFileError('Please choose a PDF file.')
-      e.target.value = ''
       return
     }
     if (file.size > MAX_PDF_MB * 1024 * 1024) {
@@ -183,17 +175,12 @@ export function BlogForm({
       }}
       className="space-y-6"
     >
-      {initialData?.image_url && (
-        <div className="p-3 bg-slate-50 border border-slate-200 rounded-2xl">
-          <p className="text-xs font-bold text-slate-500 mb-2">Current Cover Image</p>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={initialData.image_url}
-            alt={initialData.title}
-            className="w-24 h-24 rounded-xl object-cover border border-slate-200"
-          />
-        </div>
-      )}
+      {/* Thumbnail Image & Aspect Ratio Selector */}
+      <ThumbnailRatioSelector
+        defaultThumbnailUrl={initialData?.image_url}
+        defaultAspectRatio={initialData?.aspect_ratio || "16:9"}
+        label="Blog Cover / Thumbnail Image & Ratio"
+      />
 
       {/* Cover Image Upload Zone */}
       <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-3">

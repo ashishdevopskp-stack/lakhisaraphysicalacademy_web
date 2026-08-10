@@ -6,6 +6,8 @@ import { CATEGORIES } from '@/app/lib/events-data'
 
 const URL_PATTERN = /^https?:\/\//
 
+import ThumbnailRatioSelector from "@/app/admin/_components/ThumbnailRatioSelector";
+
 export function EventForm({
   action,
   submitLabel,
@@ -23,7 +25,14 @@ export function EventForm({
   }
 
   return (
-    <form action={action} className="space-y-5">
+    <form action={action} className="space-y-6 rounded-3xl border border-slate-200/90 bg-white p-5 sm:p-8 shadow-xl shadow-slate-900/5">
+      {/* Event Thumbnail & Aspect Ratio Selector */}
+      <ThumbnailRatioSelector
+        defaultThumbnailUrl={initialData?.youtube_url}
+        defaultAspectRatio={"16:9"}
+        label="Event Banner / Thumbnail Image & Ratio"
+      />
+
       <div>
         <label htmlFor="title" className="block text-sm font-medium mb-1.5 text-gray-700">Title</label>
         <input

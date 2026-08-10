@@ -4,7 +4,7 @@ import { useState } from "react";
 import type { DbVideo } from "@/app/lib/action/videos";
 import { VIDEO_CATEGORY_LABELS, VIDEO_STATUSES } from "@/app/lib/videos-data";
 import ThumbnailRatioSelector from "@/app/admin/_components/ThumbnailRatioSelector";
-import { Video, FileText, Youtube, Tag, Calendar, Sparkles } from "lucide-react";
+import { Video, FileText, PlayCircle, Tag, Calendar, Sparkles } from "lucide-react";
 
 const YOUTUBE_PATTERN = /^https?:\/\/(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)/;
 
@@ -84,7 +84,7 @@ export function VideoForm({
           htmlFor="videoUrl"
           className="mb-1.5 flex items-center gap-2 text-xs font-extrabold uppercase tracking-wider text-slate-700"
         >
-          <Youtube size={15} className="text-red-600" />
+          <PlayCircle size={15} className="text-red-600" />
           <span>YouTube Video URL <span className="text-orange-500">*</span></span>
         </label>
         <input

@@ -63,6 +63,8 @@ export interface JobItem {
   pdfUrl: string | null;
   videoUrl: string | null;
   detailsUrl: string | null;
+  thumbnailUrl?: string | null;
+  aspectRatio?: string | null;
 }
 
 export function mapDbJobToJobItem(db: DbJob): JobItem {
@@ -86,5 +88,7 @@ export function mapDbJobToJobItem(db: DbJob): JobItem {
     pdfUrl: db.pdf_url,
     videoUrl: db.video_url,
     detailsUrl: db.details_url,
+    thumbnailUrl: db.thumbnail_url,
+    aspectRatio: db.aspect_ratio,
   };
 }

@@ -108,6 +108,8 @@ async function compressImage(file: File): Promise<File> {
   return new File([blob], newName, { type: blob.type })
 }
 
+import ThumbnailRatioSelector from "@/app/admin/_components/ThumbnailRatioSelector";
+
 export function ProductForm({
   action,
   submitLabel,
@@ -192,80 +194,12 @@ export function ProductForm({
       {/* ---------------- Left Form Editor (Col 1-7) ---------------- */}
       <div className="lg:col-span-7 space-y-6">
         <form action={action} className="space-y-6">
-          {/* Section 1: Product Image Upload Zone */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-4">
-            <div className="flex items-center justify-between">
-              <label htmlFor={fileInputId} className="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-2">
-                <ImageIcon size={15} className="text-[#ea580c]" />
-                <span>Product Media / Image</span>
-              </label>
-              <span className="text-[10px] font-bold text-slate-400">JPG, PNG, WebP (Max 5MB)</span>
-            </div>
-
-            {/* Custom Drag & Drop Dropzone */}
-            <div
-              onClick={() => imageInputRef.current?.click()}
-              className={`group relative overflow-hidden rounded-2xl border-2 border-dashed p-6 text-center cursor-pointer transition-all duration-200 ${
-                previewUrl
-                  ? 'border-orange-500/40 bg-orange-50/20 hover:border-orange-500'
-                  : 'border-slate-200 bg-slate-50/50 hover:border-orange-500/50 hover:bg-orange-50/10'
-              }`}
-            >
-              <input
-                ref={imageInputRef}
-                id={fileInputId}
-                name="image"
-                type="file"
-                accept="image/*"
-                onChange={(e) => handleFileChange(e.target.files?.[0])}
-                className="hidden"
-              />
-
-              {previewUrl ? (
-                <div className="flex flex-col sm:flex-row items-center gap-4">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={previewUrl}
-                    alt="Preview"
-                    className="w-24 h-24 rounded-xl object-cover border-2 border-white shadow-md shrink-0"
-                  />
-                  <div className="text-left space-y-1 min-w-0">
-                    <p className="text-xs font-black text-slate-900 flex items-center gap-1.5">
-                      <CheckCircle2 size={14} className="text-emerald-600" />
-                      <span>Image Selected</span>
-                    </p>
-                    <p className="text-[11px] font-medium text-slate-500">
-                      Click anywhere on this box to change or upload another photo.
-                    </p>
-                    {compressedInfo && (
-                      <p className="text-[10.5px] font-bold text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-md inline-block">
-                        {compressedInfo}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              ) : (
-                <div className="py-4 space-y-2">
-                  <div className="mx-auto w-12 h-12 rounded-full bg-orange-50 text-[#ea580c] flex items-center justify-center border border-orange-200 group-hover:scale-110 transition-transform">
-                    <Upload size={20} />
-                  </div>
-                  <p className="text-xs font-black text-slate-800">
-                    Click to browse or drop product photo here
-                  </p>
-                  <p className="text-[11px] text-slate-500">
-                    High resolution shoes, tracksuit, or equipment photos look best on store.
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {fileError && <p className="text-xs font-bold text-red-600">{fileError}</p>}
-            {isCompressing && (
-              <p className="text-xs font-bold text-slate-500 flex items-center gap-2">
-                <Spinner /> Processing &amp; optimizing image size…
-              </p>
-            )}
-          </div>
+          {/* Section 1: Product Thumbnail & Aspect Ratio */}
+          <ThumbnailRatioSelector
+            defaultThumbnailUrl={initialData?.image_url}
+            defaultAspectRatio={"4:3"}
+            label="Product Photo & Aspect Ratio"
+          />
 
           {/* Section 2: Basic Product Info */}
           <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-5">
