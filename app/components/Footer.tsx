@@ -15,6 +15,8 @@ import {
   ChevronRight,
   Heart,
   Flag,
+  ShieldCheck,
+  Info,
 } from "lucide-react";
 import Container from "./Container";
 import Button from "./Button";
@@ -352,6 +354,17 @@ export default function Footer() {
                   {prog}
                 </span>
               ))}
+            </div>
+          </div>
+
+          {/* Legal Compliance Disclaimer Box */}
+          <div className="mt-8 p-4 rounded-2xl bg-slate-900/70 border border-slate-800 text-[11.5px] text-slate-400 font-medium leading-relaxed flex items-start gap-3">
+            <Info size={16} className="text-amber-400 shrink-0 mt-0.5" />
+            <div>
+              <p className="font-extrabold text-slate-200">Legal &amp; Compliance Disclaimer:</p>
+              <p className="mt-0.5 text-slate-400">
+                Lakhisarai Physical Academy is a private physical coaching institute founded by Ganesh Sir. We specialize in physical fitness preparation, 1600m track running, and recruitment physical test coaching for competitive examinations (Indian Army Agniveer, Bihar Police, Bihar SI, SSC GD, etc.). Lakhisarai Physical Academy is a private coaching academy and is not affiliated with, authorized by, or an official recruitment body of the Indian Armed Forces, Ministry of Defence, or any government department.
+              </p>
             </div>
           </div>
         </Container>
