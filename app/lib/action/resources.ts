@@ -11,6 +11,7 @@ export interface DbResource {
   description: string
   category: string
   file_url: string | null
+  thumbnail_url: string | null
   video_url: string | null
   has_video: boolean
   downloads: number
@@ -73,6 +74,23 @@ async function uploadResourceFile(
   return data.publicUrl
 }
 
+async function uploadResourceThumbnail(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  file: File
+): Promise<string> {
+  const ext = file.name.split('.').pop()
+  const path = `thumbnails/${randomUUID()}.${ext}`
+
+  const { error } = await supabase.storage
+    .from('resource-files')
+    .upload(path, file, { upsert: false })
+
+  if (error) throw new Error(`Thumbnail upload failed: ${error.message}`)
+
+  const { data } = supabase.storage.from('resource-files').getPublicUrl(path)
+  return data.publicUrl
+}
+
 export async function createResource(formData: FormData) {
   const supabase = await createClient()
 
@@ -83,10 +101,16 @@ export async function createResource(formData: FormData) {
   const videoUrl = String(formData.get('videoUrl') ?? '').trim()
   const hasVideo = videoUrl.length > 0
   const file = formData.get('file') as File | null
+  const thumbnailFile = formData.get('thumbnail') as File | null
 
   let fileUrl: string | null = null
   if (file && file.size > 0) {
     fileUrl = await uploadResourceFile(supabase, file)
+  }
+
+  let thumbnailUrl: string | null = null
+  if (thumbnailFile && thumbnailFile.size > 0) {
+    thumbnailUrl = await uploadResourceThumbnail(supabase, thumbnailFile)
   }
 
   const { error } = await supabase.from('resources').insert({
@@ -97,6 +121,7 @@ export async function createResource(formData: FormData) {
     video_url: videoUrl || null,
     has_video: hasVideo,
     file_url: fileUrl,
+    thumbnail_url: thumbnailUrl,
   })
 
   if (error) {
@@ -118,6 +143,7 @@ export async function updateResource(id: string, formData: FormData) {
   const videoUrl = String(formData.get('videoUrl') ?? '').trim()
   const hasVideo = videoUrl.length > 0
   const file = formData.get('file') as File | null
+  const thumbnailFile = formData.get('thumbnail') as File | null
 
   const update: Partial<DbResource> = {
     title,
@@ -130,6 +156,10 @@ export async function updateResource(id: string, formData: FormData) {
 
   if (file && file.size > 0) {
     update.file_url = await uploadResourceFile(supabase, file)
+  }
+
+  if (thumbnailFile && thumbnailFile.size > 0) {
+    update.thumbnail_url = await uploadResourceThumbnail(supabase, thumbnailFile)
   }
 
   const { error } = await supabase.from('resources').update(update).eq('id', id)
