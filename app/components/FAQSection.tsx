@@ -48,7 +48,18 @@ const FAQS: FAQItem[] = [
     answer: "बिल्कुल। शुरुआती स्तर से Training देकर धीरे-धीरे Speed, Stamina और Running Performance को बेहतर करने पर काम किया जाता है।",
     category: "Physical Training",
   },
+  {
+    question: "Lakhisarai Physical Academy में किन भर्तियों की तैयारी कराई जाती है?",
+    answer: "बिहार पुलिस, दरोगा, दिल्ली पुलिस, होमगार्ड, आर्मी, SSC-GD, CRPF, चौकीदार एवं अन्य पुलिस/डिफेंस भर्ती की फिजिकल तैयारी कराई जाती है।",
+    category: "Courses & Fees",
+  },
+  {
+    question: "Coach Ganesh Sir की विशेषता क्या है?",
+    answer: "Coach Ganesh Sir का मुख्य फोकस छात्रों की Physical Fitness, Running Performance और भर्ती के Physical Events की सही तकनीक पर रहता है। वे छात्रों को उनके स्तर के अनुसार Training, नियमित Practice और Physical Test के माध्यम से बेहतर तैयारी करने के लिए मार्गदर्शन देते हैं। (विशेषताएँ: Running & Speed Training, High Jump & Long Jump Technique, Strength & Stamina, नियमित Performance Test एवं अनुशासन)।",
+    category: "Physical Training",
+  },
 ];
+
 
 
 export default function FAQSection() {
