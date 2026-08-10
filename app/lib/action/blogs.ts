@@ -20,8 +20,10 @@ export interface DbBlog {
   video_url: string | null
   pdf_url: string | null
   image_url: string | null
+  aspect_ratio?: string | null
   created_at: string
 }
+
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024
 const MAX_PDF_BYTES = 10 * 1024 * 1024
@@ -106,6 +108,7 @@ async function deleteFileByUrl(
 
 function readBlogFields(formData: FormData, pdfUploadUrl: string | null, pdfUrlField: string | null) {
   const pdf_url = pdfUploadUrl ?? pdfUrlField
+  const aspectRatio = String(formData.get('aspectRatio') ?? '16:9').trim()
   return {
     title: String(formData.get('title') ?? '').trim(),
     subtitle: (formData.get('subtitle') as string) || null,
@@ -118,8 +121,10 @@ function readBlogFields(formData: FormData, pdfUploadUrl: string | null, pdfUrlF
     has_video: Boolean((formData.get('videoUrl') as string)?.trim()),
     has_pdf: Boolean(pdf_url),
     pdf_url,
+    aspect_ratio: aspectRatio,
   }
 }
+
 
 export async function createBlog(formData: FormData) {
   await requireAdmin()
