@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -6,10 +8,25 @@ import {
   MapPin,
   Clock,
   ClipboardList,
+  MessageCircle,
+  Award,
+  Sparkles,
+  ExternalLink,
+  ChevronRight,
+  Heart,
+  Flag,
 } from "lucide-react";
-// Fallback simple SVG icon components to avoid runtime/type errors when
-// react-icons is not installed. These provide minimal visuals and accept
-// size/className props like react-icons components.
+import Container from "./Container";
+import Button from "./Button";
+import {
+  PHONE_NUMBER,
+  PHONE_NUMBER_ALT,
+  EMAIL,
+  ADDRESS,
+  whatsappHref,
+  telHref,
+} from "../lib/constants";
+
 const FaFacebookF = ({ size = 16, className }: any) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden>
     <path d="M22 12.07C22 6.48 17.52 2 11.93 2S2 6.48 2 12.07C2 17.06 5.66 21.18 10.44 21.95v-6.99H8.08v-2.89h2.36V9.41c0-2.34 1.4-3.63 3.54-3.63 1.03 0 2.11.18 2.11.18v2.32h-1.19c-1.17 0-1.53.73-1.53 1.48v1.78h2.6l-.42 2.89h-2.18v6.99C18.34 21.18 22 17.06 22 12.07z" />
@@ -35,50 +52,35 @@ const FaGooglePlay = ({ size = 16, className }: any) => (
     <path d="M3.2 2.7L17.1 12 3.2 21.3A2 2 0 0 1 2 20V4c0-.8.5-1.5 1.2-1.3zM20.8 11.3L6 2.7l6.6 6.6L20.8 11.3zM6 21.3l14.8-9.3c.3-.2.3-.6 0-.8L6 2.7v18.6z" />
   </svg>
 );
-const FaApple = ({ size = 16, className }: any) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden>
-    <path d="M16.365 1.43c0 1.02-.39 2.02-1.09 2.74-.79.8-1.9 1.25-3.06 1.12-.07-.6.12-1.25.45-1.78.5-.82 1.44-1.6 2.6-1.73.4-.04.98.04 1.1.65zM12 4.5c1.25 0 2.5.45 3.4 1.3.9.85 1.6 2.1 1.6 3.7 0 .55-.05 1.1-.2 1.6-.35 1.35-1.2 2.8-2.15 4.1-.85 1.15-1.9 2.4-3.35 2.4s-2.5-1.15-3.35-2.3C6.4 15.5 5.6 14 5.2 12.65 4.95 11.9 4.9 11.2 4.9 10.8c0-1.6.7-2.85 1.6-3.7C7.4 5 8.75 4.5 10 4.5c.9 0 1.6.4 2 .9.4-.55 1.1-.9 2-.9z" />
-  </svg>
-);
-import Container from "./Container";
-import Button from "./Button";
-import {
-  PHONE_NUMBER,
-  PHONE_NUMBER_ALT,
-  EMAIL,
-  ADDRESS,
-  whatsappHref,
-  telHref,
-} from "../lib/constants";
 
 const QUICK_LINKS = [
   { label: "Home", href: "/" },
   { label: "About Us", href: "/about" },
   { label: "Courses", href: "/courses" },
   { label: "Results", href: "/result" },
-  { label: "Admission", href: "/admission" },
+  { label: "Admission", href: "/admission-form" },
   { label: "Contact", href: "/contact" },
 ];
 
 const EXPLORE_LINKS = [
-  { label: "Events", href: "/events" },
-  { label: "Jobs", href: "/jobs" },
-  { label: "Store", href: "/store" },
-  { label: "Blog", href: "/blogs" },
-  { label: "Videos", href: "/youtube-video" },
-  { label: "Resources", href: "/resources" },
-  { label: "Hostel", href: "/hostel" },
-  { label: "Notifications", href: "/notification" },
+  { label: "Events & Trial", href: "/events" },
+  { label: "Job Alerts", href: "/jobs" },
+  { label: "Academy Store", href: "/store" },
+  { label: "Blog & Guides", href: "/blogs" },
+  { label: "YouTube Videos", href: "/youtube-video" },
+  { label: "Resources & Notes", href: "/resources" },
+  { label: "Hostel Facility", href: "/hostel" },
+  { label: "Circular Updates", href: "/notification" },
 ];
 
-const PROGRAMS = [
-  "Army",
-  "Bihar Police",
-  "Daroga (SI)",
-  "SSC GD",
-  "CISF",
-  "CRPF",
-  "BSF",
+const PROGRAM_PILLS = [
+  "Indian Army Agniveer",
+  "Bihar Police Constable",
+  "Bihar Daroga (SI)",
+  "SSC GD (BSF, CISF, CRPF)",
+  "RPF Railway Police",
+  "1600m Running Test",
+  "High Jump (Tiger/Scissor)",
 ];
 
 const SOCIALS = [
@@ -86,27 +88,34 @@ const SOCIALS = [
     label: "Facebook",
     icon: FaFacebookF,
     href: "https://www.facebook.com/trainer.ganesh.2025?rdid=VKCg5epDr9XWKwf5&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1SsmvbtHrj%2F",
+    color: "hover:bg-blue-600",
   },
   {
     label: "Instagram",
     icon: FaInstagram,
     href: "https://www.instagram.com/lakhisarai_physical_academy?igsh=ZWh2Y3Zxa3J1cGxt",
+    color: "hover:bg-pink-600",
   },
   {
     label: "YouTube",
     icon: FaYoutube,
     href: "https://youtube.com/@lakhisaraiphysicalacademy?si=S80l_B7Z0lWTtZSU",
+    color: "hover:bg-red-600",
   },
-  { label: "WhatsApp", icon: FaWhatsapp, href: whatsappHref() },
+  {
+    label: "WhatsApp",
+    icon: FaWhatsapp,
+    href: whatsappHref(),
+    color: "hover:bg-emerald-600",
+  },
 ];
 
-// Update PLAY_STORE_LINK / APP_STORE_LINK if either changes.
 const PLAY_STORE_LINK =
   "https://play.google.com/store/apps/details?id=com.lakhisarai.physical_academy";
 
 function FooterHeading({ children }: { children: React.ReactNode }) {
   return (
-    <p className="font-mono text-[12px] font-medium uppercase tracking-[0.16em] text-text-muted">
+    <p className="font-mono text-[11px] font-black uppercase tracking-[0.2em] text-[#ea580c] mb-4">
       {children}
     </p>
   );
@@ -116,215 +125,254 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="relative border-t border-slate-200 bg-white">
-      {/* 3-Stripe Indian Flag Tiranga Line on Top of Footer */}
-      <div className="h-1.5 w-full bg-gradient-to-r from-[#ff9933] via-slate-200 to-[#138808]" />
+    <footer className="relative bg-slate-950 text-slate-300 overflow-hidden pt-12 sm:pt-16">
+      {/* Background Soft Glow Blobs */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -left-32 top-0 -z-10 h-[500px] w-[500px] rounded-full opacity-25 blur-3xl"
+        style={{
+          background: "radial-gradient(circle, rgba(234,88,12,0.4) 0%, transparent 70%)",
+        }}
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -right-32 bottom-0 -z-10 h-[500px] w-[500px] rounded-full opacity-20 blur-3xl"
+        style={{
+          background: "radial-gradient(circle, rgba(19,136,8,0.4) 0%, transparent 70%)",
+        }}
+      />
 
-      {/* Closing CTA */}
-      <section className="border-b border-slate-200 py-12 sm:py-16 bg-slate-50">
+      {/* Prominent 3-Stripe Indian Flag Tiranga Line on Top */}
+      <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-[#ff9933] via-white to-[#138808]" />
+
+      {/* Floating CTA Pill Banner */}
+      <section className="pb-12 sm:pb-16 border-b border-slate-800/80">
         <Container>
-          <div className="flex flex-col items-start justify-between gap-8 rounded-3xl border-t-4 border-t-[#ea580c] border-b-4 border-b-[#138808] border-x border-slate-200 bg-white p-6 sm:p-10 shadow-sm sm:flex-row sm:items-center">
-            <div className="max-w-[46ch]">
-              <p className="text-xs font-black uppercase tracking-widest text-[#ea580c]">
-                Start Your Desh Seva Journey
-              </p>
-              <h2 className="mt-2 text-[24px] sm:text-[28px] font-black text-slate-900">
-                Ready to serve the nation in Defence &amp; Police?
-              </h2>
-              <p className="mt-2 text-[14px] font-medium text-slate-600">
-                Join Lakhisarai Physical Academy and train under expert
-                guidance for Indian Army, Police, and government recruitment tests.
-              </p>
-            </div>
+          <div className="group relative overflow-hidden rounded-3xl bg-slate-900 border-2 border-slate-800 p-6 sm:p-10 shadow-2xl transition-all duration-500 hover:-translate-y-1 hover:border-orange-500/40">
+            {/* Top Accent Line */}
+            <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-[#ea580c] via-amber-400 to-[#138808]" />
 
-            <div className="flex shrink-0 flex-wrap items-center gap-3">
-              <Button href="/admission" variant="primary" icon={ClipboardList}>
-                Apply Now
-              </Button>
-              <Button href={telHref()} variant="secondary" icon={Phone}>
-                Call Now
-              </Button>
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
+              <div className="max-w-[50ch]">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-orange-500/10 text-[#ea580c] border border-orange-500/30 text-xs font-black mb-3">
+                  <Flag className="w-3.5 h-3.5 text-[#ea580c]" />
+                  <span>जय हिन्द! Start Your Desh Seva Journey</span>
+                </div>
+
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white leading-tight">
+                  Ready to serve the nation in <span className="text-[#ea580c]">Defence &amp; Police?</span>
+                </h2>
+
+                <p className="mt-3 text-sm text-slate-400 font-medium leading-relaxed">
+                  Join Lakhisarai Physical Academy and train under expert guidance of **Ganesh Sir &amp; Coach Mahesh Sir** for 1600m Running, High Jump, and Army/Police physical tests.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-3 shrink-0">
+                <a
+                  href="/admission-form"
+                  className="btn-orange shadow-lg shadow-orange-500/25 hover:scale-105 transition-all"
+                >
+                  <ClipboardList className="h-4 w-4" />
+                  <span>Apply for Admission</span>
+                </a>
+
+                <a
+                  href={whatsappHref()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-5 py-3 text-xs sm:text-sm font-extrabold text-[#138808] bg-emerald-950/80 hover:bg-emerald-900/90 rounded-full border border-emerald-500/40 transition-all flex items-center gap-2 shadow-lg hover:scale-105"
+                >
+                  <MessageCircle className="h-4 w-4 text-[#138808]" />
+                  <span>WhatsApp Direct</span>
+                </a>
+              </div>
             </div>
           </div>
         </Container>
       </section>
 
-      {/* App download CTA */}
-      <section className="border-b border-line py-12">
+      {/* Main Footer Links & Information Grid */}
+      <section className="py-14 sm:py-20 border-b border-slate-800/80">
         <Container>
-          <div className="flex flex-col items-center justify-between gap-6 rounded-2xl border border-line-strong bg-bg p-8 sm:flex-row sm:p-10">
-            <div className="text-center sm:text-left">
-              <p className="font-mono text-[12px] font-medium uppercase tracking-[0.18em] text-signal">
-                Get The App
-              </p>
-              <h3 className="mt-2 text-[20px] sm:text-[22px]">
-                Download our app now
-              </h3>
-              <p className="mt-1 text-[13.5px] text-text-muted">
-                Track your training, results, and updates on the go.
-              </p>
-            </div>
-
-            <div className="flex shrink-0 flex-wrap items-center justify-center gap-3">
-              <a
-                href={PLAY_STORE_LINK}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2.5 rounded-xl border border-line-strong bg-bg-raised px-4 py-2.5 transition-colors hover:border-signal"
-              >
-                <FaGooglePlay size={22} className="text-text" />
-                <span className="flex flex-col leading-tight text-left">
-                  <span className="text-[10px] text-text-muted">
-                    GET IT ON
+          <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-12 lg:gap-8">
+            {/* Brand Information & Social Badges (Col 1-4) */}
+            <div className="lg:col-span-4 space-y-4">
+              <Link href="/" className="inline-flex items-center gap-3 group">
+                <div className="relative shrink-0 p-1 bg-slate-900 rounded-full border border-orange-500/40 group-hover:border-orange-500 transition-colors">
+                  <Image
+                    src="/logo.png"
+                    alt="Lakhisarai Physical Academy"
+                    width={44}
+                    height={44}
+                    className="h-10 w-10 rounded-full object-cover"
+                  />
+                </div>
+                <div className="min-w-0">
+                  <span className="text-base font-black text-white tracking-tight block">
+                    Lakhisarai Physical Academy
                   </span>
-                  <span className="text-[13.5px] font-medium text-text">
-                    Google Play
+                  <span className="text-[10px] font-extrabold text-[#ea580c] uppercase tracking-wider block">
+                    Lakhisarai, Bihar (India)
                   </span>
-                </span>
-              </a>
-
-             
-            </div>
-          </div>
-        </Container>
-      </section>
-
-      {/* Link columns */}
-      <section className="py-16 sm:py-20">
-        <Container>
-          <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
-            {/* Brand */}
-            <div className="lg:col-span-1">
-              <Link href="/" className="flex items-center gap-3">
-                <Image
-                  src="/logo.png"
-                  alt="Lakhisarai Physical Academy"
-                  width={40}
-                  height={40}
-                  className="h-10 w-10 shrink-0 rounded-xl object-contain"
-                />
-                <span className="text-[14px] font-medium text-text">
-                  Lakhisarai Physical Academy
-                </span>
+                </div>
               </Link>
-              <p className="mt-4 max-w-[32ch] text-[13px] text-text-muted">
-                Disciplined physical training for Army, Bihar Police, Daroga,
-                SSC GD, and other government recruitment tests, guided by
-                Ganesh Sir.
+
+              <p className="text-xs text-slate-400 font-medium leading-relaxed max-w-[34ch]">
+                Dedicated physical training for Army, Bihar Police, Daroga, SSC GD, and RPF examinations guided by **Ganesh Sir &amp; Coach Mahesh Sir**.
               </p>
 
-              <div className="mt-5 flex flex-wrap gap-2">
-                {SOCIALS.map(({ label, icon: Icon, href }) => (
-                  <a
-                    key={label}
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={label}
-                    className="flex h-9 w-9 items-center justify-center rounded-lg border border-line text-text-muted transition-colors hover:border-line-strong hover:text-signal"
-                  >
-                    <Icon size={15} />
-                  </a>
-                ))}
+              <div className="pt-2">
+                <p className="text-[11px] font-black uppercase tracking-wider text-slate-500 mb-2.5">
+                  Follow &amp; Connect With Us
+                </p>
+                <div className="flex flex-wrap gap-2.5">
+                  {SOCIALS.map(({ label, icon: Icon, href, color }) => (
+                    <a
+                      key={label}
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={label}
+                      className={`flex h-10 w-10 items-center justify-center rounded-full border border-slate-800 bg-slate-900 text-slate-300 transition-all duration-300 hover:text-white hover:scale-110 shadow-md ${color}`}
+                    >
+                      <Icon size={16} />
+                    </a>
+                  ))}
+                </div>
+              </div>
+
+              {/* App Download Pill */}
+              <div className="pt-3">
+                <a
+                  href={PLAY_STORE_LINK}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-3 rounded-2xl border border-slate-800 bg-slate-900/90 px-4 py-2.5 text-xs font-semibold text-slate-300 hover:border-orange-500/50 hover:bg-slate-900 hover:scale-105 transition-all shadow-md"
+                >
+                  <FaGooglePlay size={20} className="text-emerald-400 shrink-0" />
+                  <div className="text-left leading-tight">
+                    <span className="text-[9px] uppercase tracking-widest text-slate-500 block">Download App</span>
+                    <span className="text-xs font-black text-white block">Official Android App</span>
+                  </div>
+                </a>
               </div>
             </div>
 
-            {/* Quick links */}
-            <div>
-              <FooterHeading>Quick Links</FooterHeading>
-              <ul className="mt-4 flex flex-col gap-2.5">
+            {/* Quick Links Column (Col 5-6) */}
+            <div className="lg:col-span-2">
+              <FooterHeading>Quick Navigation</FooterHeading>
+              <ul className="space-y-2.5">
                 {QUICK_LINKS.map((link) => (
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-[13.5px] text-text-muted transition-colors hover:text-text"
+                      className="text-xs font-bold text-slate-400 hover:text-[#ea580c] transition-colors inline-flex items-center gap-1.5 group"
                     >
-                      {link.label}
+                      <ChevronRight size={12} className="text-slate-600 group-hover:text-[#ea580c] group-hover:translate-x-1 transition-all" />
+                      <span>{link.label}</span>
                     </Link>
                   </li>
                 ))}
               </ul>
             </div>
 
-            {/* Explore + Programs */}
-            <div>
-              <FooterHeading>Explore</FooterHeading>
-              <ul className="mt-4 flex flex-col gap-2.5">
+            {/* Explore Column (Col 7-8) */}
+            <div className="lg:col-span-2">
+              <FooterHeading>Explore Academy</FooterHeading>
+              <ul className="space-y-2.5">
                 {EXPLORE_LINKS.map((link) => (
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-[13.5px] text-text-muted transition-colors hover:text-text"
+                      className="text-xs font-bold text-slate-400 hover:text-[#ea580c] transition-colors inline-flex items-center gap-1.5 group"
                     >
-                      {link.label}
+                      <ChevronRight size={12} className="text-slate-600 group-hover:text-[#ea580c] group-hover:translate-x-1 transition-all" />
+                      <span>{link.label}</span>
                     </Link>
                   </li>
                 ))}
               </ul>
-
-              <FooterHeading>
-                <span className="mt-7 block">Programs</span>
-              </FooterHeading>
-              <div className="mt-3 flex flex-wrap gap-1.5">
-                {PROGRAMS.map((program) => (
-                  <span
-                    key={program}
-                    className="rounded-full border border-line bg-bg px-2.5 py-1 text-[11.5px] font-medium text-text-muted"
-                  >
-                    {program}
-                  </span>
-                ))}
-              </div>
             </div>
 
-            {/* Contact */}
-            <div>
-              <FooterHeading>Contact</FooterHeading>
-              <ul className="mt-4 flex flex-col gap-3.5">
-                <li className="flex items-start gap-2.5 text-[13.5px] text-text-muted">
-                  <MapPin size={15} className="mt-0.5 shrink-0 text-signal" />
-                  {ADDRESS}
-                </li>
-                <li className="flex items-center gap-2.5 text-[13.5px] text-text-muted">
-                  <Phone size={15} className="shrink-0 text-signal" />
-                  <a href={telHref()} className="hover:text-text">
-                    +{PHONE_NUMBER}
-                  </a>
-                  <span className="text-text-muted">/</span>
-                  <a href={telHref(PHONE_NUMBER_ALT)} className="hover:text-text">
-                    +{PHONE_NUMBER_ALT}
-                  </a>
-                </li>
-                <li className="flex items-center gap-2.5 text-[13.5px] text-text-muted">
-                  <Mail size={15} className="shrink-0 text-signal" />
-                  <a href={`mailto:${EMAIL}`} className="hover:text-text">
-                    {EMAIL}
-                  </a>
-                </li>
-                <li className="flex items-start gap-2.5 text-[13.5px] text-text-muted">
-                  <Clock size={15} className="mt-0.5 shrink-0 text-signal" />
-                  <span>
-                    Morning 05:00 AM – 08:00 AM
-                    <br />
-                    Evening 04:00 PM – 07:00 PM
-                  </span>
-                </li>
-              </ul>
+            {/* Contact & Ground Address Cards (Col 9-12) */}
+            <div className="lg:col-span-4 space-y-4">
+              <FooterHeading>Ground &amp; Office Contact</FooterHeading>
+
+              <div className="space-y-3">
+                {/* Location Card */}
+                <div className="bento-card p-3.5 bg-slate-900/90 border border-slate-800 rounded-2xl flex items-start gap-3 hover:border-orange-500/40 transition-colors">
+                  <div className="p-2 rounded-xl bg-orange-500/10 text-[#ea580c] shrink-0">
+                    <MapPin size={16} />
+                  </div>
+                  <div>
+                    <p className="text-[11px] font-black uppercase text-slate-400">Training Ground</p>
+                    <p className="text-xs font-bold text-white mt-0.5 leading-snug">{ADDRESS}</p>
+                  </div>
+                </div>
+
+                {/* Phone Card */}
+                <div className="bento-card p-3.5 bg-slate-900/90 border border-slate-800 rounded-2xl flex items-center gap-3 hover:border-emerald-500/40 transition-colors">
+                  <div className="p-2 rounded-xl bg-emerald-500/10 text-[#138808] shrink-0">
+                    <Phone size={16} />
+                  </div>
+                  <div className="text-xs font-extrabold text-white">
+                    <a href={telHref()} className="hover:text-[#ea580c] transition-colors">+{PHONE_NUMBER}</a>
+                    <span className="text-slate-600 mx-2">•</span>
+                    <a href={telHref(PHONE_NUMBER_ALT)} className="hover:text-[#ea580c] transition-colors">+{PHONE_NUMBER_ALT}</a>
+                  </div>
+                </div>
+
+                {/* Email & Hours */}
+                <div className="bento-card p-3.5 bg-slate-900/90 border border-slate-800 rounded-2xl flex items-start gap-3 hover:border-amber-500/40 transition-colors">
+                  <div className="p-2 rounded-xl bg-amber-500/10 text-amber-400 shrink-0">
+                    <Clock size={16} />
+                  </div>
+                  <div className="text-xs font-bold text-slate-300">
+                    <p className="text-white font-extrabold">Ground Timing:</p>
+                    <p className="text-[11px] text-slate-400 mt-0.5">Morning 05:00 AM – 08:00 AM</p>
+                    <p className="text-[11px] text-slate-400">Evening 04:00 PM – 07:00 PM</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Program Pills Strip */}
+          <div className="mt-12 pt-8 border-t border-slate-800/80">
+            <p className="text-[11px] font-black uppercase tracking-widest text-slate-500 mb-3 text-center sm:text-left">
+              Key Selection Programs
+            </p>
+            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+              {PROGRAM_PILLS.map((prog) => (
+                <span
+                  key={prog}
+                  className="px-3.5 py-1.5 text-xs font-extrabold rounded-full bg-slate-900 border border-slate-800 text-slate-300 hover:border-orange-500 hover:text-white hover:bg-orange-500/10 transition-all cursor-pointer shadow-sm"
+                >
+                  {prog}
+                </span>
+              ))}
             </div>
           </div>
         </Container>
       </section>
 
-      {/* Bottom bar */}
-      <div className="border-t border-line py-6">
+      {/* Bottom Copyright & Credit Bar */}
+      <div className="py-6 bg-slate-950 text-slate-500 text-xs">
         <Container>
-          <div className="flex flex-col items-center justify-between gap-3 text-center sm:flex-row sm:text-left">
-            <p className="text-[12.5px] text-text-muted">
-              © {year} Lakhisarai Physical Academy. All rights reserved.
-            </p>
-            <p className="text-[12.5px] text-text-muted">
-              Founder &amp; Director — Ganesh Sir
-            </p>
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <p className="font-semibold text-slate-400">
+                © {year} Lakhisarai Physical Academy. All rights reserved.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3 text-slate-400 font-extrabold">
+              <span>Coaches: **Ganesh Sir** &amp; **Mahesh Sir**</span>
+              <span>•</span>
+              <span className="text-[#ea580c]">Lakhisarai, Bihar</span>
+            </div>
           </div>
         </Container>
       </div>
