@@ -43,7 +43,8 @@ function HostelHero() {
             </p>
 
             <p className="font-body mt-3 max-w-[54ch] text-[15.5px] leading-relaxed text-slate-600 font-medium">
-              Lakhisarai Physical Academy provides a secure and student-friendly hostel building with comfortable rooms, individual beds, storage shelves, nutritious mess meals, water &amp; power backup, and quick access to Gandhi Maidan ground.
+              Lakhisarai Physical Academy provides a secure and student-friendly hostel building with comfortable rooms, individual beds, storage shelves, nutritious mess meals, water &amp; power backup, and quick access to K.R.K Field, Lakhisarai ground.
+
             </p>
 
             <div className="mt-8">

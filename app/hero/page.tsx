@@ -113,7 +113,7 @@ export default function Hero() {
                   className="object-cover"
                 />
                 <span className="absolute top-3 right-3 px-3 py-1 bg-white/95 backdrop-blur-md text-slate-900 text-xs font-extrabold rounded-full shadow-sm">
-                  Gandhi Maidan Ground
+                  K.R.K Field, Lakhisarai
                 </span>
                 <span className="absolute bottom-3 left-3 px-3 py-1 bg-[#ea580c] text-white text-xs font-extrabold rounded-full shadow-sm">
                   Daily Morning 5:00 AM
@@ -132,8 +132,9 @@ export default function Hero() {
 
                 <p className="text-xs font-medium text-slate-600 mt-1 flex items-center gap-1">
                   <MapPin size={13} className="text-[#ea580c]" />
-                  Stadium / Gandhi Maidan, Lakhisarai
+                  K.R.K Field, Lakhisarai
                 </p>
+
 
                 {/* Specs Grid */}
                 <div className="mt-4 grid grid-cols-3 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">

@@ -13,7 +13,8 @@ export function HostelHeroImageShowcase() {
       src: "/hostel-building-new.png",
       title: "Official Hostel Campus Building",
       tag: "Safe & Disciplined Stay",
-      desc: "4-storey modern building located near Gandhi Maidan ground",
+      desc: "4-storey modern building located near K.R.K Field, Lakhisarai ground",
+
     },
     rooms: {
       src: "/hostel-rooms-new.png",

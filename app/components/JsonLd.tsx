@@ -18,7 +18,8 @@ export function OrganizationSchema() {
     "telephone": "+91-7739776471",
     "address": {
       "@type": "PostalAddress",
-      "streetAddress": "Gandhi Maidan Road, Near Stadium",
+      "streetAddress": "K.R.K Field, Lakhisarai",
+
       "addressLocality": "Lakhisarai",
       "addressRegion": "Bihar",
       "postalCode": "811311",

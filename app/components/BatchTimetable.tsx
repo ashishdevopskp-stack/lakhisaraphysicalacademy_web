@@ -10,7 +10,8 @@ const DEFAULT_BATCHES: DbBatch[] = [
     name: "Morning Physical Training Batch (मॉर्निंग फिजिकल)",
     category: "Physical",
     time: "05:00 AM - 07:30 AM",
-    location: "Gandhi Maidan / Stadium Ground, Lakhisarai",
+    location: "K.R.K Field, Lakhisarai",
+
     target_exam: "Bihar Police Constable, SI, Army Agniveer, RPF",
     capacity: 150,
     status: "Filling Fast",

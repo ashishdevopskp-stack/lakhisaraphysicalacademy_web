@@ -8,7 +8,8 @@ const ARMY_PILLARS = [
   {
     title: "1600m Speed & Endurance Track Drill",
     target: "Target Timing: 5:00 – 5:30 Min",
-    description: "Daily morning time trials on 400m track at Gandhi Maidan ground under expert stopwatch monitoring.",
+    description: "Daily morning time trials on 400m track at K.R.K Field, Lakhisarai ground under expert stopwatch monitoring.",
+
     badge: "🪖 1600m Special",
     accentColor: "border-l-4 border-l-[#ea580c]",
     icon: Flame,
@@ -136,7 +137,8 @@ export default function ArmyDefenceShowcase() {
 
           <div className="mt-6 pt-4 border-t border-[#264726] flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-xs font-bold text-slate-300">
-              ⚡ Morning Batch: 5:00 AM • Evening Batch: 4:00 PM (Gandhi Maidan Ground)
+              ⚡ Morning Batch: 5:00 AM • Evening Batch: 4:00 PM (K.R.K Field, Lakhisarai)
+
             </p>
             <a
               href={whatsappHref("Jai Hind! I want to join the Army / Police physical fitness training batch.")}

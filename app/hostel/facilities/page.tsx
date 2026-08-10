@@ -70,8 +70,9 @@ const AT_A_GLANCE = [
     gradient: "from-purple-500/10 via-pink-500/5 to-transparent",
   },
   {
-    title: "Near Gandhi Maidan Ground",
-    desc: "Just a 2-minute walk to Gandhi Maidan physical training ground.",
+    title: "Near K.R.K Field Ground",
+    desc: "Just a 2-minute walk to K.R.K Field physical training ground.",
+
     icon: MapPin,
     badge: "Prime Location",
     gradient: "from-rose-500/10 via-orange-500/5 to-transparent",

@@ -196,7 +196,8 @@ const PROGRAMS = [
     icon: ClipboardCheck,
     title: "Guest Physical Test Program",
     badge: "Trial Assessment",
-    overview: "One-day trial assessment at Gandhi Maidan ground with instant performance report card.",
+    overview: "One-day trial assessment at K.R.K Field, Lakhisarai ground with instant performance report card.",
+
     includes: [
       "Official 1600m / PET Trial Timing",
       "High Jump & Shot Put Trial Assessment",

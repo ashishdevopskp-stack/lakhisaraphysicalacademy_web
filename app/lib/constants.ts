@@ -11,7 +11,8 @@ export const WHATSAPP_MAHESH_MESSAGE = encodeURIComponent(
   "Hi Coach Mahesh Sir, I would like to ask a question regarding physical training and running."
 );
 export const ADDRESS =
-  "K.R.K. Ground, Near Lakhisarai Railway Station, Nawada Sikandara Road, Lakhisarai, Bihar – 811311";
+  "K.R.K Field, Near Lakhisarai Railway Station, Nawada Sikandara Road, Lakhisarai, Bihar – 811311";
+
 
 export function whatsappHref(message = WHATSAPP_DEFAULT_MESSAGE) {
   return `https://wa.me/${PHONE_NUMBER}?text=${message}`;

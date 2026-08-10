@@ -327,7 +327,8 @@ export function BatchManagementView({
                   name="location"
                   type="text"
                   defaultValue={editingBatch?.location}
-                  placeholder="e.g. Gandhi Maidan Stadium Ground, Lakhisarai"
+                  placeholder="e.g. K.R.K Field, Lakhisarai"
+
                   className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm font-semibold text-slate-900 outline-none focus:bg-white focus:border-[#ea580c]"
                 />
               </div>
