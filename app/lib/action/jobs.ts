@@ -18,9 +18,12 @@ export interface DbJob {
   pdf_url: string | null
   video_url: string | null
   details_url: string | null
+  thumbnail_url?: string | null
+  aspect_ratio?: string | null
   created_at: string
   updated_at: string
 }
+
 
 /* =========================================================
    Reads — used by the public /jobs page
@@ -89,11 +92,23 @@ export async function createJob(formData: FormData) {
   const location = String(formData.get('location') ?? '')
   const videoUrl = String(formData.get('videoUrl') ?? '').trim()
   const detailsUrl = String(formData.get('detailsUrl') ?? '').trim()
+  const aspectRatio = String(formData.get('aspectRatio') ?? '16:9').trim()
   const file = formData.get('pdf') as File | null
+  const thumbnailFile = formData.get('thumbnail') as File | null
+  const thumbnailUrlInput = String(formData.get('thumbnailUrl') ?? '').trim()
 
   let pdfUrl: string | null = null
   if (file && file.size > 0) {
     pdfUrl = await uploadJobPdf(supabase, file)
+  }
+
+  let thumbnailUrl: string | null = thumbnailUrlInput || null
+  if (thumbnailFile && thumbnailFile.size > 0) {
+    try {
+      thumbnailUrl = await uploadJobPdf(supabase, thumbnailFile)
+    } catch {
+      // fallback
+    }
   }
 
   const { error } = await supabase.from('jobs').insert({
@@ -108,6 +123,8 @@ export async function createJob(formData: FormData) {
     pdf_url: pdfUrl,
     video_url: videoUrl || null,
     details_url: detailsUrl || null,
+    thumbnail_url: thumbnailUrl,
+    aspect_ratio: aspectRatio,
   })
 
   if (error) {
@@ -132,9 +149,12 @@ export async function updateJob(id: string, formData: FormData) {
   const location = String(formData.get('location') ?? '')
   const videoUrl = String(formData.get('videoUrl') ?? '').trim()
   const detailsUrl = String(formData.get('detailsUrl') ?? '').trim()
+  const aspectRatio = String(formData.get('aspectRatio') ?? '16:9').trim()
   const file = formData.get('pdf') as File | null
+  const thumbnailFile = formData.get('thumbnail') as File | null
+  const thumbnailUrlInput = String(formData.get('thumbnailUrl') ?? '').trim()
 
-  const update: Partial<DbJob> = {
+  const update: Record<string, any> = {
     title,
     subtitle: subtitle || null,
     organization,
@@ -145,13 +165,27 @@ export async function updateJob(id: string, formData: FormData) {
     location,
     video_url: videoUrl || null,
     details_url: detailsUrl || null,
+    aspect_ratio: aspectRatio,
+  }
+
+  if (thumbnailUrlInput) {
+    update.thumbnail_url = thumbnailUrlInput
   }
 
   if (file && file.size > 0) {
     update.pdf_url = await uploadJobPdf(supabase, file)
   }
 
+  if (thumbnailFile && thumbnailFile.size > 0) {
+    try {
+      update.thumbnail_url = await uploadJobPdf(supabase, thumbnailFile)
+    } catch {
+      // fallback
+    }
+  }
+
   const { error } = await supabase.from('jobs').update(update).eq('id', id)
+
 
   if (error) {
     redirect(`/admin/jobs/${id}/edit?error=${encodeURIComponent(error.message)}`)

@@ -21,6 +21,8 @@ import { JOB_CATEGORY_LABELS, JOB_STATUSES } from "@/app/lib/jobs-data";
 
 const CUSTOM_CATEGORY_OPTION = "Custom (Mention)";
 
+import ThumbnailRatioSelector from "@/app/admin/_components/ThumbnailRatioSelector";
+
 export function JobForm({
   action,
   submitLabel,
@@ -64,7 +66,15 @@ export function JobForm({
       }}
       className="space-y-6 rounded-3xl border border-slate-200/90 bg-white p-5 sm:p-8 shadow-xl shadow-slate-900/5"
     >
+      {/* Thumbnail Image & Aspect Ratio Selector */}
+      <ThumbnailRatioSelector
+        defaultThumbnailUrl={initialData?.thumbnail_url}
+        defaultAspectRatio={initialData?.aspect_ratio || "16:9"}
+        label="Job Banner / Thumbnail Image & Ratio"
+      />
+
       {/* Existing PDF Alert if editing */}
+
       {initialData?.pdf_url && (
         <div className="flex items-center justify-between gap-3 rounded-2xl bg-amber-50/80 p-4 border border-amber-200 text-xs font-semibold text-amber-900">
           <div className="flex items-center gap-2">

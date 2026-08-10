@@ -12,11 +12,13 @@ export type DbVideo = {
   category: string
   video_url: string
   thumbnail_url: string | null
+  aspect_ratio?: string | null
   status: VideoStatus
   publish_date: string
   featured: boolean
   created_at: string
 }
+
 
 export async function getVideos(): Promise<DbVideo[]> {
   const supabase = await createClient()
@@ -95,11 +97,13 @@ export async function createVideo(formData: FormData) {
   const status = formData.get('status') as string
   const publishDate = formData.get('publishDate') as string
   const featured = formData.get('featured') === 'on'
+  const aspectRatio = (formData.get('aspectRatio') as string) || '16:9'
   const thumbnailFile = formData.get('thumbnail') as File | null
+  const thumbnailUrlInput = (formData.get('thumbnailUrl') as string)?.trim() || null
 
-  let thumbnailUrl: string | null = null
+  let thumbnailUrl: string | null = thumbnailUrlInput
   if (thumbnailFile && thumbnailFile.size > 0) {
-    thumbnailUrl = await uploadThumbnail(supabase, thumbnailFile)
+    thumbnailUrl = await uploadThumbnail(supabase, thumbnailFile) || thumbnailUrlInput
   }
 
   const { error } = await supabase.from('videos').insert({
@@ -108,6 +112,7 @@ export async function createVideo(formData: FormData) {
     category,
     video_url: videoUrl,
     thumbnail_url: thumbnailUrl,
+    aspect_ratio: aspectRatio,
     status,
     publish_date: publishDate,
     featured,
@@ -133,22 +138,30 @@ export async function updateVideo(id: string, formData: FormData) {
   const status = formData.get('status') as string
   const publishDate = formData.get('publishDate') as string
   const featured = formData.get('featured') === 'on'
+  const aspectRatio = (formData.get('aspectRatio') as string) || '16:9'
   const thumbnailFile = formData.get('thumbnail') as File | null
+  const thumbnailUrlInput = (formData.get('thumbnailUrl') as string)?.trim() || null
 
   const updates: Record<string, unknown> = {
     title,
     description,
     category,
     video_url: videoUrl,
+    aspect_ratio: aspectRatio,
     status,
     publish_date: publishDate,
     featured,
+  }
+
+  if (thumbnailUrlInput) {
+    updates.thumbnail_url = thumbnailUrlInput
   }
 
   if (thumbnailFile && thumbnailFile.size > 0) {
     const thumbnailUrl = await uploadThumbnail(supabase, thumbnailFile)
     if (thumbnailUrl) updates.thumbnail_url = thumbnailUrl
   }
+
 
   const { error } = await supabase.from('videos').update(updates).eq('id', id)
 
