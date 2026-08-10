@@ -61,7 +61,6 @@ const NAV: NavItem[] = [
       { label: 'Add Blog', href: '/admin/blogs/new' },
     ],
   },
-  //  { label: 'Admissions', href: '/admin/admissions', icon: ClipboardList },
   {
     label: 'Events', href: '/admin/events', icon: Calendar,
     children: [
@@ -105,14 +104,12 @@ function isActive(pathname: string, href: string) {
   return pathname === base || pathname.startsWith(base + '/')
 }
 
-/** Logo with a graceful text fallback if /logo.png is missing — never
- *  renders a broken-image icon, never trusts any external/user input. */
 function BrandLogo() {
   const [failed, setFailed] = useState(false)
 
   if (failed) {
     return (
-      <div className="w-9 h-9 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-sm shrink-0">
+      <div className="w-9 h-9 rounded-full bg-[#ea580c] text-white flex items-center justify-center font-black text-sm shrink-0">
         LP
       </div>
     )
@@ -125,7 +122,7 @@ function BrandLogo() {
       alt="Lakhisarai Physical Academy"
       width={36}
       height={36}
-      className="w-9 h-9 rounded-full object-cover shrink-0 ring-1 ring-black/5"
+      className="w-9 h-9 rounded-full object-cover shrink-0 ring-2 ring-orange-500/40"
       onError={() => setFailed(true)}
     />
   )
@@ -133,11 +130,12 @@ function BrandLogo() {
 
 function BrandHeader() {
   return (
-    <div className="flex items-center gap-2.5 px-5 py-4 border-b border-gray-100">
+    <div className="relative overflow-hidden flex items-center gap-2.5 px-5 py-4 border-b border-slate-200/80 bg-white">
+      <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-[#ff9933] via-slate-200 to-[#138808]" />
       <BrandLogo />
       <div className="min-w-0">
-        <p className="text-sm font-bold text-gray-900 leading-tight truncate">LAKHISARAI</p>
-        <p className="text-[11px] text-gray-500 leading-tight truncate">Admin Panel</p>
+        <p className="text-sm font-black text-slate-900 leading-tight truncate tracking-tight">LAKHISARAI</p>
+        <p className="text-[11px] font-bold text-[#ea580c] leading-tight truncate uppercase tracking-wider">Admin Control Panel</p>
       </div>
     </div>
   )
@@ -176,15 +174,15 @@ const SidebarContent = memo(function SidebarContent({
               href={item.href}
               onClick={onNavigate}
               className={
-                'group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ' +
+                'group flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-extrabold transition-all ' +
                 (active
-                  ? 'bg-indigo-600 text-white shadow-sm'
-                  : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900')
+                  ? 'bg-[#ea580c] text-white shadow-md shadow-orange-500/20'
+                  : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900')
               }
             >
               <Icon
                 size={18}
-                className={'shrink-0 transition-colors ' + (active ? 'text-white' : 'text-gray-400 group-hover:text-gray-600')}
+                className={'shrink-0 transition-colors ' + (active ? 'text-white' : 'text-slate-400 group-hover:text-slate-600')}
               />
               {item.label}
             </Link>
@@ -200,11 +198,11 @@ const SidebarContent = memo(function SidebarContent({
               onClick={() => toggleGroup(item.label)}
               aria-expanded={open}
               className={
-                'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ' +
-                (active ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900')
+                'w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-extrabold transition-all ' +
+                (active ? 'bg-orange-50 text-[#ea580c]' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900')
               }
             >
-              <Icon size={18} className={'shrink-0 ' + (active ? 'text-indigo-600' : 'text-gray-400')} />
+              <Icon size={18} className={'shrink-0 ' + (active ? 'text-[#ea580c]' : 'text-slate-400')} />
               <span className="flex-1 text-left">{item.label}</span>
               <ChevronDown
                 size={16}
@@ -213,7 +211,7 @@ const SidebarContent = memo(function SidebarContent({
             </button>
 
             {open && (
-              <div className="mt-1 ml-[1.85rem] pl-3 border-l border-gray-200 space-y-0.5">
+              <div className="mt-1 ml-[1.85rem] pl-3 border-l-2 border-orange-200 space-y-0.5">
                 {item.children.map((child) => {
                   const childActive = pathname === child.href.split('?')[0]
                   const ChildIcon = child.icon
@@ -223,10 +221,10 @@ const SidebarContent = memo(function SidebarContent({
                       href={child.href}
                       onClick={onNavigate}
                       className={
-                        'flex items-center gap-2 px-3 py-2 rounded-md text-sm transition-colors ' +
+                        'flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-colors ' +
                         (childActive
-                          ? 'bg-indigo-50 text-indigo-700 font-medium'
-                          : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900')
+                          ? 'bg-orange-100/70 text-[#ea580c]'
+                          : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900')
                       }
                     >
                       {ChildIcon && <ChildIcon size={14} className="shrink-0" />}
@@ -249,9 +247,6 @@ export function AdminSidebar({ active }: { active?: string }) {
 
   const closeMobile = useCallback(() => setMobileOpen(false), [])
 
-  // Lock background scroll and allow Escape to dismiss while the mobile
-  // drawer is open — small UX/security-adjacent touch (avoids trapping
-  // focus/scroll state in a way that could leave the page in a broken state).
   useEffect(() => {
     if (!mobileOpen) return
     const previousOverflow = document.body.style.overflow
@@ -273,16 +268,16 @@ export function AdminSidebar({ active }: { active?: string }) {
 
   return (
     <>
-      <div className="lg:hidden flex items-center justify-between px-4 py-3 border-b border-gray-200 bg-white sticky top-0 z-30">
+      <div className="lg:hidden flex items-center justify-between px-4 py-3 border-b border-slate-200 bg-white sticky top-0 z-30 shadow-sm">
         <div className="flex items-center gap-2">
           <BrandLogo />
-          <span className="text-sm font-semibold text-gray-900">Admin Panel</span>
+          <span className="text-sm font-black text-slate-900">Admin Control Panel</span>
         </div>
         <button
           type="button"
           onClick={() => setMobileOpen(true)}
           aria-label="Open menu"
-          className="p-2 rounded-md hover:bg-gray-100 active:scale-95 transition-transform"
+          className="p-2 rounded-lg hover:bg-slate-100 active:scale-95 transition-transform text-slate-700"
         >
           <Menu size={20} />
         </button>
@@ -291,21 +286,21 @@ export function AdminSidebar({ active }: { active?: string }) {
       {mobileOpen && (
         <div className="lg:hidden fixed inset-0 z-40 flex" role="dialog" aria-modal="true">
           <div
-            className="fixed inset-0 bg-black/40 backdrop-blur-[2px] animate-[fadeIn_0.15s_ease-out]"
+            className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm animate-[fadeIn_0.15s_ease-out]"
             onClick={closeMobile}
             aria-hidden="true"
           />
-          <div className="relative w-72 max-w-[80vw] bg-white h-full flex flex-col shadow-xl animate-[slideIn_0.2s_ease-out]">
-            <div className="flex items-center justify-between px-4 py-4 border-b border-gray-100">
+          <div className="relative w-72 max-w-[80vw] bg-white h-full flex flex-col shadow-2xl animate-[slideIn_0.2s_ease-out]">
+            <div className="flex items-center justify-between px-4 py-4 border-b border-slate-100">
               <div className="flex items-center gap-2 min-w-0">
                 <BrandLogo />
-                <span className="text-sm font-semibold text-gray-900 truncate">Admin Panel</span>
+                <span className="text-sm font-extrabold text-slate-900 truncate">Admin Panel</span>
               </div>
               <button
                 type="button"
                 onClick={closeMobile}
                 aria-label="Close menu"
-                className="p-2 rounded-md hover:bg-gray-100 shrink-0"
+                className="p-2 rounded-lg hover:bg-slate-100 shrink-0 text-slate-700"
               >
                 <X size={20} />
               </button>
@@ -315,7 +310,7 @@ export function AdminSidebar({ active }: { active?: string }) {
         </div>
       )}
 
-      <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:shrink-0 border-r border-gray-200 bg-white h-screen sticky top-0">
+      <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:shrink-0 border-r border-slate-200/90 bg-white h-screen sticky top-0 shadow-sm">
         <BrandHeader />
         {sidebarContent}
       </aside>
