@@ -12,6 +12,8 @@ export const WHATSAPP_MAHESH_MESSAGE = encodeURIComponent(
 );
 export const ADDRESS =
   "K.R.K Field, Near Lakhisarai Railway Station, Nawada Sikandara Road, Lakhisarai, Bihar – 811311";
+export const WHATSAPP_CHANNEL_URL =
+  "https://whatsapp.com/channel/0029VaAoQ1gDjiOa3By7bM3s";
 
 
 export function whatsappHref(message = WHATSAPP_DEFAULT_MESSAGE) {

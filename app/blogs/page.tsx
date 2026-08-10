@@ -144,9 +144,16 @@ function StayUpdatedCTA() {
               Never Miss a New Blog or Recruitment Update!
             </h2>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <Button href={whatsappHref()} variant="primary" icon={MessageCircle}>
-                Join WhatsApp Channel
-              </Button>
+              <a
+                href="https://whatsapp.com/channel/0029VaAoQ1gDjiOa3By7bM3s"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs sm:text-sm shadow-md transition-all hover:scale-105"
+              >
+                <MessageCircle size={18} />
+                <span>Join WhatsApp Channel</span>
+              </a>
+
               {/* TODO: replace with your actual YouTube channel/video URL */}
               <Button href="https://www.youtube.com/@lakhisaraiphysicalacademy?si=S80l_B7Z0lWTtZSU" variant="primary" icon={Video}>
                 Subscribe on YouTube

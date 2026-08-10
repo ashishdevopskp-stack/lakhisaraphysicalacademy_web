@@ -248,17 +248,20 @@ function StayUpdatedCTA() {
             charts, and guides are uploaded.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <Button
-              href={`https://wa.me/${PHONE_NUMBER}`}
-              variant="whatsapp"
-              icon={MessageCircle}
+            <a
+              href="https://whatsapp.com/channel/0029VaAoQ1gDjiOa3By7bM3s"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs sm:text-sm shadow-lg shadow-emerald-600/30 transition-all hover:scale-105"
             >
-              Join WhatsApp Channel
-            </Button>
+              <MessageCircle size={18} />
+              <span>Join WhatsApp Channel</span>
+            </a>
             <Button href="#resources" variant="ghost" icon={Download}>
               Browse Resources
             </Button>
           </div>
+
         </ScrollFadeUp>
       </Container>
     </section>

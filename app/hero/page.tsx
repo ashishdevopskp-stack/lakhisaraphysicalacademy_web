@@ -25,8 +25,36 @@ export default function Hero() {
     <section id="top" className="pb-12 pt-3 sm:pb-20 sm:pt-5 overflow-hidden">
       <Container>
 
+        {/* Top WhatsApp Channel Announcement Banner */}
+        <div className="mb-5 rounded-2xl bg-gradient-to-r from-emerald-900 via-emerald-950 to-slate-950 p-3.5 sm:p-4 text-white shadow-lg border border-emerald-500/30 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shrink-0">
+              <MessageCircle size={20} />
+            </div>
+            <div>
+              <p className="text-xs font-black uppercase tracking-wider text-emerald-400">
+                📢 Official Academy Channel
+              </p>
+              <p className="text-xs sm:text-sm font-extrabold text-white">
+                Join Lakhisarai Physical Academy Official WhatsApp Channel for Daily Ground &amp; Exam Updates!
+              </p>
+            </div>
+          </div>
+
+          <a
+            href="https://whatsapp.com/channel/0029VaAoQ1gDjiOa3By7bM3s"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs transition-all shadow-md shrink-0 flex items-center gap-2 hover:scale-105"
+          >
+            <span>Join WhatsApp Channel</span>
+            <ArrowRight size={14} />
+          </a>
+        </div>
+
         {/* Main Bento Layout Grid with Tiranga Saffron, White, & India Green Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+
           {/* Left Column: Hero Header & Stats (Col 1-7) */}
           <div className="lg:col-span-7 flex flex-col justify-between gap-6">
             {/* Top Saffron Bento Card */}

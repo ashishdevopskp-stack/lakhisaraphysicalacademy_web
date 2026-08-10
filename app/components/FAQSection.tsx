@@ -39,11 +39,17 @@ const FAQS: FAQItem[] = [
     category: "Courses & Fees",
   },
   {
-    question: "लखीसराय फिजिकल एकेडमी का सफलता दर (Success Rate) क्या है?",
-    answer: "हमारी एकेडमी ने पिछले 5 वर्षों में 1200+ से अधिक अभ्यर्थियों को बिहार पुलिस, इंडियन आर्मी, SSC GD और RPF में अंतिम रूप से चयनित कराया है।",
+    question: "एडमिशन एवं अधिक जानकारी के लिए किस नंबर पर संपर्क करें?",
+    answer: "📞 7739776471 / 7903594008 — अधिक जानकारी, Batch, Hostel, Mess और Admission से संबंधित जानकारी के लिए संपर्क करें।",
     category: "Admission",
   },
+  {
+    question: "क्या कमजोर Running वाले छात्र भी एडमिशन ले सकते हैं?",
+    answer: "बिल्कुल। शुरुआती स्तर से Training देकर धीरे-धीरे Speed, Stamina और Running Performance को बेहतर करने पर काम किया जाता है।",
+    category: "Physical Training",
+  },
 ];
+
 
 export default function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
