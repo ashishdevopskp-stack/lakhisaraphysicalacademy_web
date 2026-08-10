@@ -7,11 +7,9 @@ import {
   Mail,
   MapPin,
   Clock,
-  Video as Youtube,
-  FormIcon as Facebook,
-  Camera as Instagram,
   Navigation,
 } from "lucide-react";
+import { FaYoutube, FaFacebookF, FaInstagram, FaWhatsapp } from "react-icons/fa";
 import Container from "../components/Container";
 import Button from "../components/Button";
 import { FadeInUp, ScrollFadeUp, StaggerList, StaggerItem } from "./_ContactMotion";
@@ -226,10 +224,34 @@ function AcademyTimings() {
    ========================================================= */
 function ConnectWithUs() {
   const links = [
-    { label: "YouTube", icon: Youtube, href: "https://www.youtube.com/@lakhisaraiphysicalacademy?si=S80l_B7Z0lWTtZSU" },
-    { label: "Facebook", icon: Facebook, href: "https://www.facebook.com/trainer.ganesh.2025?rdid=VKCg5epDr9XWKwf5&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1SsmvbtHrj%2F" },
-    { label: "Instagram", icon: Instagram, href: "https://www.instagram.com/lakhisarai_physical_academy?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" },
-    { label: "WhatsApp", icon: MessageCircle, href: whatsappHref() },
+    {
+      label: "YouTube",
+      icon: FaYoutube,
+      href: "https://www.youtube.com/@lakhisaraiphysicalacademy?si=S80l_B7Z0lWTtZSU",
+      color: "#FF0000",
+      bg: "rgba(255,0,0,0.08)",
+    },
+    {
+      label: "Facebook",
+      icon: FaFacebookF,
+      href: "https://www.facebook.com/trainer.ganesh.2025?rdid=VKCg5epDr9XWKwf5&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1SsmvbtHrj%2F",
+      color: "#1877F2",
+      bg: "rgba(24,119,242,0.08)",
+    },
+    {
+      label: "Instagram",
+      icon: FaInstagram,
+      href: "https://www.instagram.com/lakhisarai_physical_academy?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==",
+      color: "#E1306C",
+      bg: "rgba(225,48,108,0.08)",
+    },
+    {
+      label: "WhatsApp",
+      icon: FaWhatsapp,
+      href: whatsappHref(),
+      color: "#25D366",
+      bg: "rgba(37,211,102,0.08)",
+    },
   ];
 
   return (
@@ -240,15 +262,22 @@ function ConnectWithUs() {
         </ScrollFadeUp>
 
         <StaggerList className="mt-8 flex flex-wrap gap-3">
-          {links.map(({ label, icon: Icon, href }) => (
+          {links.map(({ label, icon: Icon, href, color, bg }) => (
             <StaggerItem
               key={label}
               as="a"
               href={href}
+              target="_blank"
+              rel="noopener noreferrer"
               hover
-              className="flex items-center gap-2 rounded-lg border border-line bg-bg px-4 py-2.5 text-[13px] font-medium text-text transition-colors hover:border-line-strong"
+              className="flex items-center gap-2.5 rounded-lg border border-line bg-bg px-4 py-2.5 text-[13px] font-medium text-text transition-all hover:border-line-strong hover:scale-105"
             >
-              <Icon size={16} className="text-signal" />
+              <span
+                className="flex h-7 w-7 items-center justify-center rounded-full shrink-0"
+                style={{ backgroundColor: bg }}
+              >
+                <Icon size={15} style={{ color }} />
+              </span>
               {label}
             </StaggerItem>
           ))}
