@@ -14,24 +14,16 @@ import {
   CheckCircle2,
   Calendar,
   Flag,
+  Flame,
+  MessageCircle,
 } from "lucide-react";
 import Container from "../components/Container";
 import EnrollForm from "../components/EnrollForm";
-
-const EXAM_CATEGORIES = [
-  { id: "all", label: "All Programs" },
-  { id: "army", label: "Indian Army Agniveer" },
-  { id: "bihar_police", label: "Bihar Police Constable" },
-  { id: "daroga", label: "Bihar Daroga (SI)" },
-  { id: "ssc_gd", label: "SSC GD (BSF, CISF, CRPF)" },
-  { id: "rpf", label: "RPF Railway Police" },
-];
 
 const PHONE_NUMBER = "917739776471";
 
 export default function Hero() {
   const [enrollOpen, setEnrollOpen] = useState(false);
-  const [activeCategory, setActiveCategory] = useState("all");
 
   return (
     <section id="top" className="pb-12 pt-3 sm:pb-20 sm:pt-5 overflow-hidden">
@@ -109,7 +101,7 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Right Column: Featured Course & Coach Card (Col 8-12) */}
+          {/* Right Column: Featured Course & Coach Cards (Col 8-12) */}
           <div className="lg:col-span-5 flex flex-col gap-6">
             {/* Featured Academy Card with Green Accent Border */}
             <div className="bento-card bento-card-green p-5 flex flex-col justify-between">
@@ -171,41 +163,75 @@ export default function Hero() {
               </div>
             </div>
 
-            {/* Coach Profile Card (Ashoka Chakra Navy Theme Card) */}
-            <div className="bento-card bento-card-navy p-5 flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3.5">
-                <div className="relative h-12 w-12 rounded-full overflow-hidden border-2 border-[#000080]/30 shrink-0 ring-2 ring-orange-500/30">
-                  <Image
-                    src="/ganeshsir.png"
-                    alt="Ganesh Sir"
-                    fill
-                    sizes="48px"
-                    className="object-cover"
-                  />
-                </div>
-                <div>
-                  <h4 className="text-sm font-black text-slate-900 leading-tight">
-                    Ganesh Sir
-                  </h4>
-                  <p className="text-xs font-semibold text-slate-600">
-                    Founder &amp; Chief NIS Instructor
-                  </p>
-                  <div className="flex items-center gap-1 mt-0.5">
-                    <Star size={12} className="text-amber-400 fill-amber-400" />
-                    <span className="text-[11px] font-extrabold text-slate-800">4.9</span>
-                    <span className="text-[11px] font-semibold text-slate-500">(NIS Certified)</span>
+            {/* Grid of Coaches (Ganesh Sir & Coach Mahesh Sir) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* Ganesh Sir Card */}
+              <div className="bento-card bento-card-navy p-3.5 flex flex-col justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="relative h-10 w-10 rounded-full overflow-hidden border-2 border-[#000080]/30 shrink-0 ring-2 ring-orange-500/30">
+                    <Image
+                      src="/ganeshsir.png"
+                      alt="Ganesh Sir"
+                      fill
+                      sizes="40px"
+                      className="object-cover"
+                    />
                   </div>
+                  <div className="min-w-0">
+                    <h4 className="text-xs font-black text-slate-900 leading-tight truncate">
+                      Ganesh Sir
+                    </h4>
+                    <p className="text-[10px] font-bold text-slate-600 truncate">
+                      Founder &amp; NIS Coach
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between">
+                  <span className="text-[10px] font-bold text-slate-500">Physical Chief</span>
+                  <a
+                    href={`https://wa.me/${PHONE_NUMBER}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-2.5 py-1 text-[10px] font-extrabold text-[#138808] bg-emerald-50 hover:bg-emerald-100 rounded-full border border-emerald-300 transition-colors shrink-0"
+                  >
+                    Chat
+                  </a>
                 </div>
               </div>
 
-              <a
-                href={`https://wa.me/${PHONE_NUMBER}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-4 py-2 text-xs font-extrabold text-[#138808] bg-emerald-50 hover:bg-emerald-100 rounded-full border border-emerald-300 transition-colors shrink-0"
-              >
-                Chat Direct
-              </a>
+              {/* Coach Mahesh Sir Card */}
+              <div className="bento-card bento-card-saffron p-3.5 flex flex-col justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="relative h-10 w-10 rounded-full overflow-hidden border-2 border-orange-400 shrink-0 ring-2 ring-orange-500/30">
+                    <Image
+                      src="/maheshsir.jpg"
+                      alt="Coach Mahesh Sir"
+                      fill
+                      sizes="40px"
+                      className="object-cover object-top"
+                    />
+                  </div>
+                  <div className="min-w-0">
+                    <h4 className="text-xs font-black text-slate-900 leading-tight truncate">
+                      Mahesh Sir
+                    </h4>
+                    <p className="text-[10px] font-extrabold text-[#ea580c] truncate">
+                      Running Specialist
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between">
+                  <span className="text-[10px] font-bold text-slate-500">1600m Speed</span>
+                  <a
+                    href="/about#coaches"
+                    className="px-2.5 py-1 text-[10px] font-extrabold text-[#ea580c] bg-orange-50 hover:bg-orange-100 rounded-full border border-orange-300 transition-colors shrink-0"
+                  >
+                    Profile
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </div>
