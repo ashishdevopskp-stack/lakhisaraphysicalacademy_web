@@ -155,24 +155,25 @@ function FacilitiesHero() {
       <SectionGlow />
       <Container>
         <FadeInUp>
+          <div className="mb-4">
+            <HostelSubNav current="/hostel/facilities" />
+          </div>
+
           <p className="font-mono text-[13px] font-semibold uppercase tracking-[0.2em] text-[#ea580c]">
             Hostel Campus
           </p>
-          <h1 className="font-display mt-4 max-w-[24ch] text-[34px] font-black leading-[1.1] sm:text-[44px] text-slate-900">
+          <h1 className="font-display mt-2 max-w-[24ch] text-[34px] font-black leading-[1.1] sm:text-[44px] text-slate-900">
             Hostel <span className="text-[#ea580c]">Facilities &amp; Amenities</span>
           </h1>
           <p className="mt-3 text-sm font-semibold text-slate-600 max-w-xl">
             Everything you need for a comfortable stay, athletic recovery, and focused written exam preparation.
           </p>
-
-          <div className="mt-8">
-            <HostelSubNav current="/hostel/facilities" />
-          </div>
         </FadeInUp>
       </Container>
     </section>
   );
 }
+
 
 function HostelOverview() {
   return (

@@ -39,19 +39,20 @@ function FaqHero() {
     <section id="top" className="relative overflow-hidden pb-12 pt-16 sm:pt-24">
       <SectionGlow />
       <Container>
+        <div className="mb-4">
+          <HostelSubNav current="/hostel/faq" />
+        </div>
         <p className="font-mono text-[13px] font-semibold uppercase tracking-[0.2em] text-signal">
           Hostel
         </p>
-        <h1 className="font-display mt-5 max-w-[24ch] text-[30px] font-extrabold leading-[1.1] sm:text-[40px]">
-          Frequently Asked <span className="text-gradient-brand">Questions</span>
+        <h1 className="font-display mt-2 max-w-[24ch] text-[30px] font-extrabold leading-[1.1] sm:text-[40px] text-slate-900">
+          Frequently Asked <span className="text-[#ea580c]">Questions</span>
         </h1>
-        <div className="mt-8">
-          <HostelSubNav current="/hostel/faq" />
-        </div>
       </Container>
     </section>
   );
 }
+
 
 function FaqList() {
   return (

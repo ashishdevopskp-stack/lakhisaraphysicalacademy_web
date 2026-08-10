@@ -24,19 +24,20 @@ function FeesHero() {
   return (
     <section id="top" className="relative overflow-hidden pb-8 pt-12 sm:pt-16">
       <Container>
+        <div className="mb-4">
+          <HostelSubNav current="/hostel/fees" />
+        </div>
         <p className="font-mono text-[13px] font-semibold uppercase tracking-[0.2em] text-signal">
           Hostel
         </p>
-        <h1 className="font-display mt-3 max-w-[24ch] text-[30px] font-extrabold leading-[1.1] sm:text-[40px] text-slate-900">
+        <h1 className="font-display mt-2 max-w-[24ch] text-[30px] font-extrabold leading-[1.1] sm:text-[40px] text-slate-900">
           Hostel <span className="text-[#ea580c]">Fees Structure</span>
         </h1>
-        <div className="mt-6">
-          <HostelSubNav current="/hostel/fees" />
-        </div>
       </Container>
     </section>
   );
 }
+
 
 function FeesGrid() {
   return (

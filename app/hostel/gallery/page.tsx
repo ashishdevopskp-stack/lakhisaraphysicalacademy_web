@@ -32,6 +32,10 @@ export default function HostelGalleryPage() {
       {/* Hero Section */}
       <section id="top" className="pb-8 pt-16 sm:pt-24 bg-gradient-to-b from-amber-500/10 via-white to-slate-50 border-b border-slate-200">
         <Container>
+          <div className="mb-4">
+            <HostelSubNav current="/hostel/gallery" />
+          </div>
+
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-orange-50 text-[#ea580c] border border-orange-300 text-xs font-black mb-3">
             <Sparkles size={14} className="text-[#ea580c]" />
             <span>Real Campus Infrastructure</span>
@@ -44,11 +48,8 @@ export default function HostelGalleryPage() {
           <p className="mt-3 text-slate-600 font-medium text-sm sm:text-base max-w-2xl">
             Explore the authentic photos of Lakhisarai Physical Academy hostel building, student accommodation rooms, beds, and facilities.
           </p>
-
-          <div className="mt-8">
-            <HostelSubNav current="/hostel/gallery" />
-          </div>
         </Container>
+
       </section>
 
       {/* Gallery Grid */}

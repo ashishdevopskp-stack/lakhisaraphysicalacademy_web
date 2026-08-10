@@ -30,11 +30,15 @@ function HostelHero() {
 
           {/* ---------------- Right: copy + CTAs ---------------- */}
           <FadeInUp>
+            <div className="mb-4">
+              <HostelSubNav current="/hostel" />
+            </div>
+
             <p className="font-mono text-[13px] font-semibold uppercase tracking-[0.2em] text-[#ea580c]">
               Hostel Campus
             </p>
 
-            <h1 className="font-display mt-4 max-w-[20ch] text-[34px] font-black leading-[1.1] sm:text-[44px] lg:text-[52px] text-slate-900">
+            <h1 className="font-display mt-2 max-w-[20ch] text-[34px] font-black leading-[1.1] sm:text-[44px] lg:text-[52px] text-slate-900">
               Hostel <span className="text-[#ea580c]">Facility</span>
             </h1>
 
@@ -44,12 +48,8 @@ function HostelHero() {
 
             <p className="font-body mt-3 max-w-[54ch] text-[15.5px] leading-relaxed text-slate-600 font-medium">
               Lakhisarai Physical Academy provides a secure and student-friendly hostel building with comfortable rooms, individual beds, storage shelves, nutritious mess meals, water &amp; power backup, and quick access to K.R.K Field, Lakhisarai ground.
-
             </p>
 
-            <div className="mt-8">
-              <HostelSubNav current="/hostel" />
-            </div>
 
             <div className="mt-9 flex flex-wrap items-center gap-3">
               <Button href={whatsappHref(HOSTEL_ENQUIRY_MESSAGE)} variant="primary" icon={Building2}>

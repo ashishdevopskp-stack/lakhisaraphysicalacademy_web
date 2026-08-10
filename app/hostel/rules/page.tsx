@@ -30,6 +30,10 @@ function RulesHero() {
   return (
     <section id="top" className="pb-8 pt-16 sm:pt-24 bg-gradient-to-b from-slate-50 via-white to-slate-50 border-b border-slate-200">
       <Container>
+        <div className="mb-4">
+          <HostelSubNav current="/hostel/rules" />
+        </div>
+
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 text-[#138808] border border-emerald-300 text-xs font-black mb-3">
           <ShieldCheck className="w-4 h-4 text-[#138808]" />
           <span>Academy Discipline Guidelines</span>
@@ -41,11 +45,8 @@ function RulesHero() {
         <p className="mt-2 text-slate-600 text-sm sm:text-base font-medium max-w-2xl">
           🏠 हॉस्टल में रहने वाले बच्चों के लिए अनिवार्य अनुशासन नियम। सभी प्रशिक्षुओं से इन नियमों के कड़ाई से पालन की अपेक्षा की जाती है।
         </p>
-
-        <div className="mt-8">
-          <HostelSubNav current="/hostel/rules" />
-        </div>
       </Container>
+
     </section>
   );
 }
