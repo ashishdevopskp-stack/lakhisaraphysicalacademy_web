@@ -39,8 +39,8 @@ export default function Hero() {
                 </div>
 
                 <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900 leading-[1.15]">
-                  Serve The Nation! Build Elite Fitness for{" "}
-                  <span className="text-[#ea580c]">Defence &amp; Police Exams</span>
+                  Serve the Nation!{" "}
+                  <span className="text-[#ea580c]">Join Lakhisarai Physical Academy Now</span>
                 </h1>
 
                 <p className="mt-4 text-slate-700 text-base sm:text-lg font-medium leading-relaxed">
@@ -51,13 +51,16 @@ export default function Hero() {
               {/* Action Pill CTAs */}
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 <a
-                  href={`tel:+${PHONE_NUMBER}`}
+                  href="https://play.google.com/store/apps/details?id=com.lakhisarai.physical_academy"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="btn-orange"
                 >
                   <ClipboardList className="h-4 w-4" />
-                  <span>Apply for Admission</span>
+                  <span>Apply for Admission (App)</span>
                   <ArrowRight className="h-4 w-4" />
                 </a>
+
 
                 <a
                   href={`tel:+${PHONE_NUMBER}`}

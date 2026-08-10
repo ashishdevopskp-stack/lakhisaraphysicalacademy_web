@@ -519,9 +519,10 @@ function NextSuccessStoryCTA() {
             today and start your journey toward success.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <Button href={telHref()} variant="primary" icon={ClipboardList}>
-              Apply for Admission
+            <Button href="https://play.google.com/store/apps/details?id=com.lakhisarai.physical_academy" variant="primary" icon={ClipboardList}>
+              Apply for Admission (App)
             </Button>
+
             <Button
               href={`https://wa.me/${PHONE_NUMBER}`}
               variant="whatsapp"

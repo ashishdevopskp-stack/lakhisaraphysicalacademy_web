@@ -2,6 +2,8 @@ export const PHONE_NUMBER = "917739776471";
 export const PHONE_NUMBER_ALT = "917903594008";
 export const PHONE_NUMBER_MAHESH = "917903594008";
 export const EMAIL = "ganeshkumar90067@gmail.com";
+export const PLAY_STORE_URL =
+  "https://play.google.com/store/apps/details?id=com.lakhisarai.physical_academy";
 export const WHATSAPP_DEFAULT_MESSAGE = encodeURIComponent(
   "Hi, I'd like to know more about admission at Lakhisarai Physical Academy."
 );
@@ -19,4 +21,5 @@ export function maheshWhatsappHref(message = WHATSAPP_MAHESH_MESSAGE) {
 }
 export function telHref(number = PHONE_NUMBER) {
   return `tel:+${number}`;
-}
+}
+

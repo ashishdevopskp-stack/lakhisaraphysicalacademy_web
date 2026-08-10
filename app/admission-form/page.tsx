@@ -1,12 +1,11 @@
-import type { Metadata } from "next";
-import AdmissionForm from "./_AdmissionForm";
+import { redirect } from "next/navigation";
+import { PLAY_STORE_URL } from "../lib/constants";
 
-export const metadata: Metadata = {
-  title: "Online Admission Form | Admission 2026",
-  description:
-    "Apply for admission online. Fill in your personal, contact, educational, and course details — our admission team will reach out with your Admission ID and next steps.",
+export const metadata = {
+  title: "Online Admission | Lakhisarai Physical Academy App",
+  description: "Download Lakhisarai Physical Academy official mobile app for admission and training guidance.",
 };
 
 export default function AdmissionPage() {
-  return <AdmissionForm />;
-}
+  redirect(PLAY_STORE_URL);
+}

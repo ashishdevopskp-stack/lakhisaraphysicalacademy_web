@@ -39,9 +39,10 @@ export default function Courses() {
             </div>
 
             <div className="mt-8 flex flex-wrap items-center gap-3">
-              <Button href={telHref()} variant="primary" icon={ClipboardList}>
-                Apply for Admission
+              <Button href="https://play.google.com/store/apps/details?id=com.lakhisarai.physical_academy" variant="primary" icon={ClipboardList}>
+                Apply for Admission (App)
               </Button>
+
               <Button href={whatsappHref()} variant="secondary" icon={MessageCircle}>
                 WhatsApp Enquiry
               </Button>

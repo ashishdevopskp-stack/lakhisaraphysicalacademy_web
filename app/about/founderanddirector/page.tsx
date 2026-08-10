@@ -64,9 +64,10 @@ export default function FounderAndDirector() {
                 <Button href={telHref(PHONE_NUMBER)} variant="primary" icon={Phone}>
                   Contact Now
                 </Button>
-                <Button href={telHref(PHONE_NUMBER)} variant="secondary" icon={ClipboardList}>
-                  Apply for Admission
+                <Button href="https://play.google.com/store/apps/details?id=com.lakhisarai.physical_academy" variant="secondary" icon={ClipboardList}>
+                  Apply for Admission (App)
                 </Button>
+
                 <Button href={whatsappHref()} variant="whatsapp" icon={MessageCircle}>
                   WhatsApp
                 </Button>

@@ -189,11 +189,14 @@ export default function BatchTimetable({
                 <div className="mt-6 pt-4 border-t border-amber-500/15 flex items-center justify-between">
                   <span className="text-xs text-slate-500 font-bold">सीमित सीटें उपलब्ध</span>
                   <a
-                    href="/admission-form"
+                    href="https://play.google.com/store/apps/details?id=com.lakhisarai.physical_academy"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="btn-orange text-xs py-2 px-5 rounded-full shadow-lg shadow-amber-500/20"
                   >
-                    Join Batch Now
+                    Join Batch Now (App)
                   </a>
+
                 </div>
               </div>
             );

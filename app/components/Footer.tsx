@@ -60,9 +60,10 @@ const QUICK_LINKS = [
   { label: "About Us", href: "/about" },
   { label: "Courses", href: "/courses" },
   { label: "Results", href: "/result" },
-  { label: "Admission", href: "/admission-form" },
+  { label: "Download App", href: "https://play.google.com/store/apps/details?id=com.lakhisarai.physical_academy" },
   { label: "Contact", href: "/contact" },
 ];
+
 
 const EXPLORE_LINKS = [
   { label: "Events & Trial", href: "/events" },
@@ -172,12 +173,15 @@ export default function Footer() {
 
               <div className="flex flex-wrap items-center gap-3 shrink-0">
                 <a
-                  href={telHref()}
+                  href="https://play.google.com/store/apps/details?id=com.lakhisarai.physical_academy"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="btn-orange shadow-lg shadow-orange-500/25 hover:scale-105 transition-all"
                 >
                   <ClipboardList className="h-4 w-4" />
-                  <span>Apply for Admission</span>
+                  <span>Apply for Admission (App)</span>
                 </a>
+
 
                 <a
                   href={whatsappHref()}
