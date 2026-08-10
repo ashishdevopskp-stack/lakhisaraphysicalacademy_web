@@ -67,9 +67,10 @@ export default function Hero() {
                 </div>
 
                 <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900 leading-[1.15]">
-                  Serve the Nation!{" "}
-                  <span className="text-[#ea580c]">Join Lakhisarai Physical Academy Now</span>
+                  Serve the Nation! Join{" "}
+                  <span className="text-[#ea580c]">Lakhisarai Physical Academy</span> Now
                 </h1>
+
 
                 <p className="mt-4 text-slate-700 text-base sm:text-lg font-medium leading-relaxed">
                   Dedicated physical training for 1600m Running, High Jump, Long Jump, &amp; Shot Put guided by expert NIS coaches with patriotic discipline.
