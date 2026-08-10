@@ -3,11 +3,11 @@ import Link from 'next/link'
 import type { LucideIcon } from 'lucide-react'
 
 const TINT: Record<string, string> = {
-  indigo: 'bg-indigo-50 text-indigo-600',
-  green: 'bg-green-50 text-green-600',
-  amber: 'bg-amber-50 text-amber-600',
-  red: 'bg-red-50 text-red-600',
-  gray: 'bg-gray-100 text-gray-500',
+  indigo: 'bg-amber-500/15 text-amber-900 border border-amber-500/25',
+  green: 'bg-emerald-500/15 text-emerald-900 border border-emerald-500/25',
+  amber: 'bg-amber-500/20 text-amber-950 border border-amber-500/30',
+  red: 'bg-red-500/15 text-red-900 border border-red-500/25',
+  gray: 'bg-slate-200/60 text-slate-700 border border-slate-300/40',
 }
 
 function StatCardBase({
@@ -28,30 +28,32 @@ function StatCardBase({
   return (
     <Link
       href={href}
-      className="group bg-white border border-gray-200 rounded-xl p-4 sm:p-5 hover:border-gray-300 hover:shadow-md hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 transition-all flex flex-col"
+      className="group liquid-glass p-4 sm:p-5 hover:-translate-y-1 hover:border-amber-500/40 hover:shadow-xl transition-all duration-300 flex flex-col justify-between"
     >
       <div className="flex items-center justify-between mb-3">
         <span
           className={
-            'w-9 h-9 rounded-lg flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 ' +
+            'w-10 h-10 rounded-2xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110 shadow-sm ' +
             TINT[tint]
           }
         >
-          <Icon size={17} aria-hidden="true" />
+          <Icon size={19} aria-hidden="true" />
         </span>
       </div>
-      <p className="text-xs sm:text-sm text-gray-500 mb-1 truncate" title={label}>
-        {label}
-      </p>
-      <p className="text-xl sm:text-2xl font-semibold tabular-nums mb-1.5 truncate text-gray-900">
-        {value.toLocaleString('en-IN')}
-      </p>
-      <p
-        className="text-xs text-gray-500 truncate group-hover:text-indigo-600 transition-colors"
-        title={delta}
-      >
-        {delta}
-      </p>
+      <div>
+        <p className="text-xs font-bold text-slate-700 mb-1 truncate" title={label}>
+          {label}
+        </p>
+        <p className="text-2xl sm:text-3xl font-black tabular-nums mb-1.5 truncate text-slate-900">
+          {value.toLocaleString('en-IN')}
+        </p>
+        <p
+          className="text-xs font-extrabold text-amber-800/80 truncate group-hover:text-amber-900 transition-colors"
+          title={delta}
+        >
+          {delta}
+        </p>
+      </div>
     </Link>
   )
 }

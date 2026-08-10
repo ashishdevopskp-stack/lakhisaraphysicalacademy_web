@@ -46,14 +46,14 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 px-3 pt-3 pb-3 sm:px-6 sm:pt-4 sm:pb-4">
       <div className="mx-auto max-w-7xl">
-        {/* Navbar Container without overflow-hidden so More dropdown pops out visibly */}
-        <div className="relative rounded-full border border-slate-200/90 bg-white/95 px-4 py-2.5 shadow-md backdrop-blur-md sm:px-6 sm:py-3 z-50">
-          {/* Prominent Indian Flag Tiranga Line on Top */}
-          <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-[#ff9933] via-slate-200 to-[#138808] rounded-t-full" />
+        {/* Liquid Motion Translucent Pill Bar Container */}
+        <div className="relative rounded-full border border-amber-500/20 bg-[#faf7f0]/85 px-4 py-2.5 shadow-[0_10px_35px_-5px_rgba(217,119,6,0.12)] backdrop-blur-xl sm:px-6 sm:py-3 z-50 transition-all duration-300">
+          {/* Subtle Golden Saffron Liquid Accent Bar */}
+          <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-[#ff9933] via-amber-400 to-[#138808] rounded-t-full opacity-90" />
 
           <div className="flex items-center justify-between gap-2 sm:gap-4">
             {/* Brand Logo & Name */}
-            <Link href="/" className="flex items-center gap-2.5 shrink-0">
+            <Link href="/" className="flex items-center gap-2.5 shrink-0 group">
               <div className="relative shrink-0">
                 <Image
                   src="/logo.png"
@@ -61,26 +61,26 @@ export default function Navbar() {
                   width={42}
                   height={42}
                   priority
-                  className="h-9 w-9 sm:h-11 sm:w-11 rounded-full object-cover ring-2 ring-orange-500/40"
+                  className="h-9 w-9 sm:h-11 sm:w-11 rounded-full object-cover ring-2 ring-amber-500/40 group-hover:scale-105 transition-transform duration-300"
                 />
               </div>
               <div className="flex flex-col min-w-0">
                 <span className="text-[15px] sm:text-[17px] lg:text-[18px] font-black tracking-tight text-slate-900 leading-tight truncate max-w-[140px] sm:max-w-none">
                   {brand.shortName}
                 </span>
-                <span className="text-[9px] sm:text-[10px] font-bold text-[#ea580c] hidden md:inline-block tracking-wider uppercase">
+                <span className="text-[9px] sm:text-[10px] font-bold text-amber-600 hidden md:inline-block tracking-wider uppercase">
                   Lakhisarai, Bihar (India)
                 </span>
               </div>
             </Link>
 
-            {/* Desktop Nav Links in Exact Requested Order */}
-            <nav className="hidden xl:flex items-center gap-1 bg-slate-100/90 p-1.5 rounded-full border border-slate-200/70 shrink-0">
+            {/* Desktop Nav Links as Floating Liquid Pills */}
+            <nav className="hidden xl:flex items-center gap-1 bg-[#f3efe6]/80 p-1.5 rounded-full border border-amber-500/15 shrink-0 shadow-inner">
               {PRIMARY_NAV.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="px-3.5 py-1.5 text-[14px] font-extrabold text-slate-700 rounded-full hover:text-[#ea580c] hover:bg-white transition-all whitespace-nowrap"
+                  className="px-4 py-1.5 text-[14px] font-extrabold text-slate-800 rounded-full hover:text-amber-800 hover:bg-white/90 hover:shadow-sm transition-all whitespace-nowrap"
                 >
                   {item.label}
                 </Link>
@@ -91,15 +91,15 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={() => setMoreOpen(!moreOpen)}
-                  className="flex items-center gap-1 px-3.5 py-1.5 text-[14px] font-extrabold text-slate-700 rounded-full hover:text-[#ea580c] hover:bg-white transition-all cursor-pointer"
+                  className="flex items-center gap-1 px-4 py-1.5 text-[14px] font-extrabold text-slate-800 rounded-full hover:text-amber-800 hover:bg-white/90 transition-all cursor-pointer"
                 >
                   <span>More</span>
-                  <ChevronDown size={15} className={`transition-transform duration-200 ${moreOpen ? "rotate-180 text-[#ea580c]" : ""}`} />
+                  <ChevronDown size={15} className={`transition-transform duration-200 ${moreOpen ? "rotate-180 text-amber-600" : ""}`} />
                 </button>
 
                 {moreOpen && (
-                  <div className="absolute right-0 top-full mt-3 w-52 rounded-2xl border border-slate-200 bg-white p-2 shadow-2xl border-t-4 border-t-[#ff9933] z-50 animate-[fadeIn_0.15s_ease-out]">
-                    <div className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-slate-400 border-b border-slate-100 mb-1">
+                  <div className="absolute right-0 top-full mt-3 w-52 rounded-2xl border border-amber-500/20 bg-[#faf7f0]/95 p-2 shadow-2xl backdrop-blur-xl border-t-4 border-t-amber-500 z-50 animate-[fadeIn_0.15s_ease-out]">
+                    <div className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-amber-700/70 border-b border-amber-200/50 mb-1">
                       More Navigation
                     </div>
                     {SECONDARY_NAV.map((item) => (
@@ -107,7 +107,7 @@ export default function Navbar() {
                         key={item.href}
                         href={item.href}
                         onClick={() => setMoreOpen(false)}
-                        className="block px-3.5 py-2 text-xs font-extrabold text-slate-700 hover:bg-orange-50 hover:text-[#ea580c] rounded-xl transition-colors"
+                        className="block px-3.5 py-2 text-xs font-extrabold text-slate-700 hover:bg-amber-100/60 hover:text-amber-800 rounded-xl transition-colors"
                       >
                         {item.label}
                       </Link>

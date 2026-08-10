@@ -130,12 +130,12 @@ function BrandLogo() {
 
 function BrandHeader() {
   return (
-    <div className="relative overflow-hidden flex items-center gap-2.5 px-5 py-4 border-b border-slate-200/80 bg-white">
-      <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-[#ff9933] via-slate-200 to-[#138808]" />
+    <div className="relative overflow-hidden flex items-center gap-2.5 px-5 py-4 border-b border-amber-500/20 bg-[#faf7f0]/90 backdrop-blur-xl">
+      <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-[#ff9933] via-amber-400 to-[#138808]" />
       <BrandLogo />
       <div className="min-w-0">
         <p className="text-sm font-black text-slate-900 leading-tight truncate tracking-tight">LAKHISARAI</p>
-        <p className="text-[11px] font-bold text-[#ea580c] leading-tight truncate uppercase tracking-wider">Admin Control Panel</p>
+        <p className="text-[11px] font-bold text-amber-600 leading-tight truncate uppercase tracking-wider">Admin Control Panel</p>
       </div>
     </div>
   )
@@ -162,7 +162,7 @@ const SidebarContent = memo(function SidebarContent({
   )
 
   return (
-    <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+    <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1.5">
       {NAV.map((item) => {
         const Icon = item.icon
         const active = isActive(pathname, item.href)
@@ -175,15 +175,15 @@ const SidebarContent = memo(function SidebarContent({
               prefetch={true}
               onClick={onNavigate}
               className={
-                'group flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-extrabold transition-all ' +
+                'group flex items-center gap-3 px-4 py-2.5 rounded-full text-sm font-extrabold transition-all duration-200 ' +
                 (active
-                  ? 'bg-[#ea580c] text-white shadow-md shadow-orange-500/20'
-                  : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900')
+                  ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg shadow-amber-500/25'
+                  : 'text-slate-700 hover:bg-amber-500/10 hover:text-amber-900')
               }
             >
               <Icon
                 size={18}
-                className={'shrink-0 transition-colors ' + (active ? 'text-white' : 'text-slate-400 group-hover:text-slate-600')}
+                className={'shrink-0 transition-colors ' + (active ? 'text-white' : 'text-slate-400 group-hover:text-amber-600')}
               />
               {item.label}
             </Link>
@@ -199,20 +199,20 @@ const SidebarContent = memo(function SidebarContent({
               onClick={() => toggleGroup(item.label)}
               aria-expanded={open}
               className={
-                'w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-extrabold transition-all ' +
-                (active ? 'bg-orange-50 text-[#ea580c]' : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900')
+                'w-full flex items-center gap-3 px-4 py-2.5 rounded-full text-sm font-extrabold transition-all duration-200 ' +
+                (active ? 'bg-amber-500/15 text-amber-900 border border-amber-500/30' : 'text-slate-700 hover:bg-amber-500/10 hover:text-amber-900')
               }
             >
-              <Icon size={18} className={'shrink-0 ' + (active ? 'text-[#ea580c]' : 'text-slate-400')} />
+              <Icon size={18} className={'shrink-0 ' + (active ? 'text-amber-600' : 'text-slate-400')} />
               <span className="flex-1 text-left">{item.label}</span>
               <ChevronDown
                 size={16}
-                className={'shrink-0 transition-transform duration-200 ' + (open ? 'rotate-180' : '')}
+                className={'shrink-0 transition-transform duration-200 ' + (open ? 'rotate-180 text-amber-600' : '')}
               />
             </button>
 
             {open && (
-              <div className="mt-1 ml-[1.85rem] pl-3 border-l-2 border-orange-200 space-y-0.5">
+              <div className="mt-1 ml-[1.85rem] pl-3 border-l-2 border-amber-400/40 space-y-1">
                 {item.children.map((child) => {
                   const childActive = pathname === child.href.split('?')[0]
                   const ChildIcon = child.icon
@@ -223,13 +223,13 @@ const SidebarContent = memo(function SidebarContent({
                       prefetch={true}
                       onClick={onNavigate}
                       className={
-                        'flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-colors ' +
+                        'flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold transition-all duration-150 ' +
                         (childActive
-                          ? 'bg-orange-100/70 text-[#ea580c]'
-                          : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900')
+                          ? 'bg-amber-500/20 text-amber-900 font-extrabold shadow-sm'
+                          : 'text-slate-600 hover:bg-amber-500/10 hover:text-amber-900')
                       }
                     >
-                      {ChildIcon && <ChildIcon size={14} className="shrink-0" />}
+                      {ChildIcon && <ChildIcon size={14} className="shrink-0 text-amber-600" />}
                       {child.label}
                     </Link>
                   )
@@ -270,7 +270,7 @@ export function AdminSidebar({ active }: { active?: string }) {
 
   return (
     <>
-      <div className="lg:hidden flex items-center justify-between px-4 py-3 border-b border-slate-200 bg-white sticky top-0 z-30 shadow-sm">
+      <div className="lg:hidden flex items-center justify-between px-4 py-3 border-b border-amber-500/20 bg-[#faf7f0]/90 backdrop-blur-xl sticky top-0 z-30 shadow-md">
         <div className="flex items-center gap-2">
           <BrandLogo />
           <span className="text-sm font-black text-slate-900">Admin Control Panel</span>
@@ -279,7 +279,7 @@ export function AdminSidebar({ active }: { active?: string }) {
           type="button"
           onClick={() => setMobileOpen(true)}
           aria-label="Open menu"
-          className="p-2 rounded-lg hover:bg-slate-100 active:scale-95 transition-transform text-slate-700"
+          className="p-2 rounded-xl hover:bg-amber-500/10 active:scale-95 transition-transform text-slate-700"
         >
           <Menu size={20} />
         </button>
@@ -288,12 +288,12 @@ export function AdminSidebar({ active }: { active?: string }) {
       {mobileOpen && (
         <div className="lg:hidden fixed inset-0 z-40 flex" role="dialog" aria-modal="true">
           <div
-            className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm animate-[fadeIn_0.15s_ease-out]"
+            className="fixed inset-0 bg-slate-900/60 backdrop-blur-md animate-[fadeIn_0.15s_ease-out]"
             onClick={closeMobile}
             aria-hidden="true"
           />
-          <div className="relative w-72 max-w-[80vw] bg-white h-full flex flex-col shadow-2xl animate-[slideIn_0.2s_ease-out]">
-            <div className="flex items-center justify-between px-4 py-4 border-b border-slate-100">
+          <div className="relative w-72 max-w-[80vw] bg-[#faf7f0] border-r border-amber-500/20 h-full flex flex-col shadow-2xl animate-[slideIn_0.2s_ease-out]">
+            <div className="flex items-center justify-between px-4 py-4 border-b border-amber-500/20">
               <div className="flex items-center gap-2 min-w-0">
                 <BrandLogo />
                 <span className="text-sm font-extrabold text-slate-900 truncate">Admin Panel</span>
@@ -302,7 +302,7 @@ export function AdminSidebar({ active }: { active?: string }) {
                 type="button"
                 onClick={closeMobile}
                 aria-label="Close menu"
-                className="p-2 rounded-lg hover:bg-slate-100 shrink-0 text-slate-700"
+                className="p-2 rounded-xl hover:bg-amber-500/10 shrink-0 text-slate-700"
               >
                 <X size={20} />
               </button>
@@ -312,7 +312,7 @@ export function AdminSidebar({ active }: { active?: string }) {
         </div>
       )}
 
-      <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:shrink-0 border-r border-slate-200/90 bg-white h-screen sticky top-0 shadow-sm">
+      <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:shrink-0 border-r border-amber-500/20 bg-[#faf7f0]/85 backdrop-blur-2xl h-screen sticky top-0 shadow-lg">
         <BrandHeader />
         {sidebarContent}
       </aside>

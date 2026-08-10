@@ -160,54 +160,72 @@ export default async function AdminDashboardPage() {
   const firstName = user.email?.split('@')[0] ?? 'Admin'
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col lg:flex-row">
+    <div className="min-h-screen liquid-mesh-bg text-slate-900 flex flex-col lg:flex-row">
       <AdminSidebar active="Dashboard" />
 
-      <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-6xl w-full">
-        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
-          <div>
-            <h1 className="text-2xl font-semibold mb-1">
-              {greeting()}, <span className="text-indigo-600">{firstName}</span>
-            </h1>
-            <p className="text-sm text-gray-500">Here&apos;s what&apos;s happening across your site right now.</p>
+      <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full">
+        {/* Organic Liquid Wave Hero Banner (Inspired by mockup chart card) */}
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-400 p-6 sm:p-8 mb-8 shadow-2xl text-slate-900">
+          <div className="absolute -right-10 -bottom-10 w-72 h-72 rounded-full bg-white/20 blur-2xl pointer-events-none" />
+          
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-slate-900/10 backdrop-blur-md text-xs font-black uppercase tracking-wider mb-2">
+                <span>⚡ Live Academy Dashboard</span>
+              </div>
+              <h1 className="text-3xl sm:text-4xl font-black text-slate-950 tracking-tight">
+                {greeting()}, <span className="underline decoration-slate-950/30">{firstName}</span>
+              </h1>
+              <p className="mt-1 text-sm font-bold text-slate-800/90 max-w-xl">
+                Real-time insights across physical batches, Bhojan tokens, admissions, events &amp; store orders.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3 shrink-0">
+              <RefreshButton />
+              <form action={logout}>
+                <button
+                  type="submit"
+                  className="px-5 py-2.5 rounded-full bg-slate-950 text-white font-extrabold text-xs shadow-lg hover:bg-slate-900 active:scale-95 transition-all"
+                >
+                  Sign Out
+                </button>
+              </form>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <RefreshButton />
-            <form action={logout}>
-              <button
-                type="submit"
-                className="text-sm px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 font-medium hover:bg-gray-50 hover:border-gray-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 transition-colors"
-              >
-                Sign out
-              </button>
-            </form>
+
+          {/* Dynamic SVG Liquid Wave Accent */}
+          <div className="mt-6 pt-4 border-t border-slate-950/15 flex items-center justify-between">
+            <svg className="w-full h-12 text-slate-950/20 stroke-current fill-none" viewBox="0 0 500 50">
+              <path d="M 0 30 Q 125 5, 250 25 T 500 15" strokeWidth="4" strokeLinecap="round" />
+            </svg>
           </div>
         </div>
 
         {failedSources.length > 0 && (
-          <div className="flex items-start gap-2.5 text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 mb-6">
-            <AlertTriangle size={16} className="shrink-0 mt-0.5" aria-hidden="true" />
-            <p>
+          <div className="flex items-start gap-2.5 text-sm text-amber-900 bg-amber-100/90 border border-amber-300 rounded-2xl px-5 py-3.5 mb-6 backdrop-blur-md shadow-sm">
+            <AlertTriangle size={18} className="shrink-0 mt-0.5 text-amber-700" aria-hidden="true" />
+            <p className="font-bold">
               Couldn&apos;t load {failedSources.join(', ')} right now — other numbers below are still live.
               Try refreshing in a moment.
             </p>
           </div>
         )}
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4 sm:gap-5 mb-8">
           {stats.map((stat) => (
             <StatCard key={stat.label} {...stat} />
           ))}
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-4 sm:p-6">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
-              <Activity size={16} aria-hidden="true" />
+        <div className="liquid-glass p-5 sm:p-7 shadow-xl">
+          <div className="flex items-center gap-3 mb-4 pb-3 border-b border-amber-500/15">
+            <span className="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-900 flex items-center justify-center shrink-0 shadow-sm border border-amber-500/30">
+              <Activity size={18} aria-hidden="true" />
             </span>
             <div>
-              <h2 className="text-sm font-semibold text-gray-900">Recent Activity</h2>
-              <p className="text-xs text-gray-500">Latest updates across your content</p>
+              <h2 className="text-base font-extrabold text-slate-900">Recent Activity</h2>
+              <p className="text-xs font-bold text-amber-900/70">Latest updates across admissions, products &amp; tokens</p>
             </div>
           </div>
           <ActivityFeed items={activity} />

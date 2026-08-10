@@ -1,34 +1,36 @@
 @import "tailwindcss";
 
 @theme {
-  /* Canvas & Surface - Light Soft Bento Palette */
-  --color-bg: #f4f6fa;
-  --color-bg-card: #ffffff;
+  /* Canvas & Surface - Liquid Motion Soft Champagne Palette */
+  --color-bg: #f6f3eb;
+  --color-bg-card: rgba(254, 253, 249, 0.92);
   --color-bg-raised: #ffffff;
-  --color-bg-raised-2: #f8fafc;
-  --color-bg-raised-3: #f1f5f9;
-  --color-line: #e2e8f0;
-  --color-line-strong: #cbd5e1;
+  --color-bg-raised-2: #f3efe6;
+  --color-bg-raised-3: #eae5d8;
+  --color-line: #e6dfd3;
+  --color-line-strong: #d8cebd;
 
-  /* Typography - Chakra Navy for Indian Flag theme */
+  /* Typography - Chakra Navy & Deep Charcoal */
   --color-text: #0f172a;
   --color-text-muted: #334155;
   --color-text-faint: #64748b;
   --color-text-on-dark: #ffffff;
   --color-text-on-dark-muted: #94a3b8;
 
-  /* 1. Indian Saffron (Kesari) */
+  /* Liquid Golden Amber & Saffron Accents (From Reference Mockup) */
+  --color-liquid-amber: #d97706;
+  --color-liquid-yellow: #f59e0b;
+  --color-liquid-gold: #fbbf24;
+  --color-liquid-cream: #faf7f0;
   --color-saffron: #ff9933;
   --color-signal: #ea580c;
   --color-signal-strong: #c2410c;
   --color-signal-dim: #fff7ed;
   --color-on-signal: #ffffff;
 
-  /* 2. Ashoka Chakra Navy (Blue) */
+  /* Ashoka Chakra Navy & Green */
   --color-chakra: #000080;
   --color-chakra-light: #1e3a8a;
-
-  /* 3. India Green (Hara) & Army Olive */
   --color-india-green: #138808;
   --color-army-olive: #2b4c2b;
   --color-army-dark: #112615;
@@ -48,16 +50,17 @@
   --font-body: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
 
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
-  --radius-xl: 24px;
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
   --radius-full: 9999px;
 
-  --shadow-bento: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
-  --shadow-bento-hover: 0 12px 30px -4px rgba(15, 23, 42, 0.09), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
-  --shadow-orange: 0 8px 20px -3px rgba(234, 88, 12, 0.25);
-  --shadow-green: 0 8px 20px -3px rgba(19, 136, 8, 0.25);
+  --shadow-bento: 0 8px 30px -4px rgba(180, 140, 60, 0.08), 0 2px 10px -2px rgba(15, 23, 42, 0.04);
+  --shadow-bento-hover: 0 16px 40px -6px rgba(217, 119, 6, 0.16), 0 6px 16px -2px rgba(15, 23, 42, 0.06);
+  --shadow-liquid: 0 12px 36px -6px rgba(245, 158, 11, 0.22), 0 4px 12px -2px rgba(0, 0, 0, 0.04);
+  --shadow-orange: 0 8px 24px -3px rgba(234, 88, 12, 0.28);
+  --shadow-green: 0 8px 24px -3px rgba(19, 136, 8, 0.28);
   --shadow-army: 0 8px 25px -4px rgba(27, 58, 32, 0.4);
 }
 
@@ -86,7 +89,14 @@
   }
 
   body {
-    background-color: var(--color-bg);
+    background-color: #f6f3eb;
+    background-image: 
+      radial-gradient(at 10% 10%, rgba(251, 191, 36, 0.12) 0px, transparent 50%),
+      radial-gradient(at 90% 15%, rgba(245, 158, 11, 0.15) 0px, transparent 55%),
+      radial-gradient(at 50% 50%, rgba(254, 243, 199, 0.25) 0px, transparent 65%),
+      radial-gradient(at 80% 85%, rgba(16, 185, 129, 0.08) 0px, transparent 50%),
+      radial-gradient(at 20% 80%, rgba(249, 115, 22, 0.1) 0px, transparent 55%);
+    background-attachment: fixed;
     color: var(--color-text);
     font-family: var(--font-body);
     -webkit-font-smoothing: antialiased;
@@ -108,6 +118,61 @@
 }
 
 @layer components {
+  /* Liquid Motion Ambient Background Mesh */
+  .liquid-mesh-bg {
+    background-color: #f6f3eb;
+    background-image: 
+      radial-gradient(at 15% 10%, rgba(251, 191, 36, 0.16) 0px, transparent 45%),
+      radial-gradient(at 85% 20%, rgba(245, 158, 11, 0.18) 0px, transparent 50%),
+      radial-gradient(at 50% 60%, rgba(253, 230, 138, 0.2) 0px, transparent 60%),
+      radial-gradient(at 80% 90%, rgba(16, 185, 129, 0.09) 0px, transparent 45%);
+  }
+
+  /* Liquid Glass Translucent Card Surface */
+  .liquid-glass {
+    background: rgba(254, 253, 249, 0.86);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(234, 179, 8, 0.18);
+    box-shadow: 0 10px 32px -4px rgba(217, 119, 6, 0.08), 0 2px 8px rgba(0, 0, 0, 0.02);
+    border-radius: var(--radius-lg);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .liquid-glass:hover {
+    background: rgba(255, 255, 255, 0.94);
+    border-color: rgba(245, 158, 11, 0.35);
+    box-shadow: 0 18px 45px -6px rgba(217, 119, 6, 0.15), 0 4px 14px rgba(0, 0, 0, 0.04);
+    transform: translateY(-2px);
+  }
+
+  /* Dynamic Liquid Pill Container */
+  .liquid-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.25rem;
+    border-radius: var(--radius-full);
+    background: rgba(254, 253, 249, 0.9);
+    border: 1px solid rgba(217, 119, 6, 0.2);
+    box-shadow: 0 4px 15px -2px rgba(245, 158, 11, 0.1);
+    backdrop-filter: blur(12px);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .liquid-pill:hover {
+    background: #ffffff;
+    border-color: rgba(245, 158, 11, 0.5);
+    box-shadow: 0 8px 24px -3px rgba(245, 158, 11, 0.25);
+    transform: translateY(-1px);
+  }
+
+  /* Liquid Golden Wave Accent Box (Inspired by mockup chart card) */
+  .liquid-wave-card {
+    background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 60%, #fef08a 100%);
+    color: #0f172a;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 12px 35px -6px rgba(245, 158, 11, 0.35);
+  }
+
   /* Tiranga 3-Color Flag Accent Bar: Saffron -> White -> India Green */
   .tiranga-bar {
     height: 4px;

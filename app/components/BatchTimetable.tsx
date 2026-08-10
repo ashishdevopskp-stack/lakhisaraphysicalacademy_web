@@ -120,36 +120,29 @@ export default function BatchTimetable() {
         {/* Batch Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filteredBatches.map((batch) => {
-            const cardClass =
-              batch.cardTheme === "saffron"
-                ? "bento-card-saffron"
-                : batch.cardTheme === "green"
-                ? "bento-card-green"
-                : "bento-card-navy";
-
             return (
               <div
                 key={batch.id}
-                className={`bento-card ${cardClass} p-6 flex flex-col justify-between`}
+                className="liquid-glass p-6 sm:p-7 flex flex-col justify-between hover:border-amber-500/40 transition-all duration-300 shadow-xl"
               >
                 <div>
                   <div className="flex items-center justify-between gap-3 mb-4">
-                    <span className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full bg-slate-100 text-slate-800 border border-slate-300">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wider px-3.5 py-1 rounded-full bg-amber-500/10 text-amber-900 border border-amber-500/20">
                       {batch.category === "Physical" ? (
-                        <Dumbbell className="w-3.5 h-3.5 text-[#ea580c]" />
+                        <Dumbbell className="w-3.5 h-3.5 text-amber-600" />
                       ) : batch.category === "Written" ? (
-                        <BookOpen className="w-3.5 h-3.5 text-[#000080]" />
+                        <BookOpen className="w-3.5 h-3.5 text-blue-700" />
                       ) : (
-                        <Trophy className="w-3.5 h-3.5 text-[#138808]" />
+                        <Trophy className="w-3.5 h-3.5 text-emerald-600" />
                       )}
                       {batch.category}
                     </span>
 
                     <span
-                      className={`text-xs font-black px-3 py-1 rounded-full ${
+                      className={`text-xs font-black px-3.5 py-1 rounded-full ${
                         batch.status === "Filling Fast"
-                          ? "bg-orange-100 text-[#c2410c] border border-orange-300"
-                          : "bg-emerald-100 text-[#138808] border border-emerald-300"
+                          ? "bg-amber-100/90 text-amber-900 border border-amber-300"
+                          : "bg-emerald-100/90 text-emerald-900 border border-emerald-300"
                       }`}
                     >
                       {batch.status}
@@ -161,9 +154,9 @@ export default function BatchTimetable() {
                   </h3>
 
                   {/* Specs Box */}
-                  <div className="mt-4 space-y-2 text-xs bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                  <div className="mt-4 space-y-2 text-xs bg-[#f4efe4]/80 p-4 rounded-2xl border border-amber-500/15">
                     <div className="flex items-center gap-2.5 text-slate-900 font-extrabold">
-                      <Clock className="w-4 h-4 text-[#ea580c] shrink-0" />
+                      <Clock className="w-4 h-4 text-amber-600 shrink-0" />
                       <span>{batch.time}</span>
                     </div>
                     <div className="flex items-center gap-2.5 text-slate-700 font-semibold">
@@ -171,19 +164,19 @@ export default function BatchTimetable() {
                       <span>{batch.location}</span>
                     </div>
                     <div className="flex items-center gap-2.5 text-slate-700 font-semibold">
-                      <ShieldCheck className="w-4 h-4 text-[#138808] shrink-0" />
+                      <ShieldCheck className="w-4 h-4 text-emerald-700 shrink-0" />
                       <span>Target: {batch.targetExam}</span>
                     </div>
                   </div>
 
-                  <div className="mt-4 pt-4 border-t border-slate-100">
-                    <h4 className="text-[11px] font-black text-slate-500 uppercase tracking-wider mb-2">
+                  <div className="mt-4 pt-4 border-t border-amber-500/15">
+                    <h4 className="text-[11px] font-black text-amber-900/60 uppercase tracking-wider mb-2">
                       Batch Highlights
                     </h4>
                     <ul className="space-y-1.5">
                       {batch.highlights.map((h, i) => (
                         <li key={i} className="text-xs font-semibold text-slate-700 flex items-start gap-2">
-                          <CheckCircle className="w-3.5 h-3.5 text-[#138808] mt-0.5 shrink-0" />
+                          <CheckCircle className="w-3.5 h-3.5 text-emerald-600 mt-0.5 shrink-0" />
                           <span>{h}</span>
                         </li>
                       ))}
@@ -191,11 +184,11 @@ export default function BatchTimetable() {
                   </div>
                 </div>
 
-                <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+                <div className="mt-6 pt-4 border-t border-amber-500/15 flex items-center justify-between">
                   <span className="text-xs text-slate-500 font-bold">सीमित सीटें उपलब्ध</span>
                   <a
                     href="#contact"
-                    className={batch.cardTheme === "green" ? "btn-green text-xs py-2 px-4" : "btn-orange text-xs py-2 px-4"}
+                    className="btn-orange text-xs py-2 px-5 rounded-full shadow-lg shadow-amber-500/20"
                   >
                     Join Batch Now
                   </a>

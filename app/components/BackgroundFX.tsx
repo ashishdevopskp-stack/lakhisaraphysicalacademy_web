@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 
-
 export default function BackgroundFX() {
   const grainRef = useRef<HTMLDivElement>(null);
 
@@ -22,59 +21,45 @@ export default function BackgroundFX() {
       root.setAttribute("data-gsap-bg", "active");
 
       ctx = gsap.context(() => {
-        // Central "floodlight" blob — slow, wide, wandering drift.
-        // Targets <body> directly (see note above) since that's where the
-        // gradient using these vars actually lives.
+        // Floating liquid golden amber blob 1
         gsap.to(body, {
-          "--blob1-x": "38%",
-          "--blob1-y": "6%",
-          duration: 14,
-          ease: "sine.inOut",
-          yoyo: true,
-          repeat: -1,
-        });
-        // Secondary warm blob — offset timing so it never syncs with blob1.
-        gsap.to(body, {
-          "--blob2-x": "80%",
-          "--blob2-y": "32%",
-          duration: 18,
-          delay: 1.2,
-          ease: "sine.inOut",
-          yoyo: true,
-          repeat: -1,
-        });
-        // Teal ground blob — slowest, biggest arc.
-        gsap.to(body, {
-          "--blob3-x": "18%",
-          "--blob3-y": "84%",
-          duration: 22,
-          delay: 2.4,
+          "--blob1-x": "45%",
+          "--blob1-y": "12%",
+          duration: 12,
           ease: "sine.inOut",
           yoyo: true,
           repeat: -1,
         });
 
-        // Fine grain crawl — set on the grain div itself, not <html>.
-        if (grainRef.current) {
-          gsap.to(grainRef.current, {
-            "--grain-x": "6%",
-            "--grain-y": "4%",
-            duration: 0.6,
-            ease: "steps(6)",
-            repeat: -1,
-            yoyo: true,
-          });
-        }
+        // Floating soft liquid saffron blob 2
+        gsap.to(body, {
+          "--blob2-x": "85%",
+          "--blob2-y": "40%",
+          duration: 16,
+          delay: 0.8,
+          ease: "sine.inOut",
+          yoyo: true,
+          repeat: -1,
+        });
 
-        // Floating-shadow "breathe" for any element opted in via .float-card.
-        const floaters = gsap.utils.toArray<HTMLElement>(".float-card");
+        // Floating liquid emerald mint blob 3
+        gsap.to(body, {
+          "--blob3-x": "15%",
+          "--blob3-y": "78%",
+          duration: 20,
+          delay: 1.6,
+          ease: "sine.inOut",
+          yoyo: true,
+          repeat: -1,
+        });
+
+        // Liquid float cards levitation physics
+        const floaters = gsap.utils.toArray<HTMLElement>(".liquid-glass, .float-card");
         floaters.forEach((el, i) => {
           gsap.to(el, {
-            y: -8,
-            boxShadow:
-              "0 26px 50px rgba(15, 23, 42, 0.16), 0 6px 14px rgba(15, 23, 42, 0.08)",
-            duration: 3.2 + (i % 3) * 0.4,
-            delay: i * 0.15,
+            y: -6,
+            duration: 3.5 + (i % 3) * 0.5,
+            delay: i * 0.1,
             ease: "sine.inOut",
             yoyo: true,
             repeat: -1,
@@ -90,5 +75,22 @@ export default function BackgroundFX() {
     };
   }, []);
 
-  return <div ref={grainRef} className="grain-overlay" aria-hidden="true" />;
-}
+  return (
+    <div className="fixed inset-0 pointer-events-none overflow-hidden z-[-1]" aria-hidden="true">
+      {/* Organic Animated Liquid Motion Blobs */}
+      <div 
+        className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-amber-400/20 blur-3xl animate-[spin_25s_linear_infinite]" 
+        style={{ borderRadius: "40% 60% 70% 30% / 40% 50% 60% 50%" }}
+      />
+      <div 
+        className="absolute top-1/3 -right-24 w-[28rem] h-[28rem] rounded-full bg-orange-400/15 blur-3xl animate-[pulse_14s_ease-in-out_infinite]" 
+        style={{ borderRadius: "60% 40% 30% 70% / 60% 30% 70% 40%" }}
+      />
+      <div 
+        className="absolute -bottom-24 left-1/4 w-[32rem] h-[32rem] rounded-full bg-emerald-400/10 blur-3xl animate-[spin_35s_linear_infinite]" 
+        style={{ borderRadius: "50% 50% 30% 70% / 30% 60% 40% 70%" }}
+      />
+      <div ref={grainRef} className="grain-overlay opacity-35" />
+    </div>
+  );
+}
