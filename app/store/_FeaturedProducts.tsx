@@ -32,6 +32,7 @@ export default function FeaturedProducts({
   const categoryOptions = useMemo(() => ["All", ...PRODUCT_CATEGORY_LABELS], []);
 
   const filtered = products.filter((p) => {
+    if ((p.availability as string) === "Unpublished") return false;
     const matchesCategory = category === "All" || p.category === category;
     const matchesQuery =
       query.trim() === "" || p.name.toLowerCase().includes(query.toLowerCase());
@@ -127,62 +128,78 @@ export default function FeaturedProducts({
               : null;
 
             return (
-              <StaggerItem key={product.name + i} className="bento-card flex flex-col p-5 shadow-sm hover:shadow-xl transition-all border border-slate-200 group">
-                <div className="relative aspect-square overflow-hidden rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center">
-                  {product.imageUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={product.imageUrl}
-                      alt={product.name}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                  ) : (
-                    <ShoppingBag size={42} className="text-slate-300" />
-                  )}
+              <StaggerItem key={product.name + i} className="bento-card flex flex-col p-5 shadow-sm hover:shadow-xl transition-all border border-slate-200 group justify-between">
+                <div>
+                  <div className="relative aspect-square overflow-hidden rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center">
+                    {product.imageUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={product.imageUrl}
+                        alt={product.name}
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    ) : (
+                      <ShoppingBag size={42} className="text-slate-300" />
+                    )}
 
-                  {discountPercent && (
-                    <span className="absolute top-2.5 left-2.5 inline-flex items-center gap-0.5 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-white bg-red-600 rounded-full shadow-md">
-                      <Percent size={10} /> {discountPercent}% OFF
+                    {discountPercent && (
+                      <span className="absolute top-2.5 left-2.5 inline-flex items-center gap-0.5 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-white bg-red-600 rounded-full shadow-md">
+                        <Percent size={10} /> {discountPercent}% OFF
+                      </span>
+                    )}
+
+                    {product.offer && (
+                      <span className="absolute top-2.5 right-2.5 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-[#ea580c] bg-amber-50 rounded-full border border-orange-200 shadow-sm">
+                        {product.offer}
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="mt-4 flex items-center justify-between gap-2">
+                    <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-slate-600 bg-slate-100 rounded-md">
+                      {product.category}
                     </span>
+                    {product.rating && (
+                      <span className="flex items-center gap-1 text-xs font-bold text-slate-700">
+                        <Star size={13} className="fill-amber-400 text-amber-400" />
+                        {product.rating}
+                      </span>
+                    )}
+                  </div>
+
+                  <h3 className="font-display mt-2.5 text-base font-extrabold text-slate-900 group-hover:text-[#ea580c] transition-colors leading-snug line-clamp-2">
+                    {product.name}
+                  </h3>
+
+                  {/* Vertical Point-Wise Description */}
+                  {product.description && (
+                    <div className="mt-3 pt-2.5 border-t border-slate-100 space-y-1">
+                      <ul className="space-y-1">
+                        {product.description.split('\n').filter(Boolean).map((pt, idx) => (
+                          <li key={idx} className="flex items-start gap-1.5 text-xs font-semibold text-slate-700 leading-snug">
+                            <CheckCircle2 size={13} className="text-emerald-600 shrink-0 mt-0.5" />
+                            <span>{pt.replace(/^[•\-\*]\s*/, '')}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   )}
 
-                  {product.offer && (
-                    <span className="absolute top-2.5 right-2.5 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-[#ea580c] bg-amber-50 rounded-full border border-orange-200 shadow-sm">
-                      {product.offer}
+                  <div className="mt-3 flex items-baseline gap-2">
+                    <span className="font-display text-xl font-black text-slate-900">
+                      ₹{product.price}
                     </span>
-                  )}
-                </div>
+                    {product.originalPrice && (
+                      <span className="text-xs font-bold text-slate-400 line-through">
+                        ₹{product.originalPrice}
+                      </span>
+                    )}
+                  </div>
 
-                <div className="mt-4 flex items-center justify-between gap-2">
-                  <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-slate-600 bg-slate-100 rounded-md">
-                    {product.category}
-                  </span>
-                  {product.rating && (
-                    <span className="flex items-center gap-1 text-xs font-bold text-slate-700">
-                      <Star size={13} className="fill-amber-400 text-amber-400" />
-                      {product.rating}
-                    </span>
-                  )}
-                </div>
-
-                <h3 className="font-display mt-2.5 text-base font-extrabold text-slate-900 group-hover:text-[#ea580c] transition-colors leading-snug line-clamp-2">
-                  {product.name}
-                </h3>
-
-                <div className="mt-3 flex items-baseline gap-2">
-                  <span className="font-display text-xl font-black text-slate-900">
-                    ₹{product.price}
-                  </span>
-                  {product.originalPrice && (
-                    <span className="text-xs font-bold text-slate-400 line-through">
-                      ₹{product.originalPrice}
-                    </span>
-                  )}
-                </div>
-
-                <div className="mt-2 flex items-center gap-1 text-[11px] font-bold text-emerald-700">
-                  <CheckCircle2 size={13} />
-                  <span>In Stock • Ready to Order</span>
+                  <div className="mt-2 flex items-center gap-1 text-[11px] font-bold text-emerald-700">
+                    <CheckCircle2 size={13} />
+                    <span>In Stock • Ready to Order</span>
+                  </div>
                 </div>
 
                 <div className="mt-5 pt-3 border-t border-slate-100">

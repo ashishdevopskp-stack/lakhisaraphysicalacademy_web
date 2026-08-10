@@ -134,6 +134,7 @@ export function ProductForm({
   const [rating, setRating] = useState(initialData?.rating ? String(initialData.rating) : '4.8')
   const [availability, setAvailability] = useState<string>(initialData?.availability ?? 'In Stock')
   const [offer, setOffer] = useState(initialData?.offer ?? '🔥 Best Seller')
+  const [description, setDescription] = useState(initialData?.description ?? '')
 
   async function handleFileChange(file: File | undefined) {
     setCompressedInfo(null)
@@ -355,6 +356,28 @@ export function ProductForm({
                 ))}
               </div>
             </div>
+
+            {/* Product Description / Vertical Point-Wise Input */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label htmlFor="description" className="text-xs font-black uppercase tracking-wider text-slate-800">
+                  Product Description / Key Features <span className="text-slate-400">(Point-wise)</span>
+                </label>
+                <span className="text-[10px] text-slate-400 font-medium">Enter 1 point per line</span>
+              </div>
+              <textarea
+                id="description"
+                name="description"
+                rows={4}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder={`• Lightweight track spikes for 1600m run\n• High durability rubber sole & steel nails\n• Suitable for Army & Bihar Police physical test`}
+                className="w-full bg-white border border-slate-200 text-slate-900 rounded-xl px-4 py-3 text-xs font-bold outline-none focus:border-[#ea580c] focus:ring-4 focus:ring-orange-500/10 transition-all leading-relaxed"
+              />
+              <p className="mt-1 text-[11px] font-medium text-slate-400">
+                ⚡ Write each detail on a new line to display it vertically point-wise on the store card.
+              </p>
+            </div>
           </div>
 
           {/* Section 3: Pricing & Discounts */}
@@ -445,6 +468,7 @@ export function ProductForm({
                   <option value="Limited Stock">Limited Stock (Fast Selling)</option>
                   <option value="Out of Stock">Out of Stock</option>
                   <option value="Pre-Order">Pre-Order</option>
+                  <option value="Unpublished">Unpublished (Hidden from Store)</option>
                 </select>
               </div>
             </div>
@@ -515,6 +539,21 @@ export function ProductForm({
               {name || 'Product Title Will Appear Here'}
             </h3>
 
+            {/* Vertical Point-Wise Description Live Preview */}
+            {description && (
+              <div className="pt-2 border-t border-slate-100 space-y-1">
+                <p className="text-[10px] font-black uppercase tracking-wider text-slate-400">Key Features:</p>
+                <ul className="space-y-1">
+                  {description.split('\n').filter(Boolean).map((pt, i) => (
+                    <li key={i} className="flex items-start gap-1.5 text-xs font-semibold text-slate-700 leading-snug">
+                      <CheckCircle2 size={13} className="text-emerald-600 shrink-0 mt-0.5" />
+                      <span>{pt.replace(/^[•\-\*]\s*/, '')}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             {/* Pricing Details */}
             <div className="flex items-baseline gap-2.5 pt-1">
               <span className="text-xl font-black text-slate-900">
@@ -533,6 +572,8 @@ export function ProductForm({
                 className={`text-[11px] font-extrabold px-2.5 py-0.5 rounded-full ${
                   availability === 'In Stock'
                     ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                    : availability === 'Unpublished'
+                    ? 'bg-slate-100 text-slate-600 border border-slate-300'
                     : 'bg-amber-50 text-amber-700 border border-amber-200'
                 }`}
               >
@@ -548,8 +589,8 @@ export function ProductForm({
           {/* Action CTA Button Preview */}
           <div className="pt-2">
             <div className="btn-orange w-full py-2.5 text-xs font-black shadow-md flex items-center justify-center gap-2 cursor-pointer">
-              <MessageCircle size={15} />
-              <span>Order via WhatsApp</span>
+              <ShoppingBag size={15} />
+              <span>Order Now</span>
             </div>
           </div>
         </div>

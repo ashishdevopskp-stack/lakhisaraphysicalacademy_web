@@ -4,7 +4,7 @@ import { createClient } from '../supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
-export type Availability = 'In Stock' | 'Limited Stock' | 'Out of Stock' | 'Pre-Order'
+export type Availability = 'In Stock' | 'Limited Stock' | 'Out of Stock' | 'Pre-Order' | 'Unpublished'
 
 export interface DbProduct {
   id: string
@@ -16,6 +16,7 @@ export interface DbProduct {
   availability: Availability
   offer: string | null
   image_url: string | null
+  description: string | null
   created_at: string
 }
 
@@ -52,6 +53,7 @@ type ParsedProduct =
         rating: number | null
         availability: Availability
         offer: string | null
+        description: string | null
       }
     }
 
@@ -63,6 +65,7 @@ function parseProductForm(formData: FormData): ParsedProduct {
   const ratingRaw = formData.get('rating') as string
   const availability = formData.get('availability') as Availability
   const offer = (formData.get('offer') as string)?.trim()
+  const description = (formData.get('description') as string)?.trim()
 
   if (!name) return { error: 'Product name is required' }
   if (!category) return { error: 'Category is required' }
@@ -77,6 +80,7 @@ function parseProductForm(formData: FormData): ParsedProduct {
       rating: ratingRaw ? Number(ratingRaw) : null,
       availability: availability || 'In Stock',
       offer: offer || null,
+      description: description || null,
     },
   }
 }
@@ -156,6 +160,18 @@ export async function updateProduct(id: string, formData: FormData) {
   revalidatePath('/admin/products')
   revalidatePath('/store')
   redirect('/admin/products')
+}
+
+export async function toggleProductAvailability(id: string, newAvailability: Availability) {
+  const supabase = await createClient()
+  const { error } = await supabase.from('products').update({ availability: newAvailability }).eq('id', id)
+
+  if (error) {
+    redirect('/admin/products?error=' + encodeURIComponent('Could not update status: ' + error.message))
+  }
+
+  revalidatePath('/admin/products')
+  revalidatePath('/store')
 }
 
 export async function deleteProduct(id: string) {
