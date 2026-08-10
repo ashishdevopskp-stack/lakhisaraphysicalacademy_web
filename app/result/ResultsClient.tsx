@@ -543,13 +543,11 @@ export default function ResultsClient({ students }: { students: StudentItem[] })
   return (
     <>
       <ResultsHero />
-      <SuccessStatistics students={students} />
-      <SuccessCategories />
       <SelectedStudentCards students={students} />
       <SuccessStoryVideos students={students} />
       <Testimonials students={students} />
-  
+      <SubmitSelection />
       <NextSuccessStoryCTA />
     </>
   );
-}
+}

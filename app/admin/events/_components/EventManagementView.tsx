@@ -134,8 +134,9 @@ export function EventManagementView({ initialEvents }: { initialEvents: DbEvent[
                   <span>•</span>
                   <span className="flex items-center gap-1 font-bold text-slate-800">
                     <Calendar size={13} className="text-[#ea580c]" />
-                    {event.event_date} {event.event_time ? `(${event.event_time})` : ""}
+                    {event.event_date} {event.time_label ? `(${event.time_label})` : ""}
                   </span>
+
                 </div>
               </div>
             </div>

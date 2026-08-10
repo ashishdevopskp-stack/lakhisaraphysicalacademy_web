@@ -2,8 +2,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ShoppingBag, Search, Star, AlertCircle, CheckCircle2, ShoppingCart, Percent } from "lucide-react";
+import { ShoppingBag, Search, Star, AlertCircle, CheckCircle2, ShoppingCart, Percent, Eye } from "lucide-react";
 import OrderModal from "./OrderModal";
+import ProductDetailModal from "./_ProductDetailModal";
 import Container from "../components/Container";
 import { CATEGORY_GROUPS, type Product } from "../lib/store-data";
 import { ScrollFadeUp, StaggerList, StaggerItem } from "./_StoreMotion";
@@ -27,6 +28,7 @@ export default function FeaturedProducts({
   const [category, setCategory] = useState<string>("All");
   const [priceRange, setPriceRange] = useState<string>("All");
   const [query, setQuery] = useState("");
+  const [viewingProduct, setViewingProduct] = useState<Product | null>(null);
   const [orderingProduct, setOrderingProduct] = useState<Product | null>(null);
 
   const categoryOptions = useMemo(() => ["All", ...PRODUCT_CATEGORY_LABELS], []);
@@ -128,93 +130,108 @@ export default function FeaturedProducts({
               : null;
 
             return (
-              <StaggerItem key={product.name + i} className="bento-card flex flex-col p-5 shadow-sm hover:shadow-xl transition-all border border-slate-200 group justify-between">
-                <div>
-                  <div className="relative aspect-square overflow-hidden rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center">
-                    {product.imageUrl ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={product.imageUrl}
-                        alt={product.name}
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                    ) : (
-                      <ShoppingBag size={42} className="text-slate-300" />
-                    )}
+              <StaggerItem key={product.name + i}>
+                <div
+                  className="bento-card flex flex-col p-5 shadow-sm hover:shadow-xl transition-all border border-slate-200 group justify-between cursor-pointer h-full"
+                  onClick={() => setViewingProduct(product)}
+                >
+                  <div>
+                    <div className="relative aspect-square overflow-hidden rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center">
+                      {product.imageUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={product.imageUrl}
+                          alt={product.name}
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      ) : (
+                        <ShoppingBag size={42} className="text-slate-300" />
+                      )}
 
-                    {discountPercent && (
-                      <span className="absolute top-2.5 left-2.5 inline-flex items-center gap-0.5 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-white bg-red-600 rounded-full shadow-md">
-                        <Percent size={10} /> {discountPercent}% OFF
-                      </span>
-                    )}
+                      {discountPercent && (
+                        <span className="absolute top-2.5 left-2.5 inline-flex items-center gap-0.5 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-white bg-red-600 rounded-full shadow-md">
+                          <Percent size={10} /> {discountPercent}% OFF
+                        </span>
+                      )}
 
-                    {product.offer && (
-                      <span className="absolute top-2.5 right-2.5 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-[#ea580c] bg-amber-50 rounded-full border border-orange-200 shadow-sm">
-                        {product.offer}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="mt-4 flex items-center justify-between gap-2">
-                    <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-slate-600 bg-slate-100 rounded-md">
-                      {product.category}
-                    </span>
-                    {product.rating && (
-                      <span className="flex items-center gap-1 text-xs font-bold text-slate-700">
-                        <Star size={13} className="fill-amber-400 text-amber-400" />
-                        {product.rating}
-                      </span>
-                    )}
-                  </div>
-
-                  <h3 className="font-display mt-2.5 text-base font-extrabold text-slate-900 group-hover:text-[#ea580c] transition-colors leading-snug line-clamp-2">
-                    {product.name}
-                  </h3>
-
-                  {/* Vertical Point-Wise Description */}
-                  {product.description && (
-                    <div className="mt-3 pt-2.5 border-t border-slate-100 space-y-1">
-                      <ul className="space-y-1">
-                        {product.description.split('\n').filter(Boolean).map((pt, idx) => (
-                          <li key={idx} className="flex items-start gap-1.5 text-xs font-semibold text-slate-700 leading-snug">
-                            <CheckCircle2 size={13} className="text-emerald-600 shrink-0 mt-0.5" />
-                            <span>{pt.replace(/^[•\-\*]\s*/, '')}</span>
-                          </li>
-                        ))}
-                      </ul>
+                      {product.offer && (
+                        <span className="absolute top-2.5 right-2.5 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-[#ea580c] bg-amber-50 rounded-full border border-orange-200 shadow-sm">
+                          {product.offer}
+                        </span>
+                      )}
                     </div>
-                  )}
 
-                  <div className="mt-3 flex items-baseline gap-2">
-                    <span className="font-display text-xl font-black text-slate-900">
-                      ₹{product.price}
-                    </span>
-                    {product.originalPrice && (
-                      <span className="text-xs font-bold text-slate-400 line-through">
-                        ₹{product.originalPrice}
+                    <div className="mt-4 flex items-center justify-between gap-2">
+                      <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-slate-600 bg-slate-100 rounded-md">
+                        {product.category}
                       </span>
+                      {product.rating && (
+                        <span className="flex items-center gap-1 text-xs font-bold text-slate-700">
+                          <Star size={13} className="fill-amber-400 text-amber-400" />
+                          {product.rating}
+                        </span>
+                      )}
+                    </div>
+
+                    <h3 className="font-display mt-2.5 text-base font-extrabold text-slate-900 group-hover:text-[#ea580c] transition-colors leading-snug line-clamp-2">
+                      {product.name}
+                    </h3>
+
+                    {/* Vertical Point-Wise Description */}
+                    {product.description && (
+                      <div className="mt-3 pt-2.5 border-t border-slate-100 space-y-1">
+                        <ul className="space-y-1">
+                          {product.description.split("\n").filter(Boolean).slice(0, 3).map((pt, idx) => (
+                            <li key={idx} className="flex items-start gap-1.5 text-xs font-semibold text-slate-700 leading-snug">
+                              <CheckCircle2 size={13} className="text-emerald-600 shrink-0 mt-0.5" />
+                              <span className="line-clamp-1">{pt.replace(/^[•\-\*]\s*/, "")}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     )}
+
+                    <div className="mt-3 flex items-baseline gap-2">
+                      <span className="font-display text-xl font-black text-slate-900">
+                        ₹{product.price}
+                      </span>
+                      {product.originalPrice && (
+                        <span className="text-xs font-bold text-slate-400 line-through">
+                          ₹{product.originalPrice}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="mt-2 flex items-center gap-1 text-[11px] font-bold text-emerald-700">
+                      <CheckCircle2 size={13} />
+                      <span>In Stock • Ready to Order</span>
+                    </div>
                   </div>
 
-                  <div className="mt-2 flex items-center gap-1 text-[11px] font-bold text-emerald-700">
-                    <CheckCircle2 size={13} />
-                    <span>In Stock • Ready to Order</span>
-                  </div>
-                </div>
+                  <div className="mt-5 pt-3 border-t border-slate-100 flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                    <button
+                      type="button"
+                      onClick={() => setViewingProduct(product)}
+                      className="flex-1 flex items-center justify-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-100 transition-colors"
+                    >
+                      <Eye size={14} className="text-[#ea580c]" />
+                      <span>Details</span>
+                    </button>
 
-                <div className="mt-5 pt-3 border-t border-slate-100">
-                  <button
-                    type="button"
-                    onClick={() => setOrderingProduct(product)}
-                    disabled={product.availability === "Out of Stock"}
-                    className="flex w-full items-center justify-center gap-2 rounded-full bg-[#ea580c] px-4 py-2.5 text-xs font-black text-white shadow-lg shadow-orange-500/25 transition-all hover:bg-[#c2410c] disabled:opacity-50"
-                  >
-                    <ShoppingCart size={15} />
-                    <span>Order Now</span>
-                  </button>
+                    <button
+                      type="button"
+                      onClick={() => setOrderingProduct(product)}
+                      disabled={product.availability === "Out of Stock"}
+                      className="flex-1 flex items-center justify-center gap-1.5 rounded-full bg-[#ea580c] py-2.5 text-xs font-black text-white shadow-md shadow-orange-500/20 hover:bg-[#c2410c] disabled:opacity-50"
+                    >
+                      <ShoppingCart size={14} />
+                      <span>Order Now</span>
+                    </button>
+                  </div>
                 </div>
               </StaggerItem>
             );
+
           })}
 
           {filtered.length === 0 && !productsError && (
@@ -224,6 +241,14 @@ export default function FeaturedProducts({
           )}
         </StaggerList>
       </Container>
+
+      {viewingProduct && (
+        <ProductDetailModal
+          product={viewingProduct}
+          onClose={() => setViewingProduct(null)}
+          onOrderNow={() => setOrderingProduct(viewingProduct)}
+        />
+      )}
 
       {orderingProduct && (
         <OrderModal

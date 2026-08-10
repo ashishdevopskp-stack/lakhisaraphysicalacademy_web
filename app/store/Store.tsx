@@ -197,7 +197,6 @@ export default function Store({
   return (
     <>
       <StoreHero />
-      <ProductCategories />
       <FeaturedProducts products={products} productsError={productsError} />
       <SpecialOffers />
       <DeliveryInfo />
@@ -205,4 +204,4 @@ export default function Store({
       <StoreCTA />
     </>
   );
-}
+}

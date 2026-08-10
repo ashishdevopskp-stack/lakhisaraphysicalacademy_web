@@ -334,6 +334,24 @@ export function ResultForm({
         </div>
 
         <div>
+          <label htmlFor="videoUrl" className="block text-xs font-black uppercase tracking-wider text-slate-800 mb-2">
+            Success Story Video URL (YouTube / Instagram) <span className="text-slate-400">(Optional)</span>
+          </label>
+          <input
+            id="videoUrl"
+            name="videoUrl"
+            type="url"
+            maxLength={500}
+            defaultValue={initialData?.video_url ?? undefined}
+            placeholder="e.g. https://www.youtube.com/watch?v=... or https://youtu.be/..."
+            className="w-full bg-white border border-slate-200 text-slate-900 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-[#ea580c] focus:ring-4 focus:ring-orange-500/10 transition-all"
+          />
+          <p className="text-[11px] text-slate-400 mt-1">
+            Adding a video URL automatically publishes this student under the &quot;Success Story Videos&quot; section on the Results page.
+          </p>
+        </div>
+
+        <div>
           <label htmlFor="testimonial" className="block text-xs font-black uppercase tracking-wider text-slate-800 mb-2">
             Student Testimonial / Review <span className="text-slate-400">(Optional)</span>
           </label>
@@ -346,6 +364,9 @@ export function ResultForm({
             placeholder="What this selected candidate said about training under Ganesh Sir..."
             className="w-full bg-white border border-slate-200 text-slate-900 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:border-[#ea580c] focus:ring-4 focus:ring-orange-500/10 transition-all resize-y"
           />
+          <p className="text-[11px] text-slate-400 mt-1">
+            Adding a quote automatically publishes this student under the &quot;What Our Achievers Say&quot; section on the Results page.
+          </p>
         </div>
       </div>
 
@@ -357,5 +378,6 @@ export function ResultForm({
         {submitLabel}
       </button>
     </form>
+
   )
 }
