@@ -16,9 +16,9 @@ const WHATSAPP_MESSAGE = encodeURIComponent(
    ========================================================= */
 export const NOTIFICATIONS_NAV = [
   { href: "/notification", label: "Overview" },
-  { href: "/notification/categories", label: "Categories" },
   { href: "/notification/updates", label: "All Notifications" },
 ];
+
 
 export function NotificationsSubNav({ current }: { current: string }) {
   return (

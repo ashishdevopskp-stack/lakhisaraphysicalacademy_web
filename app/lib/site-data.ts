@@ -46,9 +46,9 @@ export const HOSTEL_NAV = [
 
 export const NOTIFICATIONS_NAV = [
   { href: "/notification", label: "Overview" },
-  { href: "/notification/categories", label: "Categories" },
   { href: "/notification/updates", label: "All Notifications" },
 ];
+
 
 export const BLOG_NAV = [
   { href: "/blogs", label: "Overview" },
