@@ -10,19 +10,19 @@ export function HostelHeroImageShowcase() {
 
   const images = {
     building: {
-      src: "/hostel-building-new.png",
+      src: "/hostel_building.jpg",
       title: "Official Hostel Campus Building",
       tag: "Safe & Disciplined Stay",
       desc: "4-storey modern building located near K.R.K Field, Lakhisarai ground",
-
     },
     rooms: {
-      src: "/hostel-rooms-new.png",
+      src: "/hostel_rooms.png",
       title: "Clean Rooms, Beds & Shelves",
       tag: "Comfortable Accommodations",
       desc: "Ventilated rooms with individual beds, fans, and storage shelves",
     },
   };
+
 
   const active = images[activeTab];
 

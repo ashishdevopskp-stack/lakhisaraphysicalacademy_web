@@ -73,8 +73,9 @@ export default function Hero() {
 
 
                 <p className="mt-4 text-slate-700 text-base sm:text-lg font-medium leading-relaxed">
-                  Dedicated physical training for 1600m Running, High Jump, Long Jump, &amp; Shot Put guided by expert NIS coaches with patriotic discipline.
+                  Dedicated physical training for 1600m Running, High Jump, Long Jump, &amp; Shot Put guided by expert physical coaches with patriotic discipline.
                 </p>
+
               </div>
 
               {/* Action Pill CTAs */}
@@ -209,8 +210,9 @@ export default function Hero() {
                       Ganesh Sir
                     </h4>
                     <p className="text-[10px] font-bold text-slate-600 truncate">
-                      Founder &amp; NIS Coach
+                      Founder &amp; Head Coach
                     </p>
+
                   </div>
                 </div>
 

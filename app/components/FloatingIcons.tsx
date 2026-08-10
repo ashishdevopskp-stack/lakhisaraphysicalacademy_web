@@ -33,7 +33,7 @@ export default function FloatingIcons({
   onChatClick: () => void;
 }) {
   return (
-    <div className="fixed bottom-5 right-5 z-40 flex flex-col items-end gap-3">
+    <div className="fixed bottom-4 right-3 sm:bottom-5 sm:right-5 z-40 flex flex-col items-end gap-2.5">
       {/* Chat open hone par social icons hide — panel ke Send button ke
           upar aakar overlap kar rahe the */}
       {!chatOpen &&
@@ -45,9 +45,10 @@ export default function FloatingIcons({
             rel="noopener noreferrer"
             aria-label={label}
             style={{ backgroundColor: color }}
-            className="flex h-12 w-12 items-center justify-center rounded-full text-white shadow-lg transition-transform hover:scale-110"
+            className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full text-white shadow-lg transition-transform hover:scale-110 active:scale-95"
           >
-            <Icon size={20} />
+            <Icon size={18} className="sm:hidden" />
+            <Icon size={20} className="hidden sm:block" />
           </a>
         ))}
 
@@ -56,11 +57,13 @@ export default function FloatingIcons({
           type="button"
           onClick={onChatClick}
           aria-label="Chat with us"
-          className="flex h-12 w-12 items-center justify-center rounded-full bg-indigo-600 text-white shadow-lg transition-transform hover:scale-110"
+          className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-indigo-600 text-white shadow-lg transition-transform hover:scale-110 active:scale-95"
         >
-          <MessageCircle size={20} />
+          <MessageCircle size={18} className="sm:hidden" />
+          <MessageCircle size={20} className="hidden sm:block" />
         </button>
       )}
     </div>
+
   );
 }

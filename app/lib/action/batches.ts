@@ -29,7 +29,8 @@ const DEFAULT_BATCHES: DbBatch[] = [
     capacity: 150,
     status: "Filling Fast",
     highlights:
-      "1600m / 1000m Running Technique & Endurance\nHigh Jump Training (Tiger & Scissor style)\nShot Put (गोला फेंक) & Long Jump Drills\nDaily Stamina & Stretches under NIS Coach",
+      "1600m / 1000m Running Technique & Endurance\nHigh Jump Training (Tiger & Scissor style)\nShot Put (गोला फेंक) & Long Jump Drills\nDaily Stamina & Stretches under Head Coach",
+
   },
   {
     id: "batch-2",
