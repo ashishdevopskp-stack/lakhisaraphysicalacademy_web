@@ -18,8 +18,9 @@ const FAQS = [
   },
   {
     q: "Is food included?",
-    a: "Yes, mess facility with healthy and hygienic food is available. Food charges are billed separately from the room fee.",
+    a: "Yes, mess facility with healthy and hygienic food is available. Food charges are included in hostel fees.",
   },
+
   {
     q: "How far is the hostel from the academy?",
     a: "The hostel is within walking distance of the training ground, so students can reach sessions on time without commuting.",
