@@ -6,7 +6,7 @@ import Container from "../components/Container";
 import Button from "../components/Button";
 
 const EASE = [0.22, 0.61, 0.36, 1] as const;
-const WHATSAPP_NUMBER = "918863081082";
+const WHATSAPP_NUMBER = "917739776471";
 const WHATSAPP_MESSAGE = encodeURIComponent(
   "Hi, please add me to the WhatsApp updates for Lakhisarai Physical Academy."
 );

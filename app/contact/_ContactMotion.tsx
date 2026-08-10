@@ -1,6 +1,3 @@
-"use client";
-
-import { motion, type Variants } from "framer-motion";
 import type { ReactNode } from "react";
 
 export const EASE = [0.22, 0.61, 0.36, 1] as const;
@@ -12,16 +9,7 @@ export function FadeInUp({
   children: ReactNode;
   className?: string;
 }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: EASE }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  );
+  return <div className={className}>{children}</div>;
 }
 
 export function ScrollFadeUp({
@@ -33,33 +21,8 @@ export function ScrollFadeUp({
   className?: string;
   delay?: number;
 }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.55, ease: EASE, delay }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  );
+  return <div className={className}>{children}</div>;
 }
-
-const containerVariants: Variants = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.06 } },
-};
-
-const itemVariantsUp: Variants = {
-  hidden: { opacity: 0, y: 16 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: EASE } },
-};
-
-const itemVariantsScale: Variants = {
-  hidden: { opacity: 0, scale: 0.96 },
-  show: { opacity: 1, scale: 1, transition: { duration: 0.55, ease: EASE } },
-};
 
 export function StaggerList({
   children,
@@ -68,17 +31,7 @@ export function StaggerList({
   children: ReactNode;
   className?: string;
 }) {
-  return (
-    <motion.div
-      initial="hidden"
-      whileInView="show"
-      viewport={{ once: true, margin: "-80px" }}
-      variants={containerVariants}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  );
+  return <div className={className}>{children}</div>;
 }
 
 export function StaggerItem({
@@ -96,15 +49,12 @@ export function StaggerItem({
   as?: "div" | "a";
   href?: string;
 }) {
-  const MotionTag = As === "a" ? motion.a : motion.div;
-  return (
-    <MotionTag
-      href={As === "a" ? href : undefined}
-      variants={variant === "scale" ? itemVariantsScale : itemVariantsUp}
-      whileHover={hover ? { y: -3 } : undefined}
-      className={className}
-    >
-      {children}
-    </MotionTag>
-  );
+  if (As === "a") {
+    return (
+      <a href={href} className={className}>
+        {children}
+      </a>
+    );
+  }
+  return <div className={className}>{children}</div>;
 }

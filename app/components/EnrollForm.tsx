@@ -7,7 +7,7 @@ import { X, User, Phone, ClipboardList, Send } from "lucide-react";
 const EXAMS = ["Army", "Bihar Police", "Daroga", "SSC GD", "CISF", "CRPF", "BSF"];
 const EASE = [0.22, 0.61, 0.36, 1] as const;
 
-const WHATSAPP_NUMBER = "918863081082";
+const WHATSAPP_NUMBER = "917739776471";
 
 type EnrollFormProps = {
   open: boolean;

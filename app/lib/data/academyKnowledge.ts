@@ -176,7 +176,7 @@ Academy Name: Lakhisarai Physical Academy
 Founder & Director: Ganesh Sir
 Address: K.R.K. Ground, Near Lakhisarai Railway Station, Nawada Sikandara Road,
 Lakhisarai, Bihar – 811311
-Phone / WhatsApp: +91 8863081082, +91 7739776471
+Phone / WhatsApp: +91 7739776471, +91 7903594008
 Email: ganeshkumar90067@gmail.com
 Open Monday – Sunday, during Morning (05:00 AM – 08:00 AM) and Evening
 (04:00 PM – 07:00 PM) batch hours.

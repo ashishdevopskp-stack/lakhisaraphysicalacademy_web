@@ -20,6 +20,12 @@ type NavItem = {
 const NAV: NavItem[] = [
   { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
   {
+    label: 'Batches', href: '/admin/batches', icon: ClipboardList,
+    children: [
+      { label: 'All Batches', href: '/admin/batches' },
+    ],
+  },
+  {
     label: 'Students', href: '/admin/students', icon: Users,
     children: [
       { label: 'All Students', href: '/admin/students' },

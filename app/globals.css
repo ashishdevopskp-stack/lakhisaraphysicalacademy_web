@@ -1,471 +1,264 @@
 @import "tailwindcss";
 
 @theme {
-  /* Surface */
+  /* Canvas & Surface - Light Soft Bento Palette */
   --color-bg: #f4f6fa;
-  --color-bg-raised: rgba(10, 14, 22, 0.035);
-  --color-bg-raised-2: rgba(10, 14, 22, 0.055);
-  --color-bg-raised-3: rgba(10, 14, 22, 0.08);
-  --color-line: rgba(10, 14, 22, 0.1);
-  --color-line-strong: rgba(10, 14, 22, 0.16);
+  --color-bg-card: #ffffff;
+  --color-bg-raised: #ffffff;
+  --color-bg-raised-2: #f8fafc;
+  --color-bg-raised-3: #f1f5f9;
+  --color-line: #e2e8f0;
+  --color-line-strong: #cbd5e1;
 
-  /* Text */
-  --color-text: #10151f;
-  --color-text-muted: #4b5f73;
-  --color-text-faint: #6b7688;
+  /* Typography - Chakra Navy for Indian Flag theme */
+  --color-text: #0f172a;
+  --color-text-muted: #334155;
+  --color-text-faint: #64748b;
   --color-text-on-dark: #ffffff;
-  --color-text-on-dark-muted: #cbd5e1;
+  --color-text-on-dark-muted: #94a3b8;
 
-  /* Signal — trust / force */
-  --color-signal: #3b82f6;
-  --color-signal-strong: #60a5fa;
-  --color-signal-dim: rgba(59, 130, 246, 0.1);
+  /* 1. Indian Saffron (Kesari) */
+  --color-saffron: #ff9933;
+  --color-signal: #ea580c;
+  --color-signal-strong: #c2410c;
+  --color-signal-dim: #fff7ed;
   --color-on-signal: #ffffff;
 
-  /* Accent — achievement / medal */
-  --color-accent: #f5a623;
-  --color-accent-strong: #fbbf24;
-  --color-on-accent: #241902;
+  /* 2. Ashoka Chakra Navy (Blue) */
+  --color-chakra: #000080;
+  --color-chakra-light: #1e3a8a;
 
-  /* Service / camo */
-  --color-olive: #6b7a3d;
-  --color-olive-strong: #86974f;
+  /* 3. India Green (Hara) */
+  --color-india-green: #138808;
+  --color-accent: #15803d;
+  --color-accent-strong: #166534;
+  --color-accent-dim: #f0fdf4;
+  --color-on-accent: #ffffff;
 
-  --color-navy: #05070c;
-  --color-navy-2: #0f1522;
+  /* Base utilities */
+  --color-navy: #0f172a;
+  --color-navy-2: #1e293b;
+  --color-success: #15803d;
+  --color-danger: #dc2626;
 
-  --color-gold: #facc15;
-  --color-orange: #f97316;
-  --color-pink: #ec4899;
-  --color-teal: #14b8a6;
-  --color-success: #22c55e;
-  --color-danger: #ef4444;
-
-  --font-display: var(--font-poppins), "Arial Narrow", sans-serif;
-  --font-body: var(--font-inter), -apple-system, BlinkMacSystemFont,
-    "Helvetica Neue", Arial, sans-serif;
-  --font-mono: var(--font-jetbrains-mono), ui-monospace, "SF Mono", Menlo,
-    monospace;
+  --font-display: var(--font-poppins), "Inter", -apple-system, sans-serif;
+  --font-body: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
 
   --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-full: 999px;
-  --container-app: 1180px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
 
-  --shadow-card: 0 8px 28px rgba(15, 23, 42, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.6);
-  --shadow-card-hover: 0 12px 36px rgba(15, 23, 42, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.7);
-
-  /* Floating shadow — softer, more diffuse, used for the GSAP breathing effect */
-  --shadow-float-rest: 0 14px 30px rgba(15, 23, 42, 0.10), 0 2px 8px rgba(15, 23, 42, 0.06);
-  --shadow-float-peak: 0 26px 50px rgba(15, 23, 42, 0.16), 0 6px 14px rgba(15, 23, 42, 0.08);
-}
-
-/* Blob position custom properties — animated by GSAP (BackgroundFX.tsx). */
-@property --blob1-x { syntax: '<percentage>'; inherits: false; initial-value: 50%; }
-@property --blob1-y { syntax: '<percentage>'; inherits: false; initial-value: -6%; }
-@property --blob2-x { syntax: '<percentage>'; inherits: false; initial-value: 94%; }
-@property --blob2-y { syntax: '<percentage>'; inherits: false; initial-value: 18%; }
-@property --blob3-x { syntax: '<percentage>'; inherits: false; initial-value: 4%; }
-@property --blob3-y { syntax: '<percentage>'; inherits: false; initial-value: 96%; }
-@property --grain-x { syntax: '<percentage>'; inherits: false; initial-value: 0%; }
-@property --grain-y { syntax: '<percentage>'; inherits: false; initial-value: 0%; }
-
-/* CSS fallback keyframes — only runs if JS/GSAP hasn't taken over yet, or
-   is disabled. GSAP overrides these same custom properties once mounted. */
-@keyframes liquidDriftFallback {
-  0%   { --blob1-x: 50%; --blob1-y: -6%; --blob2-x: 94%; --blob2-y: 18%; --blob3-x: 4%;  --blob3-y: 96%; }
-  50%  { --blob1-x: 42%; --blob1-y: 4%;  --blob2-x: 82%; --blob2-y: 30%; --blob3-x: 14%; --blob3-y: 86%; }
-  100% { --blob1-x: 50%; --blob1-y: -6%; --blob2-x: 94%; --blob2-y: 18%; --blob3-x: 4%;  --blob3-y: 96%; }
+  --shadow-bento: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
+  --shadow-bento-hover: 0 12px 30px -4px rgba(15, 23, 42, 0.09), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+  --shadow-orange: 0 8px 20px -3px rgba(234, 88, 12, 0.25);
+  --shadow-green: 0 8px 20px -3px rgba(19, 136, 8, 0.25);
 }
 
 @layer base {
-  html {
+  html, body {
     scroll-behavior: smooth;
     color-scheme: light;
-  }
-
-  /* ============ DARK THEME OVERRIDE ============ */
-  html[data-theme="dark"] {
-    color-scheme: dark;
-
-    --color-bg: #0a0e16;
-    --color-bg-raised: rgba(255, 255, 255, 0.045);
-    --color-bg-raised-2: rgba(255, 255, 255, 0.07);
-    --color-bg-raised-3: rgba(255, 255, 255, 0.1);
-    --color-line: rgba(255, 255, 255, 0.1);
-    --color-line-strong: rgba(255, 255, 255, 0.2);
-
-    --color-text: #f3f5f8;
-    --color-text-muted: #a7b0c0;
-    --color-text-faint: #6b7688;
-
-    --color-signal-dim: rgba(59, 130, 246, 0.16);
-
-    --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.16);
-    --shadow-card-hover: 0 12px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.22);
-    --shadow-float-rest: 0 16px 34px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
-    --shadow-float-peak: 0 30px 58px rgba(0, 0, 0, 0.6), 0 6px 16px rgba(0, 0, 0, 0.35);
+    overflow-x: hidden;
+    max-width: 100vw;
   }
 
   body {
-    position: relative;
     background-color: var(--color-bg);
-    /* Center-anchored "floodlight over the parade ground": one dominant
-       glow near top-center, two quieter supporting blobs lower down, plus
-       a soft vignette so the frame edges recede and the center holds focus. */
-    background-image:
-      radial-gradient(760px 620px at var(--blob1-x) var(--blob1-y), rgba(59, 130, 246, 0.16), transparent 64%),
-      radial-gradient(640px 480px at var(--blob2-x) var(--blob2-y), rgba(245, 166, 35, 0.10), transparent 60%),
-      radial-gradient(600px 460px at var(--blob3-x) var(--blob3-y), rgba(20, 184, 166, 0.09), transparent 62%),
-      radial-gradient(120% 120% at 50% 8%, transparent 45%, rgba(10, 14, 22, 0.05) 100%);
-    background-attachment: fixed;
-    animation: liquidDriftFallback 32s ease-in-out infinite;
     color: var(--color-text);
     font-family: var(--font-body);
     -webkit-font-smoothing: antialiased;
-    font-feature-settings: "cv11", "ss01";
-    transition: background-color 0.25s ease, color 0.25s ease;
   }
 
-  html[data-theme="dark"] body {
-    background-image:
-      radial-gradient(760px 620px at var(--blob1-x) var(--blob1-y), rgba(59, 130, 246, 0.26), transparent 64%),
-      radial-gradient(640px 480px at var(--blob2-x) var(--blob2-y), rgba(245, 166, 35, 0.16), transparent 60%),
-      radial-gradient(600px 460px at var(--blob3-x) var(--blob3-y), rgba(20, 184, 166, 0.15), transparent 62%),
-      radial-gradient(120% 120% at 50% 8%, transparent 40%, rgba(0, 0, 0, 0.35) 100%);
-  }
-
-  /* Once GSAP mounts (BackgroundFX.tsx adds this to <html>), it owns the
-     custom properties every frame — the CSS fallback animation is redundant
-     and would fight it, so switch it off. */
-  html[data-gsap-bg="active"] body {
-    animation: none;
-  }
-
-  h1 {
+  h1, h2, h3, h4 {
     font-family: var(--font-display);
-    font-weight: 700;
+    color: var(--color-text);
     letter-spacing: -0.02em;
-    line-height: 1.12;
-    color: var(--color-text);
-  }
-  h2 {
-    font-family: var(--font-display);
-    font-weight: 600;
-    letter-spacing: -0.016em;
-    line-height: 1.18;
-    color: var(--color-text);
-  }
-  h3, h4 {
-    font-family: var(--font-display);
-    font-weight: 600;
-    letter-spacing: -0.012em;
-    line-height: 1.25;
-    color: var(--color-text);
-  }
-
-  :focus-visible {
-    outline: 2px solid var(--color-signal-strong);
-    outline-offset: 3px;
-    border-radius: var(--radius-sm);
   }
 }
 
 @layer components {
-  /* Base liquid-glass surface, reused by cards, badges, panels */
-  .glass {
-    background: linear-gradient(155deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.4));
-    backdrop-filter: blur(20px) saturate(160%);
-    -webkit-backdrop-filter: blur(20px) saturate(160%);
-    border: 1px solid var(--color-line-strong);
+  /* Tiranga 3-Color Flag Accent Bar: Saffron -> White -> India Green */
+  .tiranga-bar {
+    height: 4px;
+    width: 100%;
+    background: linear-gradient(
+      to right,
+      #ff9933 0%,
+      #ff9933 33.33%,
+      #ffffff 33.33%,
+      #ffffff 66.66%,
+      #138808 66.66%,
+      #138808 100%
+    );
   }
 
-  html[data-theme="dark"] .glass {
-    background: linear-gradient(155deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.015));
+  .tiranga-bar-thick {
+    height: 6px;
+    width: 100%;
+    background: linear-gradient(
+      to right,
+      #ff9933 0%,
+      #ff9933 33.33%,
+      #000080 33.33%,
+      #000080 66.66%,
+      #138808 66.66%,
+      #138808 100%
+    );
   }
 
-  .glass-sheen {
+  /* Bento Card Surface with Tiranga Top Border */
+  .bento-card {
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-bento);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
     overflow: hidden;
-    isolation: isolate;
   }
-  .glass-sheen::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.28) 45%, transparent 60%);
-    transform: translateX(-140%);
-    transition: transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1);
-    pointer-events: none;
-  }
-  .glass-sheen:hover::after,
-  .glass-sheen.sheen-run::after {
-    transform: translateX(140%);
+  .bento-card:hover {
+    box-shadow: var(--shadow-bento-hover);
+    border-color: var(--color-line-strong);
   }
 
-  .btn {
-    position: relative;
-    isolation: isolate;
-    overflow: hidden;
+  .bento-card-saffron {
+    background-color: #ffffff;
+    border: 1px solid #fed7aa;
+    border-top: 4px solid #ff9933;
+  }
+
+  .bento-card-green {
+    background-color: #ffffff;
+    border: 1px solid #bbf7d0;
+    border-top: 4px solid #138808;
+  }
+
+  .bento-card-navy {
+    background-color: #ffffff;
+    border: 1px solid #bfdbfe;
+    border-top: 4px solid #000080;
+  }
+
+  /* Saffron Primary Pill Button */
+  .btn-orange {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background-color: #ea580c;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-orange);
+    transition: all 0.15s ease;
+    border: none;
+    cursor: pointer;
+  }
+  .btn-orange:hover {
+    background-color: #c2410c;
+    transform: translateY(-1px);
+    box-shadow: 0 10px 25px -3px rgba(234, 88, 12, 0.35);
+  }
+
+  /* India Green Button (Flag Green Accent) */
+  .btn-green {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background-color: #138808;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-green);
+    transition: all 0.15s ease;
+    border: none;
+    cursor: pointer;
+  }
+  .btn-green:hover {
+    background-color: #0f6c06;
+    transform: translateY(-1px);
+  }
+
+  /* Secondary Pill Button */
+  .btn-secondary-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background-color: #ffffff;
+    color: var(--color-text);
+    font-weight: 600;
+    font-size: 14px;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-line);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+    transition: all 0.15s ease;
+    cursor: pointer;
+  }
+  .btn-secondary-pill:hover {
+    background-color: var(--color-bg-raised-2);
+    border-color: var(--color-line-strong);
+  }
+
+  /* Filter Pills */
+  .pill-tab {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+    padding: 0.5rem 1.25rem;
     border-radius: var(--radius-full);
-    padding: 0.8rem 1.6rem;
-    font-size: 14.5px;
+    font-size: 13px;
     font-weight: 600;
-    letter-spacing: 0.01em;
-    backdrop-filter: blur(14px) saturate(160%);
-    -webkit-backdrop-filter: blur(14px) saturate(160%);
-    transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease,
-      background-color 0.15s ease;
-  }
-  .btn::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.32), transparent 55%);
-    opacity: 0.5;
-    pointer-events: none;
-  }
-  .btn:active {
-    transform: translateY(1px) scale(0.99);
-  }
-
-  .btn-primary {
-    background: linear-gradient(160deg, rgba(96, 165, 250, 0.9), rgba(29, 78, 216, 0.88));
-    color: var(--color-on-signal);
-    border: 1px solid rgba(147, 197, 253, 0.45);
-    box-shadow: 0 6px 22px rgba(37, 99, 235, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  }
-  .btn-primary:hover {
-    box-shadow: 0 8px 28px rgba(37, 99, 235, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.35);
-    border-color: rgba(191, 219, 254, 0.6);
-  }
-
-  .btn-accent {
-    background: linear-gradient(160deg, rgba(251, 191, 36, 0.95), rgba(217, 119, 6, 0.88));
-    color: var(--color-on-accent);
-    border: 1px solid rgba(253, 224, 155, 0.55);
-    box-shadow: 0 6px 22px rgba(245, 166, 35, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.35);
-  }
-  .btn-accent:hover {
-    box-shadow: 0 8px 28px rgba(245, 166, 35, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.4);
-  }
-
-  .btn-whatsapp {
-    background: linear-gradient(160deg, rgba(52, 211, 153, 0.85), rgba(5, 150, 105, 0.82));
-    color: #ffffff;
-    border: 1px solid rgba(167, 243, 208, 0.4);
-    box-shadow: 0 6px 22px rgba(5, 150, 105, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  }
-  .btn-whatsapp:hover {
-    box-shadow: 0 8px 28px rgba(5, 150, 105, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.35);
-  }
-
-  .btn-secondary {
-    background: rgba(10, 14, 22, 0.03);
-    color: var(--color-text);
-    border: 1px solid var(--color-line-strong);
-  }
-  .btn-secondary:hover {
-    background: rgba(59, 130, 246, 0.1);
-    color: var(--color-signal);
-    border-color: var(--color-signal-strong);
-  }
-
-  html[data-theme="dark"] .btn-secondary {
-    background: rgba(255, 255, 255, 0.05);
-  }
-  html[data-theme="dark"] .btn-secondary:hover {
-    background: rgba(59, 130, 246, 0.12);
-    color: var(--color-text-on-dark);
-  }
-
-  .btn-ghost {
-    background-color: transparent;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border: 1px solid var(--color-line);
+    background-color: #ffffff;
     color: var(--color-text-muted);
-    border: 1px solid transparent;
   }
-  .btn-ghost:hover {
+  .pill-tab:hover {
     background-color: var(--color-bg-raised-2);
     color: var(--color-text);
   }
-
-  .pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.375rem;
-    border-radius: var(--radius-full);
-    padding: 0.45rem 1rem;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.005em;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    background-color: var(--color-signal-dim);
-    color: var(--color-signal);
-    border: 1px solid rgba(10, 14, 22, 0.06);
-    transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease,
-      border-color 0.15s ease;
-  }
-  .pill:hover {
-    transform: translateY(-1px);
-    border-color: rgba(10, 14, 22, 0.14);
-  }
-  .pill-active {
-    background-color: var(--color-signal);
-    color: var(--color-on-signal);
+  .pill-tab-active {
+    background-color: #ea580c;
+    color: #ffffff;
+    border-color: #ea580c;
+    box-shadow: var(--shadow-orange);
   }
 
-  html[data-theme="dark"] .pill {
-    color: var(--color-signal-strong);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-  }
-  html[data-theme="dark"] .pill:hover {
-    border-color: rgba(255, 255, 255, 0.18);
-  }
-
-  .card-flat {
-    background: linear-gradient(155deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.55));
-    backdrop-filter: blur(20px) saturate(160%);
-    -webkit-backdrop-filter: blur(20px) saturate(160%);
-    border: 1px solid var(--color-line-strong);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-card);
-    transition: box-shadow 0.15s ease, transform 0.15s ease, background-color 0.15s ease;
-  }
-  .card-flat:hover {
-    box-shadow: var(--shadow-card-hover);
+  .pill-green-active {
+    background-color: #138808;
+    color: #ffffff;
+    border-color: #138808;
+    box-shadow: var(--shadow-green);
   }
 
-  html[data-theme="dark"] .card-flat {
-    background: linear-gradient(155deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.015));
+  /* Tiranga Badges */
+  .badge-saffron {
+    background-color: #fff7ed;
+    color: #c2410c;
+    border: 1px solid #ffedd5;
+    font-weight: 700;
   }
-
-  .surface-navy {
-    background-color: var(--color-navy);
-    color: var(--color-text-on-dark);
+  .badge-green {
+    background-color: #f0fdf4;
+    color: #138808;
+    border: 1px solid #bbf7d0;
+    font-weight: 700;
   }
-  .surface-navy-muted {
-    color: var(--color-text-on-dark-muted);
-  }
-
-  .text-gradient-brand {
-    background-image: linear-gradient(
-      90deg,
-      var(--color-signal-strong) 0%,
-      var(--color-teal) 55%,
-      var(--color-accent-strong) 100%
-    );
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-
-  .pill-color-1 { background-color: rgba(59, 130, 246, 0.16); color: #2563eb; }
-  .pill-color-2 { background-color: rgba(34, 197, 94, 0.14); color: #16a34a; }
-  .pill-color-3 { background-color: rgba(236, 72, 153, 0.14); color: #db2777; }
-  .pill-color-4 { background-color: rgba(245, 166, 35, 0.16); color: #b45309; }
-  .pill-color-5 { background-color: rgba(20, 184, 166, 0.16); color: #0f766e; }
-
-  html[data-theme="dark"] .pill-color-1 { color: var(--color-signal-strong); }
-  html[data-theme="dark"] .pill-color-2 { color: #4ade80; }
-  html[data-theme="dark"] .pill-color-3 { color: #f472b6; }
-  html[data-theme="dark"] .pill-color-4 { color: var(--color-accent-strong); }
-  html[data-theme="dark"] .pill-color-5 { color: #2dd4bf; }
-
-  /* Ribbon stripe — service-ribbon motif for the badge signature element */
-  .ribbon-bar {
-    background: linear-gradient(
-      180deg,
-      var(--color-signal) 0%,
-      var(--color-signal) 33%,
-      var(--color-accent) 33%,
-      var(--color-accent) 66%,
-      var(--color-olive) 66%,
-      var(--color-olive) 100%
-    );
-  }
-
-  /* ============ FLOATING SHADOW SYSTEM ============
-     Opt-in class for cards/panels you want to gently "hover" in place.
-     GSAP (BackgroundFX.tsx) tweens --float-lift + box-shadow between the
-     rest/peak values below; this is the static resting state and the
-     no-JS/reduced-motion fallback. */
-  .float-card {
-    box-shadow: var(--shadow-float-rest);
-    transform: translateY(0);
-    will-change: transform, box-shadow;
-  }
-
-  /* Grain / noise overlay — fixed above the gradient, below content.
-     Adds a subtle film-grain texture so the soft gradient doesn't look
-     like a flat digital blur. Intensity is intentionally faint. */
-  .grain-overlay {
-    position: fixed;
-    inset: -10%;
-    z-index: 1;
-    pointer-events: none;
-    opacity: 0.05;
-    mix-blend-mode: overlay;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-    background-repeat: repeat;
-    background-position: var(--grain-x) var(--grain-y);
-    transform: translateZ(0);
-  }
-
-  html[data-theme="dark"] .grain-overlay {
-    opacity: 0.08;
-    mix-blend-mode: soft-light;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-
-/* Global loader overlay */
-.global-loader-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
-  animation: loader-fade-in 0.15s ease-out;
-}
-
-.global-loader-spinner {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: 4px solid rgba(255, 255, 255, 0.25);
-  border-top-color: #ffffff;
-  animation: loader-spin 0.7s linear infinite;
-}
-
-@keyframes loader-spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes loader-fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
+  .badge-navy {
+    background-color: #eff6ff;
+    color: #000080;
+    border: 1px solid #bfdbfe;
+    font-weight: 700;
   }
 }

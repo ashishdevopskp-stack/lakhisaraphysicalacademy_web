@@ -69,12 +69,12 @@ function HostelHero() {
               y={12}
               duration={0.5}
               delay={0.55}
-              className="card-flat absolute -bottom-5 left-1/2 w-[82%] -translate-x-1/2 px-5 py-3.5 text-center sm:-bottom-6"
+              className="absolute -bottom-5 left-1/2 w-[85%] -translate-x-1/2 px-5 py-3.5 text-center sm:-bottom-6 rounded-2xl bg-slate-950/95 border border-amber-500/40 shadow-2xl shadow-black/80 backdrop-blur-xl z-20"
             >
-              <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-text-faint">
+              <p className="font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-amber-400">
                 For Outstation Students
               </p>
-              <p className="mt-0.5 text-[15px] font-semibold text-text">
+              <p className="mt-0.5 text-[15px] font-extrabold text-white">
                 Safe &amp; disciplined stay
               </p>
             </FadeInUp>

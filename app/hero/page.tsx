@@ -2,260 +2,255 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
-import { ClipboardList, Phone, MessageCircle, ArrowRight, Smartphone } from "lucide-react";
+import {
+  ClipboardList,
+  Phone,
+  ArrowRight,
+  Star,
+  ShieldCheck,
+  MapPin,
+  Award,
+  Users,
+  CheckCircle2,
+  Calendar,
+  Flag,
+} from "lucide-react";
 import Container from "../components/Container";
 import EnrollForm from "../components/EnrollForm";
 
-const EXAMS = ["Army", "Bihar Police", "Daroga", "SSC GD", "CISF", "CRPF", "BSF"];
-const PILL_COLORS = ["pill-color-1", "pill-color-2", "pill-color-3", "pill-color-4", "pill-color-5"];
-const EASE = [0.22, 0.61, 0.36, 1] as const;
+const EXAM_CATEGORIES = [
+  { id: "all", label: "All Programs" },
+  { id: "army", label: "Indian Army Agniveer" },
+  { id: "bihar_police", label: "Bihar Police Constable" },
+  { id: "daroga", label: "Bihar Daroga (SI)" },
+  { id: "ssc_gd", label: "SSC GD (BSF, CISF, CRPF)" },
+  { id: "rpf", label: "RPF Railway Police" },
+];
 
-const PHONE_NUMBER = "918863081082";
-const PLAY_STORE_URL =
-  "https://play.google.com/store/apps/details?id=com.lakhisarai.physical_academy";
-
-const pillContainer = {
-  hidden: {},
-  show: {
-    transition: { staggerChildren: 0.06, delayChildren: 0.5 },
-  },
-};
-
-const pillItem = {
-  hidden: { opacity: 0, y: 8, scale: 0.9 },
-  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.35, ease: EASE } },
-};
+const PHONE_NUMBER = "917739776471";
 
 export default function Hero() {
   const [enrollOpen, setEnrollOpen] = useState(false);
+  const [activeCategory, setActiveCategory] = useState("all");
 
   return (
-    <section
-      id="top"
-      className="relative overflow-hidden pb-16 pt-14 sm:pb-24 sm:pt-20 lg:pb-28 lg:pt-24"
-    >
-      {/* Ambient background glow — purely decorative, sits behind everything */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[520px] opacity-40 blur-3xl"
-        style={{
-          backgroundImage:
-            "radial-gradient(60% 60% at 30% 0%, rgba(37,99,235,0.25), transparent 70%), radial-gradient(50% 50% at 85% 10%, rgba(20,184,166,0.2), transparent 70%)",
-        }}
-      />
-
+    <section id="top" className="pb-12 pt-3 sm:pb-20 sm:pt-5 overflow-hidden">
       <Container>
-        <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
-          {/* ---------------- Left: copy + CTAs ---------------- */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: EASE }}
-            className="flex flex-col items-start"
-          >
-            <motion.p
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: EASE, delay: 0.05 }}
-              className="flex items-center gap-2 font-mono text-[13px] font-medium uppercase tracking-[0.18em] text-signal"
-            >
-              <span className="relative flex h-2 w-2 shrink-0">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-signal opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-signal" />
-              </span>
-              Lakhisarai Physical Academy
-            </motion.p>
 
-            <h1 className="mt-5 max-w-[18ch] text-[34px] leading-[1.1] sm:text-[44px] lg:text-[56px]">
-              The Most Trusted{" "}
-              <span className="text-gradient-brand">Physical Training</span>{" "}
-              Academy in Lakhisarai
-            </h1>
+        {/* Main Bento Layout Grid with Tiranga Saffron, White, & India Green Cards */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+          {/* Left Column: Hero Header & Stats (Col 1-7) */}
+          <div className="lg:col-span-7 flex flex-col justify-between gap-6">
+            {/* Top Saffron Bento Card */}
+            <div className="bento-card bento-card-saffron p-6 sm:p-8 lg:p-10 flex flex-col justify-between h-full">
+              <div>
+                {/* Tiranga Saffron Top Tag */}
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-orange-100 text-[#c2410c] border border-orange-300 text-xs font-extrabold mb-4">
+                  <Flag className="w-3.5 h-3.5 text-[#ea580c]" />
+                  <span>जय हिन्द! #1 Physical Training Academy in Lakhisarai</span>
+                </div>
 
-            <p className="mt-6 max-w-[46ch] text-[17px] font-medium text-text">
-              Professional physical training for Army, Bihar Police, Daroga,
-              SSC GD, CISF, CRPF, BSF and other government recruitment
-              physical tests.
-            </p>
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900 leading-[1.15]">
+                  Serve The Nation! Build Elite Fitness for{" "}
+                  <span className="text-[#ea580c]">Defence &amp; Police Exams</span>
+                </h1>
 
-            <p className="mt-3.5 max-w-[50ch] text-[15px] leading-relaxed text-text-muted">
-              We help students clear defence and government physical
-              recruitment tests through disciplined training, expert
-              guidance, and continuous performance improvement — with
-              structured preparation built around each exam&rsquo;s actual
-              standards.
-            </p>
+                <p className="mt-4 text-slate-700 text-base sm:text-lg font-medium leading-relaxed">
+                  Dedicated physical training for 1600m Running, High Jump, Long Jump, &amp; Shot Put guided by expert NIS coaches with patriotic discipline.
+                </p>
+              </div>
 
-            <motion.div
-              variants={pillContainer}
-              initial="hidden"
-              animate="show"
-              className="mt-7 flex flex-wrap gap-2"
-              aria-label="Exams we train for"
-            >
-              {EXAMS.map((exam, i) => (
-                <motion.span
-                  key={exam}
-                  variants={pillItem}
-                  className={`pill ${PILL_COLORS[i % PILL_COLORS.length]} transition-transform duration-200 hover:-translate-y-0.5`}
+              {/* Action Pill CTAs */}
+              <div className="mt-8 flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setEnrollOpen(true)}
+                  className="btn-orange"
                 >
-                  {exam}
-                </motion.span>
-              ))}
-            </motion.div>
+                  <ClipboardList className="h-4 w-4" />
+                  <span>Apply for Admission</span>
+                  <ArrowRight className="h-4 w-4" />
+                </button>
 
-            {/* CTAs — solid fills with brand-color glow shadows, all live links */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: EASE, delay: 0.35 }}
-              className="mt-8 flex flex-wrap items-center gap-3"
-            >
-              <button
-                type="button"
-                onClick={() => setEnrollOpen(true)}
-                className="btn btn-primary group transition-transform duration-200 hover:-translate-y-0.5 active:translate-y-0"
-              >
-                <ClipboardList className="h-4 w-4" />
-                Enroll Now
-                <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
-              </button>
-              <a
-                href={`tel:+${PHONE_NUMBER}`}
-                className="btn btn-secondary transition-transform duration-200 hover:-translate-y-0.5 active:translate-y-0"
-              >
-                <Phone className="h-4 w-4" />
-                Call Us
-              </a>
+                <a
+                  href={`tel:+${PHONE_NUMBER}`}
+                  className="btn-secondary-pill"
+                >
+                  <Phone className="h-4 w-4 text-slate-500" />
+                  <span>Call +91 77397 76471</span>
+                </a>
+              </div>
+            </div>
+
+            {/* Indian Tiranga Tricolor Banner (Saffron -> White -> Green Gradient Banner) */}
+            <div className="rounded-3xl bg-gradient-to-r from-[#ea580c] via-[#ff9933] to-[#138808] p-6 sm:p-8 text-white shadow-xl shadow-orange-500/15 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 border-2 border-white">
+              <div>
+                <p className="text-xs font-black uppercase tracking-widest text-amber-100 flex items-center gap-1.5">
+                  <Award className="w-4 h-4 text-white" />
+                  <span>Proven Selection Wall (भारत माता की जय)</span>
+                </p>
+                <p className="text-4xl sm:text-5xl font-black mt-1 tracking-tight drop-shadow-md">
+                  1,200+
+                </p>
+                <p className="text-sm font-extrabold text-white mt-1">
+                  Selections in Bihar Police, Indian Army, SI &amp; SSC GD
+                </p>
+              </div>
+
+              <div className="bg-white/20 backdrop-blur-md rounded-2xl p-4 border border-white/30 shrink-0 text-left shadow-inner">
+                <div className="flex items-center gap-1 text-amber-300">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} size={16} className="fill-amber-300" />
+                  ))}
+                </div>
+                <p className="text-xs font-extrabold mt-1 text-white">4.9 / 5.0 Rating</p>
+                <p className="text-[11px] font-bold text-amber-100">250+ Verified Candidate Reviews</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Featured Course & Coach Card (Col 8-12) */}
+          <div className="lg:col-span-5 flex flex-col gap-6">
+            {/* Featured Academy Card with Green Accent Border */}
+            <div className="bento-card bento-card-green p-5 flex flex-col justify-between">
+              <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden bg-slate-100 mb-4 ring-2 ring-[#138808]/20">
+                <Image
+                  src="/heroimg.png"
+                  alt="Training Ground"
+                  fill
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 40vw"
+                  className="object-cover"
+                />
+                <span className="absolute top-3 right-3 px-3 py-1 bg-white/95 backdrop-blur-md text-slate-900 text-xs font-extrabold rounded-full shadow-sm">
+                  Gandhi Maidan Ground
+                </span>
+                <span className="absolute bottom-3 left-3 px-3 py-1 bg-[#ea580c] text-white text-xs font-extrabold rounded-full shadow-sm">
+                  Daily Morning 5:00 AM
+                </span>
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xl font-black text-slate-900">
+                    Physical Fitness Batch 2026
+                  </h3>
+                  <span className="text-xs font-extrabold text-[#138808] bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-300">
+                    Active Batch
+                  </span>
+                </div>
+
+                <p className="text-xs font-medium text-slate-600 mt-1 flex items-center gap-1">
+                  <MapPin size={13} className="text-[#ea580c]" />
+                  Stadium / Gandhi Maidan, Lakhisarai
+                </p>
+
+                {/* Specs Grid */}
+                <div className="mt-4 grid grid-cols-3 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-200 text-center">
+                  <div>
+                    <p className="text-[10px] uppercase font-black text-slate-500">Running</p>
+                    <p className="text-xs font-extrabold text-slate-900 mt-0.5">1600m / 1000m</p>
+                  </div>
+                  <div className="border-x border-slate-200">
+                    <p className="text-[10px] uppercase font-black text-slate-500">High Jump</p>
+                    <p className="text-xs font-extrabold text-slate-900 mt-0.5">Scissor/Tiger</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] uppercase font-black text-slate-500">Shot Put</p>
+                    <p className="text-xs font-extrabold text-slate-900 mt-0.5">16lb / 12lb</p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => setEnrollOpen(true)}
+                  className="w-full mt-4 btn-orange text-center justify-center text-sm py-2.5"
+                >
+                  Join Physical Batch Now
+                </button>
+              </div>
+            </div>
+
+            {/* Coach Profile Card (Ashoka Chakra Navy Theme Card) */}
+            <div className="bento-card bento-card-navy p-5 flex items-center justify-between gap-4">
+              <div className="flex items-center gap-3.5">
+                <div className="relative h-12 w-12 rounded-full overflow-hidden border-2 border-[#000080]/30 shrink-0 ring-2 ring-orange-500/30">
+                  <Image
+                    src="/ganeshsir.png"
+                    alt="Ganesh Sir"
+                    fill
+                    sizes="48px"
+                    className="object-cover"
+                  />
+                </div>
+                <div>
+                  <h4 className="text-sm font-black text-slate-900 leading-tight">
+                    Ganesh Sir
+                  </h4>
+                  <p className="text-xs font-semibold text-slate-600">
+                    Founder &amp; Chief NIS Instructor
+                  </p>
+                  <div className="flex items-center gap-1 mt-0.5">
+                    <Star size={12} className="text-amber-400 fill-amber-400" />
+                    <span className="text-[11px] font-extrabold text-slate-800">4.9</span>
+                    <span className="text-[11px] font-semibold text-slate-500">(NIS Certified)</span>
+                  </div>
+                </div>
+              </div>
+
               <a
                 href={`https://wa.me/${PHONE_NUMBER}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn btn-accent transition-transform duration-200 hover:-translate-y-0.5 active:translate-y-0"
+                className="px-4 py-2 text-xs font-extrabold text-[#138808] bg-emerald-50 hover:bg-emerald-100 rounded-full border border-emerald-300 transition-colors shrink-0"
               >
-                <MessageCircle className="h-4 w-4" />
-                WhatsApp
+                Chat Direct
               </a>
-            </motion.div>
-
-            {/* App download strip — its own row so it reads as a distinct, secondary action */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: EASE, delay: 0.45 }}
-              className="mt-4"
-            >
-              <a
-                href={PLAY_STORE_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group inline-flex items-center gap-3 rounded-full border border-line bg-surface/80 py-2 pl-2 pr-4 shadow-[var(--shadow-card)] backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-signal/40 hover:shadow-[var(--shadow-card-hover)]"
-              >
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-signal/10 text-signal transition-colors duration-200 group-hover:bg-signal group-hover:text-white">
-                  <Smartphone className="h-4 w-4" />
-                </span>
-                <span className="flex flex-col leading-tight">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-text-faint">
-                    Available on Google Play
-                  </span>
-                  <span className="text-[13px] font-semibold text-text">
-                    Download Our App
-                  </span>
-                </span>
-                <ArrowRight className="h-4 w-4 text-text-faint transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-signal" />
-              </a>
-            </motion.div>
-
-            {/* Trust strip — quick reassurance under the CTAs */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, ease: EASE, delay: 0.55 }}
-              className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-text-faint"
-            >
-              <span className="flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-signal" />
-                Daily 5:30 AM &amp; evening batches
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-signal" />
-                Hostel available for outstation students
-              </span>
-            </motion.div>
-          </motion.div>
-
-          {/* ---------------- Right: photo panel ---------------- */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7, ease: EASE, delay: 0.15 }}
-            className="relative mx-auto w-full max-w-[480px] lg:max-w-none"
-          >
-            {/* Soft color glow behind the photo */}
-            <div
-              aria-hidden
-              className="absolute -inset-6 -z-10 rounded-[28px] opacity-70 blur-2xl"
-              style={{
-                backgroundImage:
-                  "linear-gradient(135deg, rgba(37,99,235,0.35), rgba(20,184,166,0.30), rgba(34,197,94,0.30))",
-              }}
-            />
-
-            <div className="group relative aspect-[4/5] w-full overflow-hidden rounded-lg border border-line shadow-[var(--shadow-card-hover)] sm:aspect-[5/4] lg:aspect-[4/5]">
-              <Image
-                src="/heroimg.png"
-                alt="Empty running track at sunrise, ready for the morning training session"
-                fill
-                priority
-                sizes="(min-width: 1024px) 480px, 90vw"
-                className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-              />
-              {/* Bottom gradient so the floating card always reads clearly against any photo */}
-              <div
-                aria-hidden
-                className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/40 to-transparent"
-              />
-
-              {/* Floating "on Google Play" badge — top corner of the photo, clickable */}
-              <motion.a
-                href={PLAY_STORE_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, ease: EASE, delay: 0.65 }}
-                className="absolute right-3 top-3 flex items-center gap-2 rounded-full bg-black/55 py-1.5 pl-1.5 pr-3 text-white backdrop-blur-md transition-transform duration-200 hover:-translate-y-0.5 hover:bg-black/70"
-              >
-                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/15">
-                  <Smartphone className="h-3.5 w-3.5" />
-                </span>
-                <span className="text-[11px] font-semibold leading-none">
-                  Get the App
-                </span>
-              </motion.a>
             </div>
+          </div>
+        </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: EASE, delay: 0.6 }}
-              className="card-flat absolute -bottom-6 left-1/2 flex w-[86%] -translate-x-1/2 items-center justify-between gap-4 px-5 py-3.5 sm:-bottom-7 sm:w-[80%]"
-            >
-              <div>
-                <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-text-faint">
-                  Morning batch
-                </p>
-                <p className="mt-0.5 text-[15px] font-semibold text-text">
-                  Starts 5:30 AM daily
-                </p>
-              </div>
-              <span className="relative flex h-2.5 w-2.5 shrink-0">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-signal opacity-75" />
-                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-signal" />
-              </span>
-            </motion.div>
-          </motion.div>
+        {/* Bottom Feature Cards Strip with Tiranga Colors */}
+        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="bento-card p-4 flex items-center gap-3 border-t-4 border-t-[#ea580c]">
+            <div className="p-2.5 rounded-xl bg-orange-50 text-[#ea580c]">
+              <CheckCircle2 size={20} />
+            </div>
+            <div>
+              <p className="text-xs font-extrabold text-slate-900">Digital Timing Test</p>
+              <p className="text-[11px] font-medium text-slate-600">Exact OMR &amp; Stop-watch run</p>
+            </div>
+          </div>
+
+          <div className="bento-card p-4 flex items-center gap-3 border-t-4 border-t-[#000080]">
+            <div className="p-2.5 rounded-xl bg-blue-50 text-[#000080]">
+              <ShieldCheck size={20} />
+            </div>
+            <div>
+              <p className="text-xs font-extrabold text-slate-900">Medical Checkup</p>
+              <p className="text-[11px] font-medium text-slate-600">Knock knee &amp; flat foot check</p>
+            </div>
+          </div>
+
+          <div className="bento-card p-4 flex items-center gap-3 border-t-4 border-t-[#138808]">
+            <div className="p-2.5 rounded-xl bg-emerald-50 text-[#138808]">
+              <Users size={20} />
+            </div>
+            <div>
+              <p className="text-xs font-extrabold text-slate-900">Hostel &amp; Mess</p>
+              <p className="text-[11px] font-medium text-slate-600">Available for outstation candidates</p>
+            </div>
+          </div>
+
+          <div className="bento-card p-4 flex items-center gap-3 border-t-4 border-t-[#ff9933]">
+            <div className="p-2.5 rounded-xl bg-amber-50 text-[#ea580c]">
+              <Calendar size={20} />
+            </div>
+            <div>
+              <p className="text-xs font-extrabold text-slate-900">Sunday Time Trial</p>
+              <p className="text-[11px] font-medium text-slate-600">Weekly evaluation test run</p>
+            </div>
+          </div>
         </div>
       </Container>
 

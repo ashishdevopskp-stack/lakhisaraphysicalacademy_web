@@ -116,21 +116,24 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-line bg-bg-raised">
+    <footer className="relative border-t border-slate-200 bg-white">
+      {/* 3-Stripe Indian Flag Tiranga Line on Top of Footer */}
+      <div className="h-1.5 w-full bg-gradient-to-r from-[#ff9933] via-slate-200 to-[#138808]" />
+
       {/* Closing CTA */}
-      <section className="border-b border-line py-16 sm:py-20">
+      <section className="border-b border-slate-200 py-12 sm:py-16 bg-slate-50">
         <Container>
-          <div className="flex flex-col items-start justify-between gap-8 rounded-2xl border border-line-strong bg-bg p-8 sm:flex-row sm:items-center sm:p-10">
+          <div className="flex flex-col items-start justify-between gap-8 rounded-3xl border-t-4 border-t-[#ea580c] border-b-4 border-b-[#138808] border-x border-slate-200 bg-white p-6 sm:p-10 shadow-sm sm:flex-row sm:items-center">
             <div className="max-w-[46ch]">
-              <p className="font-mono text-[12px] font-medium uppercase tracking-[0.18em] text-signal">
-                Start Today
+              <p className="text-xs font-black uppercase tracking-widest text-[#ea580c]">
+                Start Your Desh Seva Journey
               </p>
-              <h2 className="mt-3 text-[24px] sm:text-[28px]">
-                Ready to start your success journey?
+              <h2 className="mt-2 text-[24px] sm:text-[28px] font-black text-slate-900">
+                Ready to serve the nation in Defence &amp; Police?
               </h2>
-              <p className="mt-2 text-[14px] text-text-muted">
+              <p className="mt-2 text-[14px] font-medium text-slate-600">
                 Join Lakhisarai Physical Academy and train under expert
-                guidance for Army, Police, and government recruitment tests.
+                guidance for Indian Army, Police, and government recruitment tests.
               </p>
             </div>
 

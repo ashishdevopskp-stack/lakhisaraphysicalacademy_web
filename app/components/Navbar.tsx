@@ -1,540 +1,181 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import Container from "./Container";
-import Button from "./Button";
-import ThemeToggle from "./ThemeToggle";
-import {
-  brand,
-  nav,
-  ABOUT_NAV,
-  COURSES_NAV,
-  HOSTEL_NAV,
-  NOTIFICATIONS_NAV,
-  BLOG_NAV,
-  EVENTS_NAV,
-} from "../lib/site-data";
-import { telHref, whatsappHref } from "../lib/constants";
-import type { LucideIcon } from "lucide-react";
-import {
-  Phone,
-  MessageCircle,
-  Menu,
-  X,
-  ChevronDown,
-  MoreHorizontal,
-  LayoutGrid,
-  Users,
-  BookOpen,
-  Dumbbell,
-  Building2,
-  Trophy,
-  CalendarClock,
-  Wallet,
-  HelpCircle,
-  Images,
-  Ban,
-  ListFilter,
-  Bell,
-  Newspaper,
-  Flame,
-  History,
-  Clock,
-} from "lucide-react";
+import Link from "next/link";
+import { brand } from "../lib/site-data";
+import { PHONE_NUMBER, whatsappHref, telHref } from "../lib/constants";
+import { Phone, MessageCircle, Menu, X, ChevronDown } from "lucide-react";
 
-/* =========================================================
-   Icon lookup — decorative only, keyed by sub-nav label text.
-   ========================================================= */
-const ICON_MAP: Record<string, LucideIcon> = {
-  overview: LayoutGrid,
-  "founder & director": Users,
-  "our story": BookOpen,
-  "what we train": Dumbbell,
-  facilities: Building2,
-  achievements: Trophy,
-  "training programs": Dumbbell,
-  schedule: CalendarClock,
-  "fees & admission": Wallet,
-  faq: HelpCircle,
-  gallery: Images,
-  fees: Wallet,
-  rules: Ban,
-  categories: ListFilter,
-  "all notifications": Bell,
-  "latest articles": Newspaper,
-  "popular topics": Flame,
-  "all events": CalendarClock,
-  upcoming: Clock,
-  "past events": History,
-};
+// Primary links requested in exact order by user
+const PRIMARY_NAV = [
+  { label: "Home", href: "/" },
+  { label: "Hostel", href: "/hostel" },
+  { label: "Blog", href: "/blogs" },
+  { label: "YouTube Videos", href: "/youtube-video" },
+  { label: "Store", href: "/store" },
+  { label: "About Us", href: "/about" },
+];
 
-function iconFor(label: string): LucideIcon {
-  return ICON_MAP[label.trim().toLowerCase()] ?? LayoutGrid;
-}
-
-type SubLink = { href: string; label: string };
-
-const DROPDOWN_MAP: Record<string, SubLink[]> = {
-  about: ABOUT_NAV,
-  courses: COURSES_NAV,
-  hostel: HOSTEL_NAV,
-  blog: BLOG_NAV,
-  events: EVENTS_NAV,
-  notifications: NOTIFICATIONS_NAV,
-};
-
-function getSubmenu(label: string): SubLink[] | undefined {
-  return DROPDOWN_MAP[label.trim().toLowerCase()];
-}
-
-/**
- * Where should this item's dropdown anchor, so it never runs off
- * the edge of the viewport? Items near the start hug the left,
- * items near the end hug the right, everything else stays centered.
- */
-function getDropdownPosition(index: number, total: number): string {
-  const third = total / 3;
-  if (index < third) return "left-0";
-  if (index >= total - third) return "right-0";
-  return "left-1/2 -translate-x-1/2";
-}
-
-/**
- * Measures each top-level nav item off-screen, then figures out how
- * many fit in the available width before the "More" button needs to
- * show up. Re-measures on resize so it stays correct across breakpoints.
- */
-function useOverflowNav(itemCount: number) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const itemMeasureRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const moreMeasureRef = useRef<HTMLDivElement>(null);
-  const [visibleCount, setVisibleCount] = useState(itemCount);
-
-  const recalculate = useCallback(() => {
-    const container = containerRef.current;
-    if (!container) return;
-    const available = container.offsetWidth;
-    const moreWidth = moreMeasureRef.current?.offsetWidth ?? 0;
-
-    let used = 0;
-    let count = 0;
-    for (let i = 0; i < itemCount; i++) {
-      const width = itemMeasureRefs.current[i]?.offsetWidth ?? 0;
-      const itemsLeftAfterThis = itemCount - (i + 1);
-      const reserve = itemsLeftAfterThis > 0 ? moreWidth : 0;
-      if (used + width + reserve <= available) {
-        used += width;
-        count += 1;
-      } else {
-        break;
-      }
-    }
-    setVisibleCount(count);
-  }, [itemCount]);
-
-  useLayoutEffect(() => {
-    recalculate();
-    const container = containerRef.current;
-    if (!container) return;
-    const ro = new ResizeObserver(() => recalculate());
-    ro.observe(container);
-    return () => ro.disconnect();
-  }, [recalculate]);
-
-  return { containerRef, itemMeasureRefs, moreMeasureRef, visibleCount };
-}
+// Remaining links collapsed under "More" dropdown
+const SECONDARY_NAV = [
+  { label: "Courses", href: "/courses" },
+  { label: "Results", href: "/result" },
+  { label: "Events", href: "/events" },
+  { label: "Resources", href: "/resources" },
+  { label: "Notifications", href: "/notification" },
+  { label: "Jobs", href: "/jobs" },
+];
 
 export default function Navbar() {
-  const [open, setOpen] = useState(false); // mobile panel
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null); // desktop item dropdown
-  const [moreOpen, setMoreOpen] = useState(false); // desktop "more" dropdown
-  const [mobileOpenDropdown, setMobileOpenDropdown] = useState<string | null>(null);
-  const [scrolled, setScrolled] = useState(false);
-  const navRef = useRef<HTMLElement>(null);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const { containerRef, itemMeasureRefs, moreMeasureRef, visibleCount } = useOverflowNav(nav.length);
-  const visibleItems = nav.slice(0, visibleCount);
-  const overflowItems = nav.slice(visibleCount);
-
+  // Close dropdown on click outside
   useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      if (navRef.current && !navRef.current.contains(e.target as Node)) {
-        setOpenDropdown(null);
+    function handleClickOutside(e: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setMoreOpen(false);
       }
     }
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  useEffect(() => {
-    function handleKey(e: KeyboardEvent) {
-      if (e.key === "Escape") closeAll();
-    }
-    document.addEventListener("keydown", handleKey);
-    return () => document.removeEventListener("keydown", handleKey);
-  }, []);
-
-  useEffect(() => {
-    function handleScroll() {
-      setScrolled(window.scrollY > 8);
-    }
-    handleScroll();
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  function closeAll() {
-    setOpen(false);
-    setOpenDropdown(null);
-    setMoreOpen(false);
-    setMobileOpenDropdown(null);
-  }
 
   return (
-    <header className="sticky top-0 z-50 px-3 pt-3 sm:px-4">
-      <Container>
-        <div
-          className={`relative rounded-2xl border border-white/15 shadow-[0_8px_30px_-14px_rgba(0,0,0,0.45)] transition-all duration-300 ${
-            scrolled ? "shadow-[0_10px_34px_-14px_rgba(0,0,0,0.55)]" : ""
-          }`}
-        >
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl bg-bg/60 backdrop-blur-2xl before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-white/30"
-          />
+    <header className="sticky top-0 z-50 px-3 pt-3 pb-3 sm:px-6 sm:pt-4 sm:pb-4">
+      <div className="mx-auto max-w-7xl">
+        {/* Navbar Container with 3-Stripe Indian Flag Accent Top Line */}
+        <div className="relative overflow-hidden rounded-full border border-slate-200/90 bg-white/95 px-4 py-2.5 shadow-md backdrop-blur-md sm:px-6 sm:py-3">
+          {/* Prominent Indian Flag Tiranga Line on Top */}
+          <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-[#ff9933] via-slate-200 to-[#138808]" />
 
-          <div className="relative z-10">
-            <div
-              className={`flex items-center justify-between gap-3 px-3 transition-[height] duration-300 sm:px-4 lg:px-5 ${
-                scrolled ? "h-14" : "h-16"
-              }`}
-            >
-              <a
-                href="/"
-                className="flex shrink-0 items-center gap-2 text-[16px] font-display font-bold tracking-tight text-text sm:text-[17px]"
-                onClick={closeAll}
-              >
+          <div className="flex items-center justify-between gap-2 sm:gap-4">
+            {/* Brand Logo & Name */}
+            <Link href="/" className="flex items-center gap-2.5 shrink-0">
+              <div className="relative shrink-0">
                 <Image
                   src="/logo.png"
                   alt={brand.shortName}
-                  width={36}
-                  height={36}
+                  width={42}
+                  height={42}
                   priority
-                  className={`shrink-0 rounded-lg object-contain transition-all duration-300 ${
-                    scrolled ? "h-8 w-8" : "h-9 w-9"
-                  }`}
+                  className="h-9 w-9 sm:h-11 sm:w-11 rounded-full object-cover ring-2 ring-orange-500/40"
                 />
-                <span className="max-w-[42vw] truncate sm:max-w-none">{brand.shortName}</span>
-              </a>
+              </div>
+              <div className="flex flex-col min-w-0">
+                <span className="text-[15px] sm:text-[17px] lg:text-[18px] font-black tracking-tight text-slate-900 leading-tight truncate max-w-[140px] sm:max-w-none">
+                  {brand.shortName}
+                </span>
+                <span className="text-[9px] sm:text-[10px] font-bold text-[#ea580c] hidden md:inline-block tracking-wider uppercase">
+                  Lakhisarai, Bihar (India)
+                </span>
+              </div>
+            </Link>
 
-              {/* Desktop nav — measures itself and collapses overflow into "More" */}
-              <nav
-                ref={navRef}
-                className="hidden min-w-0 flex-1 items-center justify-center lg:flex"
-                aria-label="Primary"
-              >
-                <div ref={containerRef} className="flex min-w-0 max-w-full items-center justify-center gap-1">
-                  {visibleItems.map((item, index) => {
-                    const subs = getSubmenu(item.label);
-
-                    if (!subs) {
-                      return (
-                        <a
-                          key={item.href}
-                          href={item.href}
-                          className="group relative whitespace-nowrap rounded-md px-3 py-2 text-[13.5px] font-medium text-text-muted transition-colors hover:text-text"
-                        >
-                          {item.label}
-                          <span className="absolute inset-x-3 bottom-1 h-px scale-x-0 bg-text transition-transform duration-200 group-hover:scale-x-100" />
-                        </a>
-                      );
-                    }
-
-                    const isOpen = openDropdown === item.label;
-                    return (
-                      <div key={item.href} className="relative shrink-0">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setMoreOpen(false);
-                            setOpenDropdown(isOpen ? null : item.label);
-                          }}
-                          aria-expanded={isOpen}
-                          aria-haspopup="menu"
-                          className={`group flex items-center gap-1 whitespace-nowrap rounded-md px-3 py-2 text-[13.5px] font-medium transition-colors ${
-                            isOpen ? "text-text" : "text-text-muted hover:text-text"
-                          }`}
-                        >
-                          {item.label}
-                          <ChevronDown
-                            size={13}
-                            className={`transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
-                          />
-                          <span
-                            className={`absolute inset-x-3 bottom-1 h-px bg-text transition-transform duration-200 ${
-                              isOpen ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
-                            }`}
-                          />
-                        </button>
-
-                        <div
-                          role="menu"
-                          className={`absolute top-full ${getDropdownPosition(
-                            index,
-                            visibleItems.length
-                          )} z-50 mt-2 w-[min(18rem,calc(100vw-1.5rem))] origin-top overflow-hidden rounded-xl border border-white/15 bg-navy-2/85 p-1.5 shadow-2xl backdrop-blur-2xl transition-all duration-150 before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-white/20 ${
-                            isOpen
-                              ? "pointer-events-auto scale-100 opacity-100"
-                              : "pointer-events-none scale-95 opacity-0"
-                          }`}
-                        >
-                          {subs.map((sub) => {
-                            const SubIcon = iconFor(sub.label);
-                            return (
-                              <a
-                                key={sub.href}
-                                href={sub.href}
-                                role="menuitem"
-                                onClick={() => setOpenDropdown(null)}
-                                className="flex items-center gap-2.5 rounded-md px-2.5 py-2.5 transition-colors hover:bg-bg-raised-2"
-                              >
-                                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-bg-raised-2 text-text-muted">
-                                  <SubIcon size={15} />
-                                </span>
-                                <span className="text-[13.5px] font-medium text-text">{sub.label}</span>
-                              </a>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    );
-                  })}
-
-                  {overflowItems.length > 0 && (
-                    <div className="relative shrink-0">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setOpenDropdown(null);
-                          setMoreOpen((v) => !v);
-                        }}
-                        aria-expanded={moreOpen}
-                        aria-haspopup="menu"
-                        className={`flex items-center gap-1 whitespace-nowrap rounded-md px-3 py-2 text-[13.5px] font-medium transition-colors ${
-                          moreOpen ? "text-text" : "text-text-muted hover:text-text"
-                        }`}
-                      >
-                        <MoreHorizontal size={16} />
-                        More
-                        <ChevronDown
-                          size={13}
-                          className={`transition-transform duration-200 ${moreOpen ? "rotate-180" : ""}`}
-                        />
-                      </button>
-
-                      <div
-                        role="menu"
-                        className={`absolute right-0 top-full z-50 mt-2 w-[min(20rem,calc(100vw-1.5rem))] origin-top-right overflow-hidden rounded-xl border border-white/15 bg-navy-2/85 p-1.5 shadow-2xl backdrop-blur-2xl transition-all duration-150 before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-white/20 ${
-                          moreOpen
-                            ? "pointer-events-auto scale-100 opacity-100"
-                            : "pointer-events-none scale-95 opacity-0"
-                        } max-h-[70vh] overflow-y-auto`}
-                      >
-                        {overflowItems.map((item) => {
-                          const subs = getSubmenu(item.label);
-
-                          if (!subs) {
-                            return (
-                              <a
-                                key={item.href}
-                                href={item.href}
-                                role="menuitem"
-                                onClick={() => setMoreOpen(false)}
-                                className="block rounded-md px-2.5 py-2.5 text-[14px] font-medium text-text transition-colors hover:bg-bg-raised-2"
-                              >
-                                {item.label}
-                              </a>
-                            );
-                          }
-
-                          return (
-                            <div key={item.href} className="py-1">
-                              <p className="px-2.5 pb-1 pt-1.5 text-[11px] font-semibold uppercase tracking-wide text-text-faint">
-                                {item.label}
-                              </p>
-                              {subs.map((sub) => {
-                                const SubIcon = iconFor(sub.label);
-                                return (
-                                  <a
-                                    key={sub.href}
-                                    href={sub.href}
-                                    role="menuitem"
-                                    onClick={() => setMoreOpen(false)}
-                                    className="flex items-center gap-2.5 rounded-md px-2.5 py-2 transition-colors hover:bg-bg-raised-2"
-                                  >
-                                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-bg-raised-2 text-text-muted">
-                                      <SubIcon size={14} />
-                                    </span>
-                                    <span className="text-[13.5px] font-medium text-text">{sub.label}</span>
-                                  </a>
-                                );
-                              })}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Off-screen measurement row — invisible, used only to compute widths */}
-                <div
-                  aria-hidden
-                  className="pointer-events-none absolute left-0 top-0 flex -translate-y-full items-center gap-1 opacity-0"
+            {/* Desktop Nav Links in Exact Requested Order */}
+            <nav className="hidden xl:flex items-center gap-1 bg-slate-100/90 p-1.5 rounded-full border border-slate-200/70 shrink-0">
+              {PRIMARY_NAV.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="px-3.5 py-1.5 text-[14px] font-extrabold text-slate-700 rounded-full hover:text-[#ea580c] hover:bg-white transition-all whitespace-nowrap"
                 >
-                  {nav.map((item, index) => (
-                    <div
-                      key={item.href}
-                      ref={(el) => {
-                        itemMeasureRefs.current[index] = el;
-                      }}
-                      className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-[13.5px] font-medium"
-                    >
-                      {item.label}
-                      {getSubmenu(item.label) && <ChevronDown size={13} />}
-                    </div>
-                  ))}
-                  <div
-                    ref={moreMeasureRef}
-                    className="flex shrink-0 items-center gap-1 whitespace-nowrap px-3 py-2 text-[13.5px] font-medium"
-                  >
-                    <MoreHorizontal size={16} />
-                    More
-                    <ChevronDown size={13} />
-                  </div>
-                </div>
-              </nav>
+                  {item.label}
+                </Link>
+              ))}
 
-              <div className="flex shrink-0 items-center gap-2 sm:gap-3">
-                <ThemeToggle />
-
-                <div className="hidden sm:block">
-                  <Button href={telHref()} variant="secondary" icon={Phone}>
-                    Call
-                  </Button>
-                </div>
-
+              {/* More Dropdown Menu for remaining links */}
+              <div className="relative" ref={dropdownRef}>
                 <button
                   type="button"
-                  onClick={() => setOpen((v) => !v)}
-                  aria-label={open ? "Close menu" : "Open menu"}
-                  aria-expanded={open}
-                  className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/15 bg-white/5 text-text transition-colors hover:bg-bg-raised lg:hidden"
+                  onClick={() => setMoreOpen(!moreOpen)}
+                  className="flex items-center gap-1 px-3 py-1.5 text-[14px] font-extrabold text-slate-700 rounded-full hover:text-[#ea580c] hover:bg-white transition-all"
                 >
-                  <span className="relative flex h-4 w-4 items-center justify-center">
-                    <Menu
-                      size={18}
-                      className={`absolute transition-all duration-200 ${
-                        open ? "rotate-90 opacity-0" : "rotate-0 opacity-100"
-                      }`}
-                    />
-                    <X
-                      size={18}
-                      className={`absolute transition-all duration-200 ${
-                        open ? "rotate-0 opacity-100" : "-rotate-90 opacity-0"
-                      }`}
-                    />
-                  </span>
+                  <span>More</span>
+                  <ChevronDown size={15} className={`transition-transform duration-200 ${moreOpen ? "rotate-180" : ""}`} />
                 </button>
+
+                {moreOpen && (
+                  <div className="absolute right-0 mt-2.5 w-48 rounded-2xl border border-slate-200 bg-white p-2 shadow-2xl border-t-4 border-t-[#ff9933] z-50">
+                    {SECONDARY_NAV.map((item) => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        onClick={() => setMoreOpen(false)}
+                        className="block px-3.5 py-2.5 text-xs font-extrabold text-slate-700 hover:bg-orange-50 hover:text-[#ea580c] rounded-xl transition-colors"
+                      >
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
               </div>
-            </div>
+            </nav>
 
-            <div className="ribbon-bar h-[3px] w-full" />
+            {/* Action CTAs: India Green WhatsApp & Indian Saffron Call CTA */}
+            <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+              <a
+                href={whatsappHref()}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 text-xs sm:text-sm font-extrabold text-[#138808] bg-emerald-50 rounded-full border border-emerald-300 hover:bg-emerald-100 transition-colors shadow-sm"
+              >
+                <MessageCircle className="h-4 w-4 text-[#138808]" />
+                <span className="hidden lg:inline">WhatsApp</span>
+              </a>
 
-            <div
-              className={`grid overflow-hidden transition-[grid-template-rows] duration-200 lg:hidden ${
-                open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
-              }`}
-            >
-              <div className="min-h-0">
-                <nav className="flex flex-col divide-y divide-white/10 px-3 py-2 sm:px-4" aria-label="Primary mobile">
-                  {nav.map((item) => {
-                    const subs = getSubmenu(item.label);
+              <a
+                href={telHref(PHONE_NUMBER)}
+                className="inline-flex items-center gap-1.5 px-4 py-2 sm:px-5 sm:py-2.5 text-xs sm:text-sm font-black text-white bg-[#ea580c] rounded-full shadow-lg shadow-orange-500/25 hover:bg-[#c2410c] transition-all"
+              >
+                <Phone className="h-4 w-4" />
+                <span>Call Now</span>
+              </a>
 
-                    if (!subs) {
-                      return (
-                        <a
-                          key={item.href}
-                          href={item.href}
-                          onClick={closeAll}
-                          className="flex items-center py-3 text-[15px] font-medium text-text-muted transition-colors hover:text-text"
-                        >
-                          {item.label}
-                        </a>
-                      );
-                    }
-
-                    const isOpen = mobileOpenDropdown === item.label;
-                    return (
-                      <div key={item.href} className="py-1">
-                        <button
-                          type="button"
-                          onClick={() => setMobileOpenDropdown(isOpen ? null : item.label)}
-                          aria-expanded={isOpen}
-                          className="flex w-full items-center justify-between py-3 text-[15px] font-medium text-text-muted transition-colors hover:text-text"
-                        >
-                          {item.label}
-                          <ChevronDown
-                            size={16}
-                            className={`transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
-                          />
-                        </button>
-
-                        <div
-                          className={`grid overflow-hidden transition-[grid-template-rows] duration-200 ${
-                            isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
-                          }`}
-                        >
-                          <div className="min-h-0">
-                            <div className="flex flex-col gap-0.5 pb-2 pl-3">
-                              {subs.map((sub) => {
-                                const SubIcon = iconFor(sub.label);
-                                return (
-                                  <a
-                                    key={sub.href}
-                                    href={sub.href}
-                                    onClick={closeAll}
-                                    className="flex items-center gap-2.5 rounded-md px-2 py-2.5 text-[14px] font-medium text-text-muted transition-colors hover:bg-bg-raised-2 hover:text-text"
-                                  >
-                                    <SubIcon size={15} className="opacity-70" />
-                                    {sub.label}
-                                  </a>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </nav>
-
-                <div className="flex items-center gap-3 border-t border-white/10 px-3 py-4 sm:px-4">
-                  <ThemeToggle />
-                  <Button href={telHref()} variant="secondary" icon={Phone}>
-                    Call
-                  </Button>
-                  <Button href={whatsappHref()} variant="whatsapp" icon={MessageCircle}>
-                    WhatsApp
-                  </Button>
-                </div>
-              </div>
+              {/* Mobile Menu Button */}
+              <button
+                type="button"
+                onClick={() => setMobileOpen(!mobileOpen)}
+                className="xl:hidden p-2 rounded-full border border-slate-200 text-slate-700 hover:bg-slate-100"
+                aria-label="Toggle Navigation"
+              >
+                {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+              </button>
             </div>
           </div>
         </div>
-      </Container>
+
+        {/* Mobile Dropdown Panel with All Links in Requested Order */}
+        {mobileOpen && (
+          <div className="mt-2.5 max-h-[80vh] overflow-y-auto rounded-3xl border-t-4 border-t-[#ff9933] border-b-4 border-b-[#138808] border-x border-slate-200 bg-white p-5 shadow-2xl xl:hidden">
+            <div className="flex flex-col gap-1">
+              {[...PRIMARY_NAV, ...SECONDARY_NAV].map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setMobileOpen(false)}
+                  className="px-4 py-2.5 text-sm font-extrabold text-slate-800 hover:bg-orange-50 hover:text-[#ea580c] rounded-xl"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+            <div className="mt-4 pt-3 border-t border-slate-100 flex flex-col gap-2">
+              <a
+                href={whatsappHref()}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 py-2.5 text-xs font-black text-[#138808] bg-emerald-50 rounded-2xl border border-emerald-200"
+              >
+                <MessageCircle size={16} />
+                WhatsApp Enquiry
+              </a>
+            </div>
+          </div>
+        )}
+      </div>
     </header>
   );
 }
