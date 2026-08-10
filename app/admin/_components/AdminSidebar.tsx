@@ -172,6 +172,7 @@ const SidebarContent = memo(function SidebarContent({
             <Link
               key={item.label}
               href={item.href}
+              prefetch={true}
               onClick={onNavigate}
               className={
                 'group flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-extrabold transition-all ' +
@@ -219,6 +220,7 @@ const SidebarContent = memo(function SidebarContent({
                     <Link
                       key={child.href}
                       href={child.href}
+                      prefetch={true}
                       onClick={onNavigate}
                       className={
                         'flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-colors ' +
