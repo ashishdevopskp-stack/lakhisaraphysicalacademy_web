@@ -5,34 +5,51 @@ import Image from "next/image";
 import Link from "next/link";
 import { brand } from "../lib/site-data";
 import { PHONE_NUMBER, whatsappHref, telHref } from "../lib/constants";
-import { Phone, MessageCircle, Menu, X, ChevronDown } from "lucide-react";
+import {
+  Home,
+  Building2,
+  BookOpen,
+  Youtube,
+  ShoppingBag,
+  ShieldAlert,
+  Dumbbell,
+  Trophy,
+  Calendar,
+  FileText,
+  Bell,
+  Briefcase,
+  Phone,
+  MessageCircle,
+  Menu,
+  X,
+  ChevronDown,
+  ChevronRight,
+  Sparkles,
+} from "lucide-react";
 
-// Primary links requested in exact order by user
-const PRIMARY_NAV = [
-  { label: "Home", href: "/" },
-  { label: "Hostel", href: "/hostel" },
-  { label: "Blog", href: "/blogs" },
-  { label: "YouTube Videos", href: "/youtube-video" },
-  { label: "Store", href: "/store" },
-  { label: "About Us", href: "/about" },
+const NAV_ITEMS_WITH_ICONS = [
+  { label: "Home", href: "/", icon: Home, color: "bg-orange-500/10 text-[#ea580c] border-orange-500/20" },
+  { label: "Hostel", href: "/hostel", icon: Building2, color: "bg-emerald-500/10 text-[#138808] border-emerald-500/20" },
+  { label: "Blog", href: "/blogs", icon: BookOpen, color: "bg-blue-500/10 text-blue-700 border-blue-500/20" },
+  { label: "YouTube Videos", href: "/youtube-video", icon: Youtube, color: "bg-red-500/10 text-red-600 border-red-500/20" },
+  { label: "Store", href: "/store", icon: ShoppingBag, color: "bg-amber-500/10 text-amber-700 border-amber-500/20" },
+  { label: "About Us", href: "/about", icon: ShieldAlert, color: "bg-[#2b4c2b]/15 text-[#2b4c2b] border-[#2b4c2b]/20" },
+  { label: "Courses", href: "/courses", icon: Dumbbell, color: "bg-purple-500/10 text-purple-700 border-purple-500/20" },
+  { label: "Placed Achievements", href: "/result", icon: Trophy, color: "bg-yellow-500/10 text-amber-600 border-yellow-500/20" },
+  { label: "Events", href: "/events", icon: Calendar, color: "bg-teal-500/10 text-teal-700 border-teal-500/20" },
+  { label: "Resources", href: "/resources", icon: FileText, color: "bg-indigo-500/10 text-indigo-700 border-indigo-500/20" },
+  { label: "Notifications", href: "/notification", icon: Bell, color: "bg-rose-500/10 text-rose-600 border-rose-500/20" },
+  { label: "Jobs", href: "/jobs", icon: Briefcase, color: "bg-cyan-500/10 text-cyan-700 border-cyan-500/20" },
 ];
 
-// Remaining links collapsed under "More" dropdown
-const SECONDARY_NAV = [
-  { label: "Courses", href: "/courses" },
-  { label: "Results", href: "/result" },
-  { label: "Events", href: "/events" },
-  { label: "Resources", href: "/resources" },
-  { label: "Notifications", href: "/notification" },
-  { label: "Jobs", href: "/jobs" },
-];
+const PRIMARY_NAV = NAV_ITEMS_WITH_ICONS.slice(0, 6);
+const SECONDARY_NAV = NAV_ITEMS_WITH_ICONS.slice(6);
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Close dropdown on click outside
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
@@ -74,7 +91,7 @@ export default function Navbar() {
               </div>
             </Link>
 
-            {/* Desktop Nav Links as Floating Liquid Pills */}
+            {/* Desktop Nav Links */}
             <nav className="hidden xl:flex items-center gap-1 bg-[#f3efe6]/80 p-1.5 rounded-full border border-amber-500/15 shrink-0 shadow-inner">
               {PRIMARY_NAV.map((item) => (
                 <Link
@@ -86,7 +103,7 @@ export default function Navbar() {
                 </Link>
               ))}
 
-              {/* More Dropdown Menu for remaining links */}
+              {/* More Dropdown Menu */}
               <div className="relative" ref={dropdownRef}>
                 <button
                   type="button"
@@ -98,26 +115,30 @@ export default function Navbar() {
                 </button>
 
                 {moreOpen && (
-                  <div className="absolute right-0 top-full mt-3 w-52 rounded-2xl border border-amber-500/20 bg-[#faf7f0]/95 p-2 shadow-2xl backdrop-blur-xl border-t-4 border-t-amber-500 z-50 animate-[fadeIn_0.15s_ease-out]">
+                  <div className="absolute right-0 top-full mt-3 w-56 rounded-2xl border border-amber-500/20 bg-[#faf7f0]/95 p-2.5 shadow-2xl backdrop-blur-xl border-t-4 border-t-amber-500 z-50 animate-[fadeIn_0.15s_ease-out]">
                     <div className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-amber-700/70 border-b border-amber-200/50 mb-1">
-                      More Navigation
+                      Explore Academy
                     </div>
-                    {SECONDARY_NAV.map((item) => (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        onClick={() => setMoreOpen(false)}
-                        className="block px-3.5 py-2 text-xs font-extrabold text-slate-700 hover:bg-amber-100/60 hover:text-amber-800 rounded-xl transition-colors"
-                      >
-                        {item.label}
-                      </Link>
-                    ))}
+                    {SECONDARY_NAV.map((item) => {
+                      const Icon = item.icon;
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          onClick={() => setMoreOpen(false)}
+                          className="flex items-center gap-2.5 px-3.5 py-2 text-xs font-extrabold text-slate-700 hover:bg-amber-100/60 hover:text-amber-800 rounded-xl transition-colors"
+                        >
+                          <Icon size={15} className="text-[#ea580c]" />
+                          <span>{item.label}</span>
+                        </Link>
+                      );
+                    })}
                   </div>
                 )}
               </div>
             </nav>
 
-            {/* Action CTAs: India Green WhatsApp & Indian Saffron Call CTA */}
+            {/* Action CTAs */}
             <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
               <a
                 href={whatsappHref()}
@@ -137,43 +158,77 @@ export default function Navbar() {
                 <span>Call Now</span>
               </a>
 
-              {/* Mobile Menu Button */}
+              {/* Mobile Menu Toggle Button */}
               <button
                 type="button"
                 onClick={() => setMobileOpen(!mobileOpen)}
-                className="xl:hidden p-2 rounded-full border border-slate-200 text-slate-700 hover:bg-slate-100"
+                className="xl:hidden p-2 rounded-full border border-amber-500/30 bg-amber-50 text-slate-800 hover:bg-amber-100 transition-colors"
                 aria-label="Toggle Navigation"
               >
-                {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+                {mobileOpen ? <X size={20} className="text-[#ea580c]" /> : <Menu size={20} className="text-slate-800" />}
               </button>
             </div>
           </div>
         </div>
 
-        {/* Mobile Dropdown Panel with All Links in Requested Order */}
+        {/* Super Colorful Mobile Dropdown Drawer */}
         {mobileOpen && (
-          <div className="mt-2.5 max-h-[80vh] overflow-y-auto rounded-3xl border-t-4 border-t-[#ff9933] border-b-4 border-b-[#138808] border-x border-slate-200 bg-white p-5 shadow-2xl xl:hidden z-50">
-            <div className="flex flex-col gap-1">
-              {[...PRIMARY_NAV, ...SECONDARY_NAV].map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setMobileOpen(false)}
-                  className="px-4 py-2.5 text-sm font-extrabold text-slate-800 hover:bg-orange-50 hover:text-[#ea580c] rounded-xl"
-                >
-                  {item.label}
-                </Link>
-              ))}
+          <div className="mt-2.5 max-h-[82vh] overflow-y-auto rounded-3xl border-2 border-amber-200 bg-gradient-to-b from-[#fffcf7] via-white to-slate-50 p-4 sm:p-5 shadow-2xl xl:hidden z-50 space-y-3 animate-[fadeIn_0.15s_ease-out]">
+            {/* Header Tiranga Banner */}
+            <div className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-[#ff9933] via-amber-400 to-[#138808] text-white flex items-center justify-between shadow-md">
+              <div className="flex items-center gap-2">
+                <Sparkles size={16} className="text-amber-200 animate-spin" />
+                <span className="text-xs font-black tracking-wide uppercase">Academy Navigation Menu</span>
+              </div>
+              <span className="px-2 py-0.5 rounded-full bg-white/20 text-[10px] font-black backdrop-blur-md">
+                12 Links
+              </span>
             </div>
-            <div className="mt-4 pt-3 border-t border-slate-100 flex flex-col gap-2">
+
+            {/* Colorful Menu Items Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+              {NAV_ITEMS_WITH_ICONS.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileOpen(false)}
+                    className="group flex items-center justify-between p-3 rounded-2xl bg-white border border-slate-200/80 hover:border-orange-500/40 hover:bg-orange-50/50 shadow-sm hover:shadow-md transition-all duration-200"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`p-2.5 rounded-xl border ${item.color} group-hover:scale-110 transition-transform`}>
+                        <Icon size={18} />
+                      </div>
+                      <span className="text-xs font-black text-slate-900 group-hover:text-[#ea580c] transition-colors">
+                        {item.label}
+                      </span>
+                    </div>
+
+                    <ChevronRight size={16} className="text-slate-400 group-hover:text-[#ea580c] group-hover:translate-x-0.5 transition-all" />
+                  </Link>
+                );
+              })}
+            </div>
+
+            {/* Bottom Colorful Actions */}
+            <div className="pt-3 border-t border-slate-200/80 grid grid-cols-2 gap-2">
               <a
                 href={whatsappHref()}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 py-2.5 text-xs font-black text-[#138808] bg-emerald-50 rounded-2xl border border-emerald-200"
+                className="flex items-center justify-center gap-2 py-3 px-3 text-xs font-black text-[#138808] bg-emerald-50 hover:bg-emerald-100 rounded-2xl border border-emerald-300 shadow-sm transition-all"
               >
-                <MessageCircle size={16} />
-                WhatsApp Enquiry
+                <MessageCircle size={16} className="text-[#138808]" />
+                <span>WhatsApp</span>
+              </a>
+
+              <a
+                href={telHref(PHONE_NUMBER)}
+                className="flex items-center justify-center gap-2 py-3 px-3 text-xs font-black text-white bg-[#ea580c] hover:bg-[#c2410c] rounded-2xl shadow-lg shadow-orange-500/20 transition-all"
+              >
+                <Phone size={16} />
+                <span>Call +91 77397</span>
               </a>
             </div>
           </div>
