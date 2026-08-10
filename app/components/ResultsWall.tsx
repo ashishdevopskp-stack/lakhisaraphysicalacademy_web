@@ -4,6 +4,7 @@ import React, { useState, useRef } from "react";
 import Image from "next/image";
 import { Trophy, Award, CheckCircle2, Star, Flag, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import { getCloudinaryUrl } from "../lib/cloudinary";
+import type { DbResult } from "../lib/action/results";
 
 export interface CandidateResult {
   id: string;
@@ -14,9 +15,10 @@ export interface CandidateResult {
   rankOrRoll?: string;
   imageUrl: string;
   quote?: string;
+  district?: string;
 }
 
-const RESULTS: CandidateResult[] = [
+const DEFAULT_DEMO_RESULTS: CandidateResult[] = [
   {
     id: "r1",
     name: "Vikram Kumar",
@@ -26,6 +28,7 @@ const RESULTS: CandidateResult[] = [
     rankOrRoll: "Roll: 8410294",
     imageUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
     quote: "1600m की रनिंग और टाइगर जंप सिर्फ लखीसराय एकेडमी की मेहनत से 4:55 मिनट में पूरा किया!",
+    district: "Lakhisarai",
   },
   {
     id: "r2",
@@ -35,7 +38,8 @@ const RESULTS: CandidateResult[] = [
     year: "2024",
     rankOrRoll: "Physical: 100 Marks",
     imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80",
-    quote: "60 नंबर रनिंग + 40 बीम नंबर! 100 में 100 अंक का श्रेय निदेशक सर को जाता है। जय हिन्द!",
+    quote: "60 नंबर रनing + 40 बीम नंबर! 100 में 100 अंक का श्रेय निदेशक सर को जाता है। जय हिन्द!",
+    district: "Munger",
   },
   {
     id: "r3",
@@ -46,46 +50,36 @@ const RESULTS: CandidateResult[] = [
     rankOrRoll: "Merit Rank: 142",
     imageUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80",
     quote: "महिलाओं के लिए सुरक्षित माहौल और बेहतरीन फिजिकल गाइडेंस लखीसराय एकेडमी में मिलती है।",
-  },
-  {
-    id: "r4",
-    name: "Amit Kumar Yadav",
-    post: "SSC GD Constable (CISF)",
-    exam: "SSC GD",
-    year: "2024",
-    rankOrRoll: "Score: 148/160",
-    imageUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80",
-    quote: "5km फिजिकल 19 मिनट में क्लियर किया। सर का सपोर्ट हमेशा साथ रहा।",
-  },
-  {
-    id: "r5",
-    name: "Rajesh Kumar",
-    post: "RPF Constable",
-    exam: "RPF",
-    year: "2023",
-    rankOrRoll: "Roll: 2049102",
-    imageUrl: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&w=400&q=80",
-    quote: "लॉन्ग जंप और हाई जंप की स्पेशल तकनीक ने मेरा सिलेक्शन आसान बनाया।",
-  },
-  {
-    id: "r6",
-    name: "Deepak Kumar",
-    post: "Bihar Police SI (दरोगा)",
-    exam: "Bihar Police",
-    year: "2023",
-    rankOrRoll: "SI Merit List",
-    imageUrl: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=400&q=80",
-    quote: "फिजिकल और लिखित परीक्षा दोनों की एक साथ तैयारी ने मुझे स्टार दिलाया!",
+    district: "Jamui",
   },
 ];
 
-export default function ResultsWall() {
+export default function ResultsWall({ results }: { results?: DbResult[] }) {
   const [selectedExam, setSelectedExam] = useState<string>("All");
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const filteredResults = RESULTS.filter(
-    (r) => selectedExam === "All" || r.exam === selectedExam
-  );
+  // Map DB results to CandidateResult format if present
+  const displayCandidates: CandidateResult[] = React.useMemo(() => {
+    if (results && results.length > 0) {
+      return results.map((row) => ({
+        id: row.id,
+        name: row.name,
+        post: row.post,
+        exam: row.exam || row.department || "Defence / Police",
+        year: row.year,
+        rankOrRoll: row.rank_score ? row.rank_score : row.status || "Selected",
+        imageUrl: row.photo_url || "/logo.png",
+        quote: row.testimonial || undefined,
+        district: row.district,
+      }));
+    }
+    return DEFAULT_DEMO_RESULTS;
+  }, [results]);
+
+  const filteredResults = displayCandidates.filter((r) => {
+    if (selectedExam === "All") return true;
+    return r.exam.toLowerCase().includes(selectedExam.toLowerCase()) || r.post.toLowerCase().includes(selectedExam.toLowerCase());
+  });
 
   const scrollLeft = () => {
     if (scrollRef.current) {
@@ -106,7 +100,7 @@ export default function ResultsWall() {
           <div>
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 text-[#138808] border border-emerald-300 text-xs font-black mb-3">
               <Sparkles className="w-3.5 h-3.5 text-[#138808]" />
-              <span>Placed Achievements • 1200+ Selections</span>
+              <span>Placed Achievements • {displayCandidates.length} Selected Candidates</span>
             </div>
 
             <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
@@ -138,7 +132,7 @@ export default function ResultsWall() {
 
         {/* Filter Pills */}
         <div className="mb-8 flex flex-wrap gap-2">
-          {["All", "Bihar Police", "Army Agniveer", "SSC GD", "RPF"].map((tab) => (
+          {["All", "Bihar Police", "Army", "SSC GD", "RPF"].map((tab) => (
             <button
               key={tab}
               type="button"
@@ -212,7 +206,7 @@ export default function ResultsWall() {
                   <span className="flex items-center gap-1 text-[#ea580c] font-black">
                     <Award className="w-3.5 h-3.5 text-[#ea580c]" /> Placed Hero
                   </span>
-                  <span className="font-bold text-slate-700">Lakhisarai</span>
+                  <span className="font-bold text-slate-700">{candidate.district || "Lakhisarai"}</span>
                 </div>
               </div>
             );

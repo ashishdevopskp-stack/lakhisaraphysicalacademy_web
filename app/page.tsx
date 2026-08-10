@@ -12,9 +12,10 @@ import FAQSection from "./components/FAQSection";
 import Contact from "./contact/page";
 import { OrganizationSchema } from "./components/JsonLd";
 import { getBlogs } from "./lib/action/blogs";
+import { getResults } from "./lib/action/results";
 
 export default async function Home() {
-  const blogs = await getBlogs();
+  const [blogs, results] = await Promise.all([getBlogs(), getResults()]);
 
   return (
     <main>
@@ -25,7 +26,8 @@ export default async function Home() {
       <BlogCarousel blogs={blogs} />
       <Courses />
       <BatchTimetable />
-      <ResultsWall />
+      <ResultsWall results={results} />
+
       <Events />
       <Resources />
       <Jobs />
