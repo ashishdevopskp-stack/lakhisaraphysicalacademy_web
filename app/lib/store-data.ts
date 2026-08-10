@@ -92,7 +92,7 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
   },
 ];
 
-export type Availability = "In Stock" | "Limited Stock" | "Out of Stock" | "Pre-Order";
+export type Availability = "In Stock" | "Limited Stock" | "Out of Stock" | "Pre-Order" | "Unpublished";
 
 export interface Product {
   name: string;
@@ -103,13 +103,15 @@ export interface Product {
   availability: Availability;
   offer?: string;
   imageUrl?: string;
+  description?: string;
 }
 
 export const AVAILABILITY_STYLES: Record<Availability, { className: string; icon: LucideIcon }> = {
-  "In Stock": { className: "text-olive-strong", icon: CheckCircle2 },
-  "Limited Stock": { className: "text-accent-strong", icon: AlertTriangle },
-  "Out of Stock": { className: "text-text-faint", icon: XCircle },
-  "Pre-Order": { className: "text-text-faint", icon: Timer },
+  "In Stock": { className: "text-[#138808]", icon: CheckCircle2 },
+  "Limited Stock": { className: "text-[#ea580c]", icon: AlertTriangle },
+  "Out of Stock": { className: "text-slate-400", icon: XCircle },
+  "Pre-Order": { className: "text-[#000080]", icon: Timer },
+  "Unpublished": { className: "text-slate-400", icon: XCircle },
 };
 
 export const OFFERS: { label: string; description: string; icon: LucideIcon }[] = [
@@ -144,7 +146,7 @@ export const DELIVERY_ROWS: { label: string; detail: string; icon: LucideIcon }[
 export const FAQS: { q: string; a: string }[] = [
   {
     q: "How can I order a product?",
-    a: "Tap Order on WhatsApp on any product card, and a pre-filled message with the product name will open in WhatsApp. Confirm quantity, size, or color and our team will guide you through payment and delivery.",
+    a: "Tap 'Order Now' on any product card, enter your delivery details, name, and mobile number. Your order will be placed directly in our system and our academy team will contact you to confirm shipping.",
   },
   {
     q: "Is home delivery available?",
@@ -156,10 +158,10 @@ export const FAQS: { q: string; a: string }[] = [
   },
   {
     q: "What payment methods are accepted?",
-    a: "We accept UPI, cash on pickup, and other payment methods shared by our team once your order is confirmed on WhatsApp.",
+    a: "We accept UPI, cash on delivery / pickup, and direct bank transfer.",
   },
   {
     q: "Is product exchange available?",
-    a: "Size or defect-related exchanges are available for select items. Please reach out to us on WhatsApp within 3 days of delivery.",
+    a: "Size or defect-related exchanges are available for select items. Please reach out to academy support within 3 days of delivery.",
   },
 ];

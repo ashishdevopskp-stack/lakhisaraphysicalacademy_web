@@ -30,6 +30,7 @@ export default async function StorePage() {
     availability: p.availability,
     offer: p.offer ?? undefined,
     imageUrl: p.image_url ?? undefined,
+    description: p.description ?? undefined,
   }));
 
   return <Store products={products} productsError={productsError} />;
