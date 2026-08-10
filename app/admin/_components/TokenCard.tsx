@@ -196,7 +196,7 @@ export function CompactTokenCard({ data }: { data: TokenCardData }) {
         fontSize: 10,
         display: 'flex',
         flexDirection: 'column',
-        justify: 'space-between',
+        justifyContent: 'space-between',
       }}
     >
       {/* Top Banner */}

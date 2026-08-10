@@ -18,6 +18,7 @@ export type Student = {
   rooms?: { room_number: string } | null
 }
 
+export type StudentWithDetails = Student
 export type Hostel = { id: string; name: string }
 export type Room = { id: string; room_number: string; hostel_id: string }
 

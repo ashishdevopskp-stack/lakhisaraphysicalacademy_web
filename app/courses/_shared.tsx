@@ -38,7 +38,7 @@ export function CoursesSubNav({ current }: { current: string }) {
   );
 }
 
-// Keep SectionGlow as a no-op for any other pages that still import it
-export function SectionGlow() {
+// Keep SectionGlow as a no-op accepting optional variant prop
+export function SectionGlow({ variant }: { variant?: number } = {}) {
   return null;
 }
