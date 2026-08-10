@@ -1,36 +1,21 @@
 "use client";
 
 import React, { useState } from "react";
-import { Clock, Dumbbell, BookOpen, ShieldCheck, Trophy, MapPin, CheckCircle, Flag } from "lucide-react";
+import { Clock, Dumbbell, BookOpen, ShieldCheck, Trophy, MapPin, CheckCircle, Flag, Users } from "lucide-react";
+import type { DbBatch } from "@/app/lib/action/batches";
 
-export interface BatchItem {
-  id: string;
-  name: string;
-  category: "Physical" | "Written" | "Combo";
-  time: string;
-  location: string;
-  targetExam: string;
-  highlights: string[];
-  status: "Open" | "Filling Fast" | "Special Sunday Trial";
-  cardTheme: "saffron" | "green" | "navy";
-}
-
-const BATCHES: BatchItem[] = [
+const DEFAULT_BATCHES: DbBatch[] = [
   {
     id: "batch-1",
     name: "Morning Physical Training Batch (मॉर्निंग फिजिकल)",
     category: "Physical",
     time: "05:00 AM - 07:30 AM",
     location: "Gandhi Maidan / Stadium Ground, Lakhisarai",
-    targetExam: "Bihar Police Constable, SI, Army Agniveer, RPF",
-    highlights: [
-      "1600m / 1000m Running Technique & Endurance",
-      "High Jump Training (Tiger & Scissor style)",
-      "Shot Put (गोला फेंक) & Long Jump Drills",
-      "Daily Stamina & Stretches under NIS Coach",
-    ],
+    target_exam: "Bihar Police Constable, SI, Army Agniveer, RPF",
+    capacity: 150,
     status: "Filling Fast",
-    cardTheme: "saffron",
+    highlights:
+      "1600m / 1000m Running Technique & Endurance\nHigh Jump Training (Tiger & Scissor style)\nShot Put (गोला फेंक) & Long Jump Drills\nDaily Stamina & Stretches under NIS Coach",
   },
   {
     id: "batch-2",
@@ -38,14 +23,11 @@ const BATCHES: BatchItem[] = [
     category: "Physical",
     time: "04:30 PM - 06:30 PM",
     location: "Lakhisarai Sports Complex Ground",
-    targetExam: "SSC GD Physical Test, SSC CPO, Home Guard",
-    highlights: [
-      "Weight loss & Sprinting technique",
-      "Core & Leg Strength conditioning",
-      "Individual Timing assessment every Saturday",
-    ],
+    target_exam: "SSC GD Physical Test, SSC CPO, Home Guard",
+    capacity: 100,
     status: "Open",
-    cardTheme: "green",
+    highlights:
+      "Weight loss & Sprinting technique\nCore & Leg Strength conditioning\nIndividual Timing assessment every Saturday",
   },
   {
     id: "batch-3",
@@ -53,14 +35,11 @@ const BATCHES: BatchItem[] = [
     category: "Written",
     time: "10:30 AM - 01:30 PM",
     location: "Lakhisarai Academy Classroom Center",
-    targetExam: "Bihar Police CSBC, BPSSC SI, SSC GD Written",
-    highlights: [
-      "Bihar GK, Samanya Vigyan & General Studies",
-      "Maths & Reasoning Shortcut Methods",
-      "Weekly Mock Test with OMR Evaluation",
-    ],
+    target_exam: "Bihar Police CSBC, BPSSC SI, SSC GD Written",
+    capacity: 80,
     status: "Open",
-    cardTheme: "navy",
+    highlights:
+      "Bihar GK, Samanya Vigyan & General Studies\nMaths & Reasoning Shortcut Methods\nWeekly Mock Test with OMR Evaluation",
   },
   {
     id: "batch-4",
@@ -68,21 +47,24 @@ const BATCHES: BatchItem[] = [
     category: "Combo",
     time: "06:00 AM - 09:30 AM",
     location: "Academy Ground",
-    targetExam: "All Defence & Police Aspirants",
-    highlights: [
-      "Exact 1600m Digital Timer Run Test",
-      "Body Measurement (Height, Chest, Weight)",
-      "Flat foot, Knock Knee & Eye Sight Initial Check",
-    ],
-    status: "Special Sunday Trial",
-    cardTheme: "saffron",
+    target_exam: "All Defence & Police Aspirants",
+    capacity: 200,
+    status: "Open",
+    highlights:
+      "Exact 1600m Digital Timer Run Test\nBody Measurement (Height, Chest, Weight)\nFlat foot, Knock Knee & Eye Sight Initial Check",
   },
 ];
 
-export default function BatchTimetable() {
+export default function BatchTimetable({
+  liveBatches,
+}: {
+  liveBatches?: DbBatch[];
+}) {
   const [filter, setFilter] = useState<"All" | "Physical" | "Written">("All");
 
-  const filteredBatches = BATCHES.filter(
+  const displayBatches = liveBatches && liveBatches.length > 0 ? liveBatches : DEFAULT_BATCHES;
+
+  const filteredBatches = displayBatches.filter(
     (b) => filter === "All" || b.category === filter || b.category === "Combo"
   );
 
@@ -120,6 +102,12 @@ export default function BatchTimetable() {
         {/* Batch Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filteredBatches.map((batch) => {
+            const isPhysical = batch.category === "Physical";
+            const isWritten = batch.category === "Written";
+            const highlightsList = batch.highlights
+              ? batch.highlights.split("\n").filter(Boolean)
+              : [];
+
             return (
               <div
                 key={batch.id}
@@ -128,9 +116,9 @@ export default function BatchTimetable() {
                 <div>
                   <div className="flex items-center justify-between gap-3 mb-4">
                     <span className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wider px-3.5 py-1 rounded-full bg-amber-500/10 text-amber-900 border border-amber-500/20">
-                      {batch.category === "Physical" ? (
+                      {isPhysical ? (
                         <Dumbbell className="w-3.5 h-3.5 text-amber-600" />
-                      ) : batch.category === "Written" ? (
+                      ) : isWritten ? (
                         <BookOpen className="w-3.5 h-3.5 text-blue-700" />
                       ) : (
                         <Trophy className="w-3.5 h-3.5 text-emerald-600" />
@@ -142,6 +130,8 @@ export default function BatchTimetable() {
                       className={`text-xs font-black px-3.5 py-1 rounded-full ${
                         batch.status === "Filling Fast"
                           ? "bg-amber-100/90 text-amber-900 border border-amber-300"
+                          : batch.status === "Full"
+                          ? "bg-red-100/90 text-red-900 border border-red-300"
                           : "bg-emerald-100/90 text-emerald-900 border border-emerald-300"
                       }`}
                     >
@@ -159,35 +149,47 @@ export default function BatchTimetable() {
                       <Clock className="w-4 h-4 text-amber-600 shrink-0" />
                       <span>{batch.time}</span>
                     </div>
-                    <div className="flex items-center gap-2.5 text-slate-700 font-semibold">
-                      <MapPin className="w-4 h-4 text-slate-500 shrink-0" />
-                      <span>{batch.location}</span>
-                    </div>
-                    <div className="flex items-center gap-2.5 text-slate-700 font-semibold">
-                      <ShieldCheck className="w-4 h-4 text-emerald-700 shrink-0" />
-                      <span>Target: {batch.targetExam}</span>
-                    </div>
+                    {batch.location && (
+                      <div className="flex items-center gap-2.5 text-slate-700 font-semibold">
+                        <MapPin className="w-4 h-4 text-slate-500 shrink-0" />
+                        <span>{batch.location}</span>
+                      </div>
+                    )}
+                    {batch.target_exam && (
+                      <div className="flex items-center gap-2.5 text-slate-700 font-semibold">
+                        <ShieldCheck className="w-4 h-4 text-emerald-700 shrink-0" />
+                        <span>Target: {batch.target_exam}</span>
+                      </div>
+                    )}
+                    {batch.capacity && (
+                      <div className="flex items-center gap-2.5 text-slate-700 font-semibold">
+                        <Users className="w-4 h-4 text-amber-600 shrink-0" />
+                        <span>Max Capacity: {batch.capacity} Students</span>
+                      </div>
+                    )}
                   </div>
 
-                  <div className="mt-4 pt-4 border-t border-amber-500/15">
-                    <h4 className="text-[11px] font-black text-amber-900/60 uppercase tracking-wider mb-2">
-                      Batch Highlights
-                    </h4>
-                    <ul className="space-y-1.5">
-                      {batch.highlights.map((h, i) => (
-                        <li key={i} className="text-xs font-semibold text-slate-700 flex items-start gap-2">
-                          <CheckCircle className="w-3.5 h-3.5 text-emerald-600 mt-0.5 shrink-0" />
-                          <span>{h}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                  {highlightsList.length > 0 && (
+                    <div className="mt-4 pt-4 border-t border-amber-500/15">
+                      <h4 className="text-[11px] font-black text-amber-900/60 uppercase tracking-wider mb-2">
+                        Batch Highlights
+                      </h4>
+                      <ul className="space-y-1.5">
+                        {highlightsList.map((h, i) => (
+                          <li key={i} className="text-xs font-semibold text-slate-700 flex items-start gap-2">
+                            <CheckCircle className="w-3.5 h-3.5 text-emerald-600 mt-0.5 shrink-0" />
+                            <span>{h.replace(/^[•\-\*]\s*/, "")}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
 
                 <div className="mt-6 pt-4 border-t border-amber-500/15 flex items-center justify-between">
                   <span className="text-xs text-slate-500 font-bold">सीमित सीटें उपलब्ध</span>
                   <a
-                    href="#contact"
+                    href="/admission-form"
                     className="btn-orange text-xs py-2 px-5 rounded-full shadow-lg shadow-amber-500/20"
                   >
                     Join Batch Now
@@ -201,3 +203,4 @@ export default function BatchTimetable() {
     </section>
   );
 }
+

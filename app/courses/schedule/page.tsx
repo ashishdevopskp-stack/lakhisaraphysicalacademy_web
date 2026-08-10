@@ -2,6 +2,8 @@ import { Sunrise, Sunset, CheckCircle2 } from "lucide-react";
 import Container from "../../components/Container";
 import { SectionGlow, CoursesSubNav } from "../_shared";
 import { FadeInUp, ScrollFadeUp, StaggerList, StaggerItem } from "../_CoursesMotion";
+import BatchTimetable from "@/app/components/BatchTimetable";
+import { getBatches } from "@/app/lib/action/batches";
 
 export const metadata = {
   title: "Schedule | Lakhisarai Physical Academy",
@@ -19,7 +21,9 @@ const WHY_CHOOSE = [
   "Personalized Guidance",
 ];
 
-export default function Schedule() {
+export default async function Schedule() {
+  const batches = await getBatches();
+
   return (
     <>
       <section id="top" className="relative overflow-hidden pb-16 pt-16 sm:pb-24 sm:pt-24">
@@ -45,32 +49,8 @@ export default function Schedule() {
         </Container>
       </section>
 
-      <section className="py-16 sm:py-24">
-        <Container>
-          <ScrollFadeUp>
-            <h2 className="font-display text-[28px] font-bold sm:text-[36px]">Training Schedule</h2>
-          </ScrollFadeUp>
-
-          <StaggerList className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2">
-            <StaggerItem className="card-flat p-7">
-              <Sunrise size={22} className="text-signal" />
-              <p className="font-display mt-4 text-[16px] font-semibold text-text">Morning Batch</p>
-              <p className="font-mono mt-1 text-[15px] text-text-muted">05:00 AM &ndash; 08:00 AM</p>
-            </StaggerItem>
-            <StaggerItem className="card-flat p-7">
-              <Sunset size={22} className="text-accent-strong" />
-              <p className="font-display mt-4 text-[16px] font-semibold text-text">Evening Batch</p>
-              <p className="font-mono mt-1 text-[15px] text-text-muted">04:00 PM &ndash; 07:00 PM</p>
-            </StaggerItem>
-          </StaggerList>
-
-          <ScrollFadeUp delay={0.15}>
-            <p className="font-body mt-6 text-[13px] italic text-text-muted">
-              Batch timings may change according to season or special training sessions.
-            </p>
-          </ScrollFadeUp>
-        </Container>
-      </section>
+      {/* Live Batches Component */}
+      <BatchTimetable liveBatches={batches} />
 
       <section className="relative overflow-hidden py-16 sm:py-24">
         <SectionGlow variant={2} />
@@ -93,4 +73,4 @@ export default function Schedule() {
       </section>
     </>
   );
-}
+}

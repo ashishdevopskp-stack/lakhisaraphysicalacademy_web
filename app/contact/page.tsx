@@ -263,22 +263,21 @@ function ConnectWithUs() {
 
         <StaggerList className="mt-8 flex flex-wrap gap-3">
           {links.map(({ label, icon: Icon, href, color, bg }) => (
-            <StaggerItem
-              key={label}
-              as="a"
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              hover
-              className="flex items-center gap-2.5 rounded-lg border border-line bg-bg px-4 py-2.5 text-[13px] font-medium text-text transition-all hover:border-line-strong hover:scale-105"
-            >
-              <span
-                className="flex h-7 w-7 items-center justify-center rounded-full shrink-0"
-                style={{ backgroundColor: bg }}
+            <StaggerItem key={label}>
+              <a
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2.5 rounded-lg border border-line bg-bg px-4 py-2.5 text-[13px] font-medium text-text transition-all hover:border-line-strong hover:scale-105"
               >
-                <Icon size={15} style={{ color }} />
-              </span>
-              {label}
+                <span
+                  className="flex h-7 w-7 items-center justify-center rounded-full shrink-0"
+                  style={{ backgroundColor: bg }}
+                >
+                  <Icon size={15} style={{ color }} />
+                </span>
+                {label}
+              </a>
             </StaggerItem>
           ))}
         </StaggerList>
