@@ -191,17 +191,7 @@ export async function deleteResource(id: string) {
    ========================================================= */
 export async function incrementDownloadCount(id: string) {
   const supabase = await createClient()
-  const { data } = await supabase
-    .from('resources')
-    .select('downloads')
-    .eq('id', id)
-    .single()
-
-  const current = data?.downloads ?? 0
-  await supabase
-    .from('resources')
-    .update({ downloads: current + 1 })
-    .eq('id', id)
-
+  // Atomic increment via RPC — avoids a read+write round trip
+  await supabase.rpc('increment_resource_downloads', { resource_id: id })
   revalidatePath('/resources')
 }
