@@ -189,10 +189,18 @@ export function TokenBulkForm() {
       const col = posInPage % cols
       const row = Math.floor(posInPage / cols)
 
-      const x = marginX + col * (cellW + colGap)
-      const y = marginY + row * (cellH + rowGap)
+      const imgRatio = canvas.width / canvas.height
+      let drawW = cellW
+      let drawH = drawW / imgRatio
+      if (drawH > cellH) {
+        drawH = cellH
+        drawW = drawH * imgRatio
+      }
 
-      pdf.addImage(img, 'PNG', x, y, cellW, cellH)
+      const x = marginX + col * (cellW + colGap) + (cellW - drawW) / 2
+      const y = marginY + row * (cellH + rowGap) + (cellH - drawH) / 2
+
+      pdf.addImage(img, 'PNG', x, y, drawW, drawH)
       idx++
     }
 

@@ -130,7 +130,7 @@ function BrandLogo() {
 
 function BrandHeader() {
   return (
-    <div className="relative overflow-hidden flex items-center gap-2.5 px-5 py-4 border-b border-amber-500/20 bg-[#faf7f0]/90 backdrop-blur-xl">
+    <div className="relative overflow-hidden flex items-center gap-2.5 px-5 py-4 border-b border-amber-500/20 bg-[#faf7f0]">
       <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-[#ff9933] via-amber-400 to-[#138808]" />
       <BrandLogo />
       <div className="min-w-0">
@@ -312,7 +312,7 @@ export function AdminSidebar({ active }: { active?: string }) {
         </div>
       )}
 
-      <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:shrink-0 border-r border-amber-500/20 bg-[#faf7f0]/85 backdrop-blur-2xl h-screen sticky top-0 shadow-lg">
+      <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:shrink-0 border-r border-amber-500/20 bg-[#faf7f0] h-screen sticky top-0 shadow-lg">
         <BrandHeader />
         {sidebarContent}
       </aside>

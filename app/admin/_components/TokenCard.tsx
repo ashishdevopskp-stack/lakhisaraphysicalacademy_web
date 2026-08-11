@@ -211,22 +211,20 @@ export function TokenCard({
   )
 }
 
-/** Compact A4 Print Token Card — Exactly 12 cards fit on 1 A4 page (3 cols x 4 rows) */
+/** Compact A4 Print Token Card — High precision 12-per-page A4 print layout */
 export function CompactTokenCard({ data }: { data: TokenCardData }) {
   return (
     <div
       style={{
-        width: 178,
-        height: 194,
+        width: 240,
+        height: 258,
         boxSizing: 'border-box',
-        border: '1.5px solid #1e293b',
-        borderRadius: 6,
+        border: '2px solid #1e293b',
+        borderRadius: 8,
         background: '#ffffff',
         fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
         overflow: 'hidden',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
+        display: 'block',
         position: 'relative',
       }}
     >
@@ -235,18 +233,18 @@ export function CompactTokenCard({ data }: { data: TokenCardData }) {
         style={{
           background: 'linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%)',
           color: '#ffffff',
-          padding: '3px 4px',
+          padding: '5px 8px',
           display: 'flex',
           alignItems: 'center',
-          gap: 4,
+          gap: 6,
         }}
       >
         <Logo />
-        <div style={{ flex: 1, minWidth: 0, lineHeight: 1.1 }}>
-          <div style={{ fontSize: 7.5, fontWeight: 900, color: '#fef08a', letterSpacing: 0.2 }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontSize: 9.5, fontWeight: 900, color: '#fef08a', letterSpacing: 0.3, lineHeight: 1.1 }}>
             LAKHISARAI PHYSICAL ACADEMY
           </div>
-          <div style={{ fontSize: 5.8, color: '#cbd5e1', marginTop: 1 }}>
+          <div style={{ fontSize: 7, color: '#cbd5e1', marginTop: 1.5, fontWeight: 600 }}>
             ★ BHOJAN TOKEN ★ • 7739776471
           </div>
         </div>
@@ -257,24 +255,24 @@ export function CompactTokenCard({ data }: { data: TokenCardData }) {
         style={{
           background: 'linear-gradient(90deg, #047857 0%, #059669 100%)',
           color: '#ffffff',
-          padding: '2px 5px',
+          padding: '3px 8px',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-          <span style={{ fontSize: 6.5, fontWeight: 800, color: '#e2e8f0' }}>TOKEN:</span>
-          <span style={{ fontSize: 14, fontWeight: 900, color: '#fef08a', lineHeight: 1 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <span style={{ fontSize: 8, fontWeight: 800, color: '#e2e8f0' }}>TOKEN:</span>
+          <span style={{ fontSize: 16, fontWeight: 900, color: '#fef08a', lineHeight: 1 }}>
             {data.tokenNo}
           </span>
         </div>
         <span
           style={{
-            fontSize: 6,
+            fontSize: 7.5,
             fontWeight: 700,
             background: 'rgba(255,255,255,0.2)',
-            padding: '1px 3px',
+            padding: '1.5px 5px',
             borderRadius: 3,
           }}
         >
@@ -283,43 +281,45 @@ export function CompactTokenCard({ data }: { data: TokenCardData }) {
       </div>
 
       {/* Details Box */}
-      <div style={{ padding: '3px 5px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-        <div>
-          <div
+      <div style={{ padding: '6px 8px', background: '#ffffff' }}>
+        <div
+          style={{
+            fontWeight: 900,
+            fontSize: 12,
+            color: '#0f172a',
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            lineHeight: 1.2,
+          }}
+        >
+          {data.studentName}
+        </div>
+
+        <div style={{ fontSize: 8.5, color: '#334155', marginTop: 3, lineHeight: 1.2 }}>
+          <b>Hostel:</b> {data.hostelName} | <b>Room:</b> {data.roomNumber}
+          {data.bedNumber ? `-${data.bedNumber}` : ''}
+        </div>
+
+        <div style={{ marginTop: 4, display: 'flex', alignItems: 'center', gap: 3 }}>
+          <span
             style={{
+              background: '#fef3c7',
+              color: '#92400e',
+              border: '1px solid #fcd34d',
+              padding: '1px 5px',
+              borderRadius: 4,
+              fontSize: 7.5,
               fontWeight: 800,
-              fontSize: 8.5,
-              color: '#0f172a',
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
             }}
           >
-            {data.studentName}
-          </div>
-          <div style={{ fontSize: 6.8, color: '#475569', marginTop: 1 }}>
-            <b>Hostel:</b> {data.hostelName} | <b>Room:</b> {data.roomNumber}
-            {data.bedNumber ? `-${data.bedNumber}` : ''}
-          </div>
-          <div style={{ marginTop: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
-            <span
-              style={{
-                background: '#fef3c7',
-                color: '#92400e',
-                border: '0.5px solid #fcd34d',
-                padding: '0.5px 3px',
-                borderRadius: 3,
-                fontSize: 5.8,
-                fontWeight: 800,
-              }}
-            >
-              {data.slots.join(' • ')}
-            </span>
-          </div>
-          <div style={{ fontSize: 6.8, color: '#334155', marginTop: 2 }}>
-            <b>Valid:</b> {data.issueDate} →{' '}
-            <span style={{ color: '#b91c1c', fontWeight: 800 }}>{data.expiryDate}</span>
-          </div>
+            {data.slots.join(' • ')}
+          </span>
+        </div>
+
+        <div style={{ fontSize: 8, color: '#334155', marginTop: 4, lineHeight: 1.2 }}>
+          <b>Valid:</b> {data.issueDate} →{' '}
+          <span style={{ color: '#b91c1c', fontWeight: 800 }}>{data.expiryDate}</span>
         </div>
 
         {/* Hindi Rules Notice */}
@@ -328,11 +328,12 @@ export function CompactTokenCard({ data }: { data: TokenCardData }) {
             background: '#f8fafc',
             borderTop: '1px dashed #cbd5e1',
             borderBottom: '1px dashed #cbd5e1',
-            padding: '2px 4px',
-            fontSize: 5.8,
-            lineHeight: 1.15,
+            padding: '4px 6px',
+            fontSize: 7.2,
+            lineHeight: 1.25,
             color: '#334155',
-            marginTop: 2,
+            marginTop: 6,
+            borderRadius: 4,
           }}
         >
           <span style={{ fontWeight: 800, color: '#b91c1c' }}>नोट: </span>
@@ -343,10 +344,14 @@ export function CompactTokenCard({ data }: { data: TokenCardData }) {
       {/* Footer */}
       <div
         style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
           background: '#0f172a',
           color: '#f8fafc',
-          padding: '2px 4px',
-          fontSize: 6,
+          padding: '3px 8px',
+          fontSize: 7.5,
           fontWeight: 700,
           display: 'flex',
           justifyContent: 'space-between',
