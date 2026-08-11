@@ -171,47 +171,173 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Super Colorful Mobile Dropdown Drawer */}
+        {/* Super Modern User Panel Category Drawer */}
         {mobileOpen && (
-          <div className="mt-2.5 max-h-[82vh] overflow-y-auto rounded-3xl border-2 border-amber-200 bg-gradient-to-b from-[#fffcf7] via-white to-slate-50 p-4 sm:p-5 shadow-2xl xl:hidden z-50 space-y-3 animate-[fadeIn_0.15s_ease-out]">
+          <div className="mt-2.5 max-h-[82vh] overflow-y-auto rounded-3xl border-2 border-amber-300 bg-gradient-to-b from-[#fffcf7] via-white to-slate-50 p-3.5 sm:p-5 shadow-2xl xl:hidden z-50 space-y-3.5 animate-[fadeIn_0.15s_ease-out]">
             {/* Header Tiranga Banner */}
-            <div className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-[#ff9933] via-amber-400 to-[#138808] text-white flex items-center justify-between shadow-md">
+            <div className="px-4 py-3 rounded-2xl bg-gradient-to-r from-[#ff9933] via-amber-500 to-[#138808] text-white flex items-center justify-between shadow-md">
               <div className="flex items-center gap-2">
-                <Sparkles size={16} className="text-amber-200 animate-spin" />
-                <span className="text-xs font-black tracking-wide uppercase">Academy Navigation Menu</span>
+                <Sparkles size={18} className="text-amber-200 animate-spin" />
+                <div>
+                  <h3 className="text-xs font-black tracking-wide uppercase">Academy User Panel &amp; Categories</h3>
+                  <p className="text-[10px] font-bold text-amber-100">Select any category or subcategory</p>
+                </div>
               </div>
-              <span className="px-2 py-0.5 rounded-full bg-white/20 text-[10px] font-black backdrop-blur-md">
-                12 Links
+              <span className="px-2.5 py-1 rounded-full bg-white/20 text-[10px] font-black backdrop-blur-md">
+                12 Categories
               </span>
             </div>
 
-            {/* Colorful Menu Items Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
-              {NAV_ITEMS_WITH_ICONS.map((item) => {
+            {/* Structured Category & Subcategory Card Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+              {[
+                {
+                  label: "Home Page",
+                  href: "/",
+                  icon: Home,
+                  color: "bg-orange-500/10 text-[#ea580c] border-orange-500/20",
+                  badge: "Main Hub",
+                  subs: [{ name: "Hero Section", href: "/#top" }, { name: "Coaches", href: "/about#coaches" }],
+                },
+                {
+                  label: "Courses & Training",
+                  href: "/courses",
+                  icon: Dumbbell,
+                  color: "bg-purple-500/10 text-purple-700 border-purple-500/20",
+                  badge: "Active Batches",
+                  subs: [{ name: "Programs", href: "/courses/programs" }, { name: "Schedule", href: "/courses/schedule" }, { name: "Fees", href: "/courses/fees-admission" }],
+                },
+                {
+                  label: "Hostel & Mess",
+                  href: "/hostel",
+                  icon: Building2,
+                  color: "bg-emerald-500/10 text-[#138808] border-emerald-500/20",
+                  badge: "In-Campus",
+                  subs: [{ name: "Rules", href: "/hostel/rules" }, { name: "Mess Menu", href: "/hostel/mess-menu" }, { name: "Facilities", href: "/hostel/facilities" }],
+                },
+                {
+                  label: "Academy Store",
+                  href: "/store",
+                  icon: ShoppingBag,
+                  color: "bg-amber-500/10 text-amber-700 border-amber-500/20",
+                  badge: "Official Gear",
+                  subs: [{ name: "Uniforms", href: "/store" }, { name: "Shoes", href: "/store" }, { name: "Kits", href: "/store" }],
+                },
+                {
+                  label: "Placed Achievements",
+                  href: "/result",
+                  icon: Trophy,
+                  color: "bg-yellow-500/10 text-amber-600 border-yellow-500/20",
+                  badge: "1,200+ Selected",
+                  subs: [{ name: "Bihar Police", href: "/result" }, { name: "Army Agniveer", href: "/result" }, { name: "SSC GD", href: "/result" }],
+                },
+                {
+                  label: "Blogs & Tips",
+                  href: "/blogs",
+                  icon: BookOpen,
+                  color: "bg-blue-500/10 text-blue-700 border-blue-500/20",
+                  badge: "Fitness Guides",
+                  subs: [{ name: "1600m Running", href: "/blogs" }, { name: "High Jump Drills", href: "/blogs" }, { name: "Diet Chart", href: "/blogs" }],
+                },
+                {
+                  label: "YouTube Videos",
+                  href: "/youtube-video",
+                  icon: Video,
+                  color: "bg-red-500/10 text-red-600 border-red-500/20",
+                  badge: "Ground Videos",
+                  subs: [{ name: "Live Workout", href: "/youtube-video" }, { name: "High Jump", href: "/youtube-video" }],
+                },
+                {
+                  label: "Jobs & Vacancies",
+                  href: "/jobs",
+                  icon: Briefcase,
+                  color: "bg-cyan-500/10 text-cyan-700 border-cyan-500/20",
+                  badge: "Govt Bharti",
+                  subs: [{ name: "Bihar Police", href: "/jobs" }, { name: "Army Rally", href: "/jobs" }, { name: "SSC GD", href: "/jobs" }],
+                },
+                {
+                  label: "Events & Mock PET",
+                  href: "/events",
+                  icon: Calendar,
+                  color: "bg-teal-500/10 text-teal-700 border-teal-500/20",
+                  badge: "Weekly Tests",
+                  subs: [{ name: "Sunday 1600m", href: "/events" }, { name: "Sports Meet", href: "/events" }],
+                },
+                {
+                  label: "Resources & Syllabi",
+                  href: "/resources",
+                  icon: FileText,
+                  color: "bg-indigo-500/10 text-indigo-700 border-indigo-500/20",
+                  badge: "PDF Material",
+                  subs: [{ name: "PET Standard", href: "/resources" }, { name: "Medical Check", href: "/resources" }],
+                },
+                {
+                  label: "Notifications",
+                  href: "/notification",
+                  icon: Bell,
+                  color: "bg-rose-500/10 text-rose-600 border-rose-500/20",
+                  badge: "Live Alerts",
+                  subs: [{ name: "Exam Dates", href: "/notification" }, { name: "Notice Board", href: "/notification" }],
+                },
+                {
+                  label: "About Us",
+                  href: "/about",
+                  icon: ShieldAlert,
+                  color: "bg-[#2b4c2b]/15 text-[#2b4c2b] border-[#2b4c2b]/20",
+                  badge: "Ganesh & Mahesh Sir",
+                  subs: [{ name: "Coaches", href: "/about#coaches" }, { name: "Location", href: "/about#location" }],
+                },
+              ].map((item) => {
                 const Icon = item.icon;
                 return (
-                  <Link
+                  <div
                     key={item.href}
-                    href={item.href}
-                    onClick={() => setMobileOpen(false)}
-                    className="group flex items-center justify-between p-3 rounded-2xl bg-white border border-slate-200/80 hover:border-orange-500/40 hover:bg-orange-50/50 shadow-sm hover:shadow-md transition-all duration-200"
+                    className="group rounded-2xl bg-white border border-slate-200 p-3 shadow-xs hover:shadow-md hover:border-amber-400 transition-all flex flex-col justify-between"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className={`p-2.5 rounded-xl border ${item.color} group-hover:scale-110 transition-transform`}>
-                        <Icon size={18} />
-                      </div>
-                      <span className="text-xs font-black text-slate-900 group-hover:text-[#ea580c] transition-colors">
-                        {item.label}
-                      </span>
-                    </div>
+                    <div>
+                      {/* Main Category Header Link */}
+                      <Link
+                        href={item.href}
+                        onClick={() => setMobileOpen(false)}
+                        className="flex items-center justify-between gap-2 mb-2"
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div className={`p-2 rounded-xl border ${item.color} group-hover:scale-105 transition-transform shrink-0`}>
+                            <Icon size={17} />
+                          </div>
+                          <div className="min-w-0">
+                            <span className="text-xs font-black text-slate-900 group-hover:text-[#ea580c] transition-colors truncate block">
+                              {item.label}
+                            </span>
+                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                              {item.badge}
+                            </span>
+                          </div>
+                        </div>
 
-                    <ChevronRight size={16} className="text-slate-400 group-hover:text-[#ea580c] group-hover:translate-x-0.5 transition-all" />
-                  </Link>
+                        <ChevronRight size={16} className="text-slate-400 group-hover:text-[#ea580c] group-hover:translate-x-0.5 transition-all shrink-0" />
+                      </Link>
+
+                      {/* Subcategory Pills */}
+                      <div className="flex flex-wrap gap-1 pt-1 border-t border-slate-100">
+                        {item.subs.map((sub, sIdx) => (
+                          <Link
+                            key={sIdx}
+                            href={sub.href}
+                            onClick={() => setMobileOpen(false)}
+                            className="px-2 py-0.5 rounded-md bg-slate-50 hover:bg-amber-100/60 border border-slate-200/70 hover:border-amber-300 text-[10px] font-extrabold text-slate-600 hover:text-amber-900 transition-all"
+                          >
+                            {sub.name}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
                 );
               })}
             </div>
 
-            {/* Bottom Colorful Actions */}
+            {/* Bottom Action Buttons */}
             <div className="pt-3 border-t border-slate-200/80 grid grid-cols-2 gap-2">
               <a
                 href={whatsappHref()}

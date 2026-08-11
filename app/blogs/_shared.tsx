@@ -1,15 +1,15 @@
 // app/blogs/_shared.tsx
 
 export const BLOG_NAV = [
-  { href: "/blogs", label: "Overview" },
-  { href: "/blogs/categories", label: "Categories" },
+  { href: "/blogs", label: "Blog Overview" },
+  { href: "/blogs/categories", label: "Blog Categories" },
   { href: "/blogs/articles", label: "Latest Articles" },
   { href: "/blogs/topics", label: "Popular Topics" },
 ];
 
 export function BlogSubNav({ current }: { current: string }) {
   return (
-    <nav aria-label="Blog section pages" className="flex flex-wrap gap-2">
+    <nav aria-label="Blog section sub-navigation" className="flex flex-wrap gap-2 py-2">
       {BLOG_NAV.map((item) => {
         const active = item.href === current;
         return (
@@ -18,8 +18,8 @@ export function BlogSubNav({ current }: { current: string }) {
             href={item.href}
             className={
               active
-                ? "pill pill-color-1 font-semibold"
-                : "font-body rounded-full border border-line px-3.5 py-1.5 text-[13px] text-text-muted transition-colors hover:border-line-strong hover:text-text"
+                ? "rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 text-xs font-black text-white shadow-md shadow-blue-600/25 transition-all hover:scale-105 border border-blue-400"
+                : "rounded-2xl border border-slate-200/90 bg-white px-4 py-2 text-xs font-extrabold text-slate-700 shadow-xs transition-all hover:border-blue-400 hover:bg-blue-50/60 hover:text-blue-800"
             }
           >
             {item.label}

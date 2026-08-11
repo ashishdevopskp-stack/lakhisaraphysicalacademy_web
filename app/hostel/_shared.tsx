@@ -17,17 +17,17 @@ export function SectionGlow() {
    Shared sub-navigation across all /hostel pages
    ========================================================= */
 export const HOSTEL_NAV = [
-  { href: "/hostel", label: "Overview" },
-  { href: "/hostel/facilities", label: "Facilities" },
-  { href: "/hostel/gallery", label: "Gallery" },
-  { href: "/hostel/fees", label: "Fees" },
-  { href: "/hostel/rules", label: "Rules" },
-  { href: "/hostel/faq", label: "FAQ" },
+  { href: "/hostel", label: "Hostel Overview" },
+  { href: "/hostel/facilities", label: "Facilities & Security" },
+  { href: "/hostel/gallery", label: "Campus Gallery" },
+  { href: "/hostel/fees", label: "Fee Structure" },
+  { href: "/hostel/rules", label: "Hostel Rules" },
+  { href: "/hostel/faq", label: "Hostel FAQ" },
 ];
 
 export function HostelSubNav({ current }: { current: string }) {
   return (
-    <nav aria-label="Hostel section pages" className="flex flex-wrap items-center gap-2 py-1">
+    <nav aria-label="Hostel section sub-navigation" className="flex flex-wrap items-center gap-2 py-2">
       {HOSTEL_NAV.map((item) => {
         const active = item.href === current;
         return (
@@ -36,8 +36,8 @@ export function HostelSubNav({ current }: { current: string }) {
             href={item.href}
             className={
               active
-                ? "rounded-full bg-[#ea580c] px-4 py-2 text-xs font-extrabold text-white shadow-md shadow-orange-500/25 transition-all hover:bg-[#c2410c] hover:scale-105"
-                : "rounded-full border border-slate-200 bg-white/90 px-4 py-2 text-xs font-extrabold text-slate-700 shadow-sm transition-all hover:border-orange-500/40 hover:bg-orange-50/50 hover:text-[#ea580c]"
+                ? "rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-700 px-4 py-2 text-xs font-black text-white shadow-md shadow-emerald-600/25 transition-all hover:scale-105 border border-emerald-500"
+                : "rounded-2xl border border-slate-200/90 bg-white px-4 py-2 text-xs font-extrabold text-slate-700 shadow-xs transition-all hover:border-emerald-500/50 hover:bg-emerald-50/60 hover:text-emerald-800"
             }
           >
             {item.label}

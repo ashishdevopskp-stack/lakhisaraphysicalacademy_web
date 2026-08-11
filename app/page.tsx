@@ -1,4 +1,5 @@
 import Hero from "./hero/page";
+import CategoryExplorer from "./components/CategoryExplorer";
 import About from "./about/page";
 import Courses from "./courses/page";
 import BatchTimetable from "./components/BatchTimetable";
@@ -21,6 +22,10 @@ export default async function Home() {
     <main>
       <OrganizationSchema />
       <Hero />
+
+      {/* Interactive Category & Subcategory Explorer Hub */}
+      <CategoryExplorer />
+
       <About />
       {/* Blog carousel near the top as requested */}
       <BlogCarousel blogs={blogs} />

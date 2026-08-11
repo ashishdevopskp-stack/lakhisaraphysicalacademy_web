@@ -9,15 +9,15 @@ export const PILL_COLORS = [
 export const COURSES_NAV = [
   { href: "/courses", label: "Overview" },
   { href: "/courses/programs", label: "Training Programs" },
-  { href: "/courses/schedule", label: "Schedule" },
+  { href: "/courses/schedule", label: "Ground Schedule" },
   { href: "/courses/facilities", label: "Facilities" },
   { href: "/courses/fees-admission", label: "Fees & Admission" },
-  { href: "/courses/faq", label: "FAQ" },
+  { href: "/courses/faq", label: "PET FAQ" },
 ];
 
 export function CoursesSubNav({ current }: { current: string }) {
   return (
-    <nav aria-label="Courses section pages" className="flex flex-wrap items-center gap-2 py-1">
+    <nav aria-label="Courses category sub-navigation" className="flex flex-wrap items-center gap-2 py-2">
       {COURSES_NAV.map((item) => {
         const active = item.href === current;
         return (
@@ -26,11 +26,11 @@ export function CoursesSubNav({ current }: { current: string }) {
             href={item.href}
             className={
               active
-                ? "rounded-full bg-[#ea580c] px-4 py-2 text-xs font-extrabold text-white shadow-md shadow-orange-500/25 transition-all hover:bg-[#c2410c] hover:scale-105"
-                : "rounded-full border border-slate-200 bg-white/90 px-4 py-2 text-xs font-extrabold text-slate-700 shadow-sm transition-all hover:border-orange-500/40 hover:bg-orange-50/50 hover:text-[#ea580c]"
+                ? "rounded-2xl bg-gradient-to-r from-[#ea580c] to-amber-600 px-4 py-2 text-xs font-black text-white shadow-md shadow-orange-500/25 transition-all hover:scale-105 border border-orange-400 flex items-center gap-1.5"
+                : "rounded-2xl border border-slate-200/90 bg-white px-4 py-2 text-xs font-extrabold text-slate-700 shadow-xs transition-all hover:border-orange-400 hover:bg-orange-50/60 hover:text-[#ea580c] flex items-center gap-1.5"
             }
           >
-            {item.label}
+            <span>{item.label}</span>
           </a>
         );
       })}

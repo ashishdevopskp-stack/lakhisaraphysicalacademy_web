@@ -163,22 +163,24 @@ export default function Hero() {
 
           {/* Right Column: Featured Course Card & Coaches (Col 8-12) */}
           <div className="lg:col-span-5 flex flex-col gap-6">
-            {/* Featured Academy Card with Gold Border */}
+            {/* Featured Academy Video Card with Gold Border */}
             <div className="bento-card bg-white p-5 flex flex-col justify-between border-2 border-[#D4AF37]/40 shadow-xl">
-              <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden bg-slate-100 mb-4 ring-2 ring-[#138808]/20">
-                <Image
-                  src="/heroimg.png"
-                  alt="Training Ground"
-                  fill
-                  priority
-                  sizes="(max-width: 1024px) 100vw, 40vw"
-                  className="object-cover"
+              <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden bg-slate-950 mb-4 ring-2 ring-[#138808]/30 group shadow-md">
+                <video
+                  src="/hero_video.mp4"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  controls
+                  className="w-full h-full object-cover rounded-2xl"
                 />
-                <span className="absolute top-3 right-3 px-3 py-1 bg-white/95 backdrop-blur-md text-slate-900 text-xs font-extrabold rounded-full shadow-sm">
-                  K.R.K Field, Lakhisarai
+                <span className="absolute top-3 right-3 px-3 py-1 bg-slate-950/80 backdrop-blur-md text-white text-[11px] font-black rounded-full shadow-md flex items-center gap-1.5 border border-amber-500/40 pointer-events-none">
+                  <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                  <span>Ground Action Video</span>
                 </span>
-                <span className="absolute bottom-3 left-3 px-3 py-1 bg-[#FF9933] text-slate-950 text-xs font-extrabold rounded-full shadow-sm">
-                  Daily Morning 5:00 AM
+                <span className="absolute bottom-3 left-3 px-3 py-1 bg-[#FF9933] text-slate-950 text-xs font-black rounded-full shadow-md pointer-events-none">
+                  K.R.K Field, Lakhisarai
                 </span>
               </div>
 
