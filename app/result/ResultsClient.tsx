@@ -69,21 +69,13 @@ function ResultsHero() {
             </a>
 
             <a
-              href="#submit"
-              className="px-6 py-3.5 rounded-2xl bg-white border-2 border-slate-300 hover:border-amber-500 text-slate-900 font-black text-xs sm:text-sm transition-all shadow-sm flex items-center gap-2"
-            >
-              <ClipboardList size={16} className="text-[#ea580c]" />
-              <span>Submit Your Selection</span>
-            </a>
-
-            <a
               href={whatsappHref(encodeURIComponent("Hello Lakhisarai Physical Academy, I want to inquire about physical training batches."))}
               target="_blank"
               rel="noopener noreferrer"
               className="px-5 py-3.5 rounded-2xl bg-emerald-50 hover:bg-emerald-100 text-[#138808] border border-emerald-300 font-black text-xs sm:text-sm transition-all flex items-center gap-2"
             >
               <MessageCircle size={16} />
-              <span>WhatsApp</span>
+              <span>WhatsApp Enquiry</span>
             </a>
           </div>
         </div>
