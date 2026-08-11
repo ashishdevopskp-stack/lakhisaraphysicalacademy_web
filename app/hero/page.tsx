@@ -14,6 +14,8 @@ import {
   Calendar,
   Flag,
   MessageCircle,
+  Smartphone,
+  Download,
 } from "lucide-react";
 import Container from "../components/Container";
 
@@ -25,31 +27,62 @@ export default function Hero() {
     <section id="top" className="pb-12 pt-3 sm:pb-20 sm:pt-5 overflow-hidden">
       <Container>
 
-        {/* Top WhatsApp Channel Announcement Banner */}
-        <div className="mb-5 rounded-2xl bg-gradient-to-r from-emerald-900 via-emerald-950 to-slate-950 p-3.5 sm:p-4 text-white shadow-lg border border-emerald-500/30 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shrink-0">
-              <MessageCircle size={20} />
+        {/* Top Announcement Cards: 1. WhatsApp Channel | 2. Download Our App (Sky Blue Theme) */}
+        <div className="mb-5 grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4">
+          {/* Card 1: WhatsApp Channel */}
+          <div className="rounded-2xl bg-gradient-to-r from-emerald-900 via-emerald-950 to-slate-950 p-4 text-white shadow-lg border border-emerald-500/30 flex flex-col justify-between gap-3 group hover:border-emerald-400/50 transition-all">
+            <div className="flex items-start gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shrink-0 mt-0.5">
+                <MessageCircle size={20} />
+              </div>
+              <div className="space-y-0.5">
+                <p className="text-[11px] font-black uppercase tracking-wider text-emerald-400 flex items-center gap-1">
+                  <span>📢 Official WhatsApp Channel</span>
+                </p>
+                <p className="text-xs sm:text-sm font-extrabold text-white leading-snug">
+                  Join Lakhisarai Physical Academy Official Channel for Daily Ground &amp; Exam Updates!
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="text-xs font-black uppercase tracking-wider text-emerald-400">
-                📢 Official Academy Channel
-              </p>
-              <p className="text-xs sm:text-sm font-extrabold text-white">
-                Join Lakhisarai Physical Academy Official WhatsApp Channel for Daily Ground &amp; Exam Updates!
-              </p>
-            </div>
+
+            <a
+              href="https://whatsapp.com/channel/0029VaAoQ1gDjiOa3By7bM3s"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-1 px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs transition-all shadow-md flex items-center justify-center gap-2 group-hover:scale-[1.02]"
+            >
+              <span>Join WhatsApp Channel</span>
+              <ArrowRight size={14} />
+            </a>
           </div>
 
-          <a
-            href="https://whatsapp.com/channel/0029VaAoQ1gDjiOa3By7bM3s"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-5 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs transition-all shadow-md shrink-0 flex items-center gap-2 hover:scale-105"
-          >
-            <span>Join WhatsApp Channel</span>
-            <ArrowRight size={14} />
-          </a>
+          {/* Card 2: Download Our App (Sky Blue Theme) */}
+          <div className="rounded-2xl bg-gradient-to-r from-sky-900 via-sky-950 to-slate-950 p-4 text-white shadow-lg border border-sky-400/40 flex flex-col justify-between gap-3 group hover:border-sky-300/60 transition-all">
+            <div className="flex items-start gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-sky-400/20 text-sky-300 border border-sky-400/40 shrink-0 mt-0.5">
+                <Smartphone size={20} />
+              </div>
+              <div className="space-y-0.5">
+                <p className="text-[11px] font-black uppercase tracking-wider text-sky-300 flex items-center gap-1">
+                  <span>📱 Official Mobile App</span>
+                </p>
+                <p className="text-xs sm:text-sm font-extrabold text-white leading-snug">
+                  Download Academy App for Online Admissions, Batches &amp; Bhojan Token!
+                </p>
+              </div>
+            </div>
+
+            <a
+              href="https://play.google.com/store/apps/details?id=com.lakhisarai.physical_academy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-1 px-4 py-2.5 rounded-xl bg-sky-400 hover:bg-sky-300 text-slate-950 font-black text-xs transition-all shadow-md flex items-center justify-center gap-2 group-hover:scale-[1.02]"
+            >
+              <Download size={14} />
+              <span>Download Our App (Play Store)</span>
+              <ArrowRight size={14} />
+            </a>
+          </div>
         </div>
 
         {/* Main Bento Layout Grid with Tiranga Saffron, White, & India Green Cards */}
