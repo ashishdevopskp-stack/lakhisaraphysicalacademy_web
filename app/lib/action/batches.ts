@@ -14,6 +14,9 @@ export interface DbBatch {
   capacity: number;
   status: string;
   highlights: string;
+  is_visible?: boolean;
+  thumbnail_url?: string;
+  aspect_ratio?: string;
   created_at?: string;
 }
 
@@ -24,13 +27,13 @@ const DEFAULT_BATCHES: DbBatch[] = [
     category: "Physical",
     time: "05:00 AM - 07:30 AM",
     location: "K.R.K Field, Lakhisarai",
-
     target_exam: "Bihar Police Constable, SI, Army Agniveer, RPF",
     capacity: 150,
     status: "Filling Fast",
     highlights:
       "1600m / 1000m Running Technique & Endurance\nHigh Jump Training (Tiger & Scissor style)\nShot Put (गोला फेंक) & Long Jump Drills\nDaily Stamina & Stretches under Head Coach",
-
+    is_visible: true,
+    aspect_ratio: "16:9",
   },
   {
     id: "batch-2",
@@ -43,6 +46,8 @@ const DEFAULT_BATCHES: DbBatch[] = [
     status: "Open",
     highlights:
       "Weight loss & Sprinting technique\nCore & Leg Strength conditioning\nIndividual Timing assessment every Saturday",
+    is_visible: true,
+    aspect_ratio: "16:9",
   },
   {
     id: "batch-3",
@@ -55,6 +60,8 @@ const DEFAULT_BATCHES: DbBatch[] = [
     status: "Open",
     highlights:
       "Bihar GK, Samanya Vigyan & General Studies\nMaths & Reasoning Shortcut Methods\nWeekly Mock Test with OMR Evaluation",
+    is_visible: true,
+    aspect_ratio: "16:9",
   },
   {
     id: "batch-4",
@@ -67,8 +74,28 @@ const DEFAULT_BATCHES: DbBatch[] = [
     status: "Open",
     highlights:
       "Exact 1600m Digital Timer Run Test\nBody Measurement (Height, Chest, Weight)\nFlat foot, Knock Knee & Eye Sight Initial Check",
+    is_visible: true,
+    aspect_ratio: "16:9",
   },
 ];
+
+async function uploadBatchThumbnail(file: File): Promise<string | null> {
+  try {
+    const supabase = await createClient();
+    const ext = file.name.split(".").pop() || "webp";
+    const path = `batches/${Date.now()}-${Math.random().toString(36).substring(2, 7)}.${ext}`;
+
+    const { error: err1 } = await supabase.storage.from("events").upload(path, file, { upsert: true });
+    if (!err1) {
+      const { data } = supabase.storage.from("events").getPublicUrl(path);
+      return data.publicUrl;
+    }
+    return null;
+  } catch (err) {
+    console.error("Batch thumbnail upload error:", err);
+    return null;
+  }
+}
 
 export async function getBatches(): Promise<DbBatch[]> {
   try {
@@ -103,6 +130,15 @@ export async function createBatch(formData: FormData) {
   const capacity = Number(formData.get("capacity")) || 100;
   const status = String(formData.get("status") || "Open").trim();
   const highlights = String(formData.get("highlights") || "").trim();
+  const isVisible = String(formData.get("visibility") || "show") === "show";
+  const aspectRatio = String(formData.get("aspectRatio") || "16:9").trim();
+
+  let thumbnailUrl = String(formData.get("thumbnailUrl") || "").trim();
+  const file = formData.get("thumbnail") as File | null;
+  if (file && file instanceof File && file.size > 0) {
+    const uploaded = await uploadBatchThumbnail(file);
+    if (uploaded) thumbnailUrl = uploaded;
+  }
 
   if (!name || !time) {
     redirect("/admin/batches?error=Name+and+Time+are+required");
@@ -117,6 +153,9 @@ export async function createBatch(formData: FormData) {
     capacity,
     status,
     highlights,
+    is_visible: isVisible,
+    thumbnail_url: thumbnailUrl,
+    aspect_ratio: aspectRatio,
   });
 
   if (error) {
@@ -141,6 +180,15 @@ export async function updateBatch(id: string, formData: FormData) {
   const capacity = Number(formData.get("capacity")) || 100;
   const status = String(formData.get("status") || "Open").trim();
   const highlights = String(formData.get("highlights") || "").trim();
+  const isVisible = String(formData.get("visibility") || "show") === "show";
+  const aspectRatio = String(formData.get("aspectRatio") || "16:9").trim();
+
+  let thumbnailUrl = String(formData.get("thumbnailUrl") || "").trim();
+  const file = formData.get("thumbnail") as File | null;
+  if (file && file instanceof File && file.size > 0) {
+    const uploaded = await uploadBatchThumbnail(file);
+    if (uploaded) thumbnailUrl = uploaded;
+  }
 
   const { error } = await supabase
     .from("batches")
@@ -153,6 +201,9 @@ export async function updateBatch(id: string, formData: FormData) {
       capacity,
       status,
       highlights,
+      is_visible: isVisible,
+      thumbnail_url: thumbnailUrl,
+      aspect_ratio: aspectRatio,
     })
     .eq("id", id);
 

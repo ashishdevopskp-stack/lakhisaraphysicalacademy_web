@@ -67,7 +67,7 @@ export default function BatchTimetable({
   const displayBatches = liveBatches && liveBatches.length > 0 ? liveBatches : DEFAULT_BATCHES;
 
   const filteredBatches = displayBatches.filter(
-    (b) => filter === "All" || b.category === filter || b.category === "Combo"
+    (b) => b.is_visible !== false && (filter === "All" || b.category === filter || b.category === "Combo")
   );
 
   return (
@@ -113,9 +113,21 @@ export default function BatchTimetable({
             return (
               <div
                 key={batch.id}
-                className="liquid-glass p-6 sm:p-7 flex flex-col justify-between hover:border-amber-500/40 transition-all duration-300 shadow-xl"
+                className="liquid-glass p-6 sm:p-7 flex flex-col justify-between hover:border-amber-500/40 transition-all duration-300 shadow-xl overflow-hidden"
               >
                 <div>
+                  {/* Optional Batch Thumbnail Image */}
+                  {batch.thumbnail_url && (
+                    <div className="mb-4 overflow-hidden rounded-2xl border border-amber-500/20 shadow-sm relative group/img">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={batch.thumbnail_url}
+                        alt={batch.name}
+                        className="w-full h-44 object-cover group-hover/img:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                  )}
+
                   <div className="flex items-center justify-between gap-3 mb-4">
                     <span className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wider px-3.5 py-1 rounded-full bg-amber-500/10 text-amber-900 border border-amber-500/20">
                       {isPhysical ? (

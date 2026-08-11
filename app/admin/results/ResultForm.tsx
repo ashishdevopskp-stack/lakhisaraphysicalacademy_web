@@ -3,8 +3,7 @@
 import { useState, useRef } from 'react'
 import type { DbResult } from '@/app/lib/action/results'
 import { DEPARTMENTS, STATUS_OPTIONS } from '@/app/lib/results-data'
-import { Sparkles, CheckCircle2, User, Award } from 'lucide-react'
-import ThumbnailRatioSelector from "@/app/admin/_components/ThumbnailRatioSelector"
+import { User } from 'lucide-react'
 
 const MAX_IMAGE_MB = 10
 const IMAGE_MAX_DIMENSION = 1600
@@ -119,13 +118,6 @@ export function ResultForm({
       className="space-y-6"
     >
       {initialData?.id && <input type="hidden" name="id" value={initialData.id} />}
-
-      {/* Thumbnail & Aspect Ratio Selector */}
-      <ThumbnailRatioSelector
-        defaultThumbnailUrl={initialData?.photo_url}
-        defaultAspectRatio={"3:4"}
-        label="Student Photo & Aspect Ratio"
-      />
 
       {/* Photo Upload Zone with WebP Auto-Compress */}
       <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-4">
