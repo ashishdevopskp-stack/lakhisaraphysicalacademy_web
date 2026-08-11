@@ -184,6 +184,107 @@ function AboutHero() {
   );
 }
 
+function AboutSubcategoryGrid() {
+  const subcategories = [
+    {
+      title: "Founder & Director",
+      subtitle: "Ganesh Sir's story, physical coaching background & vision",
+      href: "/about/founderanddirector",
+      icon: Star,
+      color: "from-orange-500/20 to-amber-500/10 border-orange-500/30 text-orange-600",
+      badge: "Leadership",
+    },
+    {
+      title: "Our Story",
+      subtitle: "From small training batches to Bihar's #1 physical academy",
+      href: "/about/ourstory",
+      icon: Award,
+      color: "from-amber-500/20 to-yellow-500/10 border-amber-500/30 text-amber-600",
+      badge: "History",
+    },
+    {
+      title: "What We Train",
+      subtitle: "1600m Running, High Jump (Scissor/Tiger), Shot Put, Long Jump",
+      href: "/about/whatwetrain",
+      icon: Flame,
+      color: "from-emerald-500/20 to-teal-500/10 border-emerald-500/30 text-emerald-600",
+      badge: "Training",
+    },
+    {
+      title: "Academy Facilities",
+      subtitle: "K.R.K Field ground setup, stopwatch timing & medical check",
+      href: "/about/facilities",
+      icon: ShieldCheck,
+      color: "from-blue-500/20 to-indigo-500/10 border-blue-500/30 text-blue-600",
+      badge: "Ground",
+    },
+    {
+      title: "Selections & Achievements",
+      subtitle: "Hall of Fame record of 1,200+ selected candidates",
+      href: "/about/achievements",
+      icon: Award,
+      color: "from-purple-500/20 to-violet-500/10 border-purple-500/30 text-purple-600",
+      badge: "Selections",
+    },
+  ];
+
+  return (
+    <section className="py-12 sm:py-16 bg-white border-t border-slate-200">
+      <Container>
+        <div className="mb-8">
+          <span className="px-3.5 py-1 text-xs font-black uppercase tracking-wider bg-orange-100 text-[#ea580c] border border-orange-200 rounded-full">
+            ⭐ Academy Subcategories &amp; Information
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mt-2">
+            Explore About Academy
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {subcategories.map((sub) => {
+            const Icon = sub.icon;
+            return (
+              <a
+                key={sub.href}
+                href={sub.href}
+                className="group rounded-3xl bg-slate-50 border-2 border-slate-200 p-5 shadow-xs hover:shadow-xl hover:border-amber-400 hover:bg-white transition-all duration-300 flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-3">
+                    <div className={`p-2.5 rounded-2xl bg-gradient-to-br ${sub.color} border shadow-xs group-hover:scale-110 transition-transform`}>
+                      <Icon size={20} />
+                    </div>
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase bg-orange-50 text-[#ea580c] border border-orange-200">
+                      {sub.badge}
+                    </span>
+                  </div>
+
+                  <h3 className="text-base font-black text-slate-900 group-hover:text-[#ea580c] transition-colors leading-tight">
+                    {sub.title}
+                  </h3>
+                  <p className="text-xs font-medium text-slate-600 mt-1.5 leading-relaxed">
+                    {sub.subtitle}
+                  </p>
+                </div>
+
+                <div className="mt-4 pt-3 border-t border-slate-200/80 flex items-center justify-between text-xs font-black text-[#ea580c]">
+                  <span>View Details</span>
+                  <span className="group-hover:translate-x-1 transition-transform">→</span>
+                </div>
+              </a>
+            );
+          })}
+        </div>
+      </Container>
+    </section>
+  );
+}
+
 export default function About() {
-  return <AboutHero />;
+  return (
+    <>
+      <AboutHero />
+      <AboutSubcategoryGrid />
+    </>
+  );
 }
