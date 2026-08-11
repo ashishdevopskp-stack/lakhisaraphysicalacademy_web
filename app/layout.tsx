@@ -6,6 +6,7 @@ import { ThemeProvider } from "./components/ThemeProvider";
 import LoadingProvider from "./components/LoadingProvider";
 import LayoutChrome from "./components/LayoutChrome";
 import ContentProtection from "./components/ContentProtection";
+import { TricolorProgress } from "./components/TricolorProgress";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const poppins = Poppins({ subsets: ["latin"], weight: ["500", "600", "700"], variable: "--font-poppins", display: "swap" });
@@ -52,6 +53,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body>
+        <TricolorProgress />
         <ThemeProvider>
           <LoadingProvider>
             <ContentProtection />

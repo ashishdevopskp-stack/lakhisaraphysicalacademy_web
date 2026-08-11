@@ -28,13 +28,17 @@
   --color-signal-dim: #fff7ed;
   --color-on-signal: #ffffff;
 
-  /* Ashoka Chakra Navy & Green */
+  /* Army Institutional Palette & Ashoka Navy */
+  --color-army-olive: #2D3A1E;
+  --color-army-olive-light: #3D4C29;
+  --color-army-olive-dark: #1E2813;
+  --color-army-khaki: #C3B091;
+  --color-army-gold: #D4AF37;
+  --color-saffron: #FF9933;
   --color-chakra: #000080;
-  --color-chakra-light: #1e3a8a;
+  --color-chakra-light: #0B3D91;
   --color-india-green: #138808;
-  --color-army-olive: #2b4c2b;
-  --color-army-dark: #112615;
-  --color-army-khaki: #8b9a65;
+
   --color-accent: #15803d;
   --color-accent-strong: #166534;
   --color-accent-dim: #f0fdf4;
@@ -84,7 +88,6 @@
     -khtml-user-drag: none;
     -moz-user-drag: none;
     -o-user-drag: none;
-    user-drag: none;
     pointer-events: auto;
   }
 
