@@ -148,19 +148,6 @@ export function TokenCard({
             Room {data.roomNumber}
             {data.bedNumber ? ` (Bed ${data.bedNumber})` : ''}
           </Row>
-          <Row label="Meal Plan:" small>
-            <span
-              style={{
-                background: '#fef3c7',
-                color: '#92400e',
-                padding: '2px 6px',
-                borderRadius: 4,
-                fontWeight: 700,
-              }}
-            >
-              {data.slots.join(' • ')}
-            </span>
-          </Row>
           <Row label="Date of Issue:">{data.issueDate}</Row>
           <Row label="Valid Till:" noBorder>
             <span style={{ color: '#b91c1c', fontWeight: 800 }}>{data.expiryDate}</span>
@@ -299,22 +286,6 @@ export function CompactTokenCard({ data }: { data: TokenCardData }) {
         <div style={{ fontSize: 8.5, color: '#334155', marginTop: 3, lineHeight: 1.2 }}>
           <b>Hostel:</b> {data.hostelName} | <b>Room:</b> {data.roomNumber}
           {data.bedNumber ? `-${data.bedNumber}` : ''}
-        </div>
-
-        <div style={{ marginTop: 4, display: 'flex', alignItems: 'center', gap: 3 }}>
-          <span
-            style={{
-              background: '#fef3c7',
-              color: '#92400e',
-              border: '1px solid #fcd34d',
-              padding: '1px 5px',
-              borderRadius: 4,
-              fontSize: 7.5,
-              fontWeight: 800,
-            }}
-          >
-            {data.slots.join(' • ')}
-          </span>
         </div>
 
         <div style={{ fontSize: 8, color: '#334155', marginTop: 4, lineHeight: 1.2 }}>
