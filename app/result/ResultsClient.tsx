@@ -34,6 +34,7 @@ import {
   type StudentItem,
   type SelectionStatus,
 } from "../lib/results-data";
+import { ServiceLogo } from "../components/ServiceLogos";
 
 function ResultsHero() {
   return (
@@ -305,11 +306,12 @@ function SelectedStudentCards({ students }: { students: StudentItem[] }) {
 
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center justify-between gap-1">
+                          <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-slate-900 text-amber-400 text-[10px] font-black border border-slate-700">
+                            <ServiceLogo label={student.department} size={16} />
+                            <span>{student.department}</span>
+                          </div>
                           <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase border ${statusBadge.color}`}>
                             {statusBadge.label}
-                          </span>
-                          <span className="text-[10px] font-black text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
-                            {student.year}
                           </span>
                         </div>
 

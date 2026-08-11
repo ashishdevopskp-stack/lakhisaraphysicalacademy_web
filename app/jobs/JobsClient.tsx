@@ -24,6 +24,7 @@ import {
   STATUS_STYLES,
   type JobItem,
 } from "../lib/jobs-data";
+import { ServiceLogo } from "../components/ServiceLogos";
 import { FadeInUp, ScrollFadeUp, StaggerList, StaggerItem } from "./_JobsMotion";
 
 const PILL_COLORS = ["pill-color-1", "pill-color-2", "pill-color-3", "pill-color-4", "pill-color-5"];
@@ -129,8 +130,8 @@ function JobCategories({
           Job Categories
         </ScrollFadeUp>
 
-        <StaggerList className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
-          {combinedList.map(({ label, icon: Icon }) => {
+        <StaggerList className="mt-10 grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 sm:gap-4">
+          {combinedList.map(({ label }) => {
             const isSelected = selectedCategory === label;
             return (
               <StaggerItem
@@ -140,16 +141,32 @@ function JobCategories({
                   const el = document.getElementById("listings");
                   if (el) el.scrollIntoView({ behavior: "smooth" });
                 }}
-                className={`card-flat flex flex-col items-center gap-2 px-3 py-5 text-center transition-all cursor-pointer ${
+                className={`group relative flex flex-col items-center justify-between p-4 text-center cursor-pointer rounded-3xl transition-all duration-300 ${
                   isSelected
-                    ? "bg-[#ea580c] text-white border-orange-600 shadow-md scale-[1.02]"
-                    : "hover:border-orange-300"
+                    ? "bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 text-white border-2 border-orange-500 shadow-2xl scale-[1.04] ring-4 ring-orange-500/20"
+                    : "bg-white hover:bg-gradient-to-b hover:from-white hover:to-orange-50/50 border-2 border-slate-200/90 hover:border-orange-400 shadow-sm hover:shadow-xl hover:-translate-y-1"
                 }`}
               >
-                <Icon size={20} className={isSelected ? "text-white" : "text-signal-strong"} />
-                <span className={`font-body text-[12px] font-bold ${isSelected ? "text-white" : "text-text-muted"}`}>
+                {/* Official Logo Display - Large 68px Prominent Emblem */}
+                <div className="my-2 transition-transform duration-300 group-hover:scale-110 drop-shadow-md">
+                  <ServiceLogo label={label} size={68} />
+                </div>
+
+                {/* Category Label */}
+                <span
+                  className={`font-body text-[12.5px] font-black leading-tight mt-2 ${
+                    isSelected ? "text-amber-400" : "text-slate-900 group-hover:text-orange-600"
+                  }`}
+                >
                   {label}
                 </span>
+
+                {/* Active Selection Indicator */}
+                {isSelected && (
+                  <span className="mt-2 px-2 py-0.5 rounded-full bg-orange-500 text-[9px] font-extrabold uppercase tracking-wider text-white shadow-xs">
+                    Selected
+                  </span>
+                )}
               </StaggerItem>
             );
           })}
@@ -269,11 +286,14 @@ function JobListings({
                   </div>
                 )}
 
-                <div className="flex items-center justify-between gap-3">
-                  <span className={`pill ${PILL_COLORS[i % PILL_COLORS.length]}`}>
-                    {job.category}
-                  </span>
-                  <span className={`font-mono text-[12px] font-medium ${STATUS_STYLES[job.status]}`}>
+                <div className="flex items-center justify-between gap-3 mb-2">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-xl bg-slate-950 text-white border border-slate-800 shadow-xs">
+                    <ServiceLogo label={job.category} size={22} />
+                    <span className="text-[11px] font-black text-amber-400">
+                      {job.category}
+                    </span>
+                  </div>
+                  <span className={`font-mono text-[12px] font-bold ${STATUS_STYLES[job.status]}`}>
                     ● {job.status}
                   </span>
                 </div>

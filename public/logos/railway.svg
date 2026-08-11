@@ -1,0 +1,35 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="60" cy="60" r="58" fill="#D32F2F" stroke="#B71C1C" stroke-width="2"/>
+  <circle cx="60" cy="60" r="50" stroke="#FFFFFF" stroke-width="1.5" stroke-dasharray="4 2"/>
+  <circle cx="60" cy="60" r="44" stroke="#FFFFFF" stroke-width="2" fill="none"/>
+  
+  <path id="h-path" d="M 24 60 A 36 36 0 0 1 96 60" fill="none"/>
+  <text fill="#FFFFFF" font-size="9" font-weight="900" font-family="sans-serif">
+    <textPath href="#h-path" startOffset="50%" text-anchor="middle">भारतीय रेल</textPath>
+  </text>
+
+  <path id="e-path" d="M 96 60 A 36 36 0 0 1 24 60" fill="none"/>
+  <text fill="#FFFFFF" font-size="8" font-weight="900" font-family="sans-serif">
+    <textPath href="#e-path" startOffset="50%" text-anchor="middle">INDIAN RAILWAYS</textPath>
+  </text>
+
+  <circle cx="60" cy="60" r="32" fill="#C62828" stroke="#FFFFFF" stroke-width="1.5"/>
+  <line x1="32" y1="52" x2="88" y2="52" stroke="#FFFFFF" stroke-width="1" opacity="0.6"/>
+  <line x1="32" y1="57" x2="88" y2="57" stroke="#FFFFFF" stroke-width="1" opacity="0.6"/>
+  <line x1="32" y1="62" x2="88" y2="62" stroke="#FFFFFF" stroke-width="1" opacity="0.6"/>
+  <line x1="32" y1="67" x2="88" y2="67" stroke="#FFFFFF" stroke-width="1" opacity="0.6"/>
+  <line x1="32" y1="72" x2="88" y2="72" stroke="#FFFFFF" stroke-width="1" opacity="0.6"/>
+
+  <path d="M60 36C46 36 40 46 38 68C38 74 44 78 60 78C76 78 82 74 82 68C80 46 74 36 60 36Z" fill="#FFFFFF"/>
+  <circle cx="60" cy="48" r="8" fill="#C62828"/>
+  <path d="M57 44H63V52H57V44Z" fill="#FFFFFF"/>
+  <circle cx="60" cy="46" r="2.5" fill="#C62828"/>
+
+  <rect x="46" y="62" width="28" height="3" rx="1" fill="#C62828"/>
+  <rect x="48" y="67" width="24" height="2" rx="1" fill="#C62828"/>
+  <circle cx="52" cy="72" r="2" fill="#C62828"/>
+  <circle cx="68" cy="72" r="2" fill="#C62828"/>
+
+  <polygon points="20,58 21.5,61 25,61 22,63 23,66 20,64 17,66 18,63 15,61 18.5,61" fill="#FFFFFF"/>
+  <polygon points="100,58 101.5,61 105,61 102,63 103,66 100,64 97,66 98,63 95,61 98.5,61" fill="#FFFFFF"/>
+</svg>

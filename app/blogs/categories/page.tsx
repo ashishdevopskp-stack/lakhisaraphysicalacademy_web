@@ -8,6 +8,7 @@ import {
 import Container from "../../components/Container";
 import { SectionGlow, BlogSubNav } from "../_shared";
 import { FadeInUp, StaggerList, StaggerItem } from "../_BlogMotion";
+import { ServiceLogo } from "../../components/ServiceLogos";
 
 export const metadata = {
   title: "Browse By Category | Academy Blog",
@@ -16,22 +17,22 @@ export const metadata = {
 };
 
 const CATEGORIES = [
-  { label: "Army Preparation", icon: Shield },
-  { label: "Bihar Police", icon: ShieldAlert },
-  { label: "Daroga (SI)", icon: Star },
-  { label: "SSC GD", icon: ShieldCheck },
-  { label: "Railway", icon: TrainFront },
-  { label: "Defence & Paramilitary", icon: Siren },
-  { label: "Physical Training", icon: Activity },
-  { label: "Fitness & Workout", icon: Dumbbell },
-  { label: "Diet & Nutrition", icon: Salad },
-  { label: "Running Tips", icon: Flame },
-  { label: "Exam Preparation", icon: Target },
-  { label: "Recruitment News", icon: Megaphone },
-  { label: "Student Success Stories", icon: Trophy },
-  { label: "Academy Updates", icon: Clapperboard },
-  { label: "General Knowledge", icon: GraduationCap },
-  { label: "Motivation", icon: Sparkles },
+  { label: "Army Preparation" },
+  { label: "Bihar Police" },
+  { label: "Daroga (SI)" },
+  { label: "SSC GD" },
+  { label: "Railway" },
+  { label: "Defence & Paramilitary" },
+  { label: "Physical Training" },
+  { label: "Fitness & Workout" },
+  { label: "Diet & Nutrition" },
+  { label: "Running Tips" },
+  { label: "Exam Preparation" },
+  { label: "Recruitment News" },
+  { label: "Student Success Stories" },
+  { label: "Academy Updates" },
+  { label: "General Knowledge" },
+  { label: "Motivation" },
 ] as const;
 
 function CategoriesHero() {
@@ -60,17 +61,21 @@ function CategoryGrid() {
     <section className="py-12 sm:py-20">
       <Container>
         <StaggerList
-          className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8"
+          className="grid grid-cols-2 gap-3.5 sm:grid-cols-4 lg:grid-cols-8"
           staggerDelay={0.03}
         >
-          {CATEGORIES.map(({ label, icon: Icon }) => (
+          {CATEGORIES.map(({ label }) => (
             <StaggerItem key={label} hover>
               <a
                 href={`/blogs/articles?category=${encodeURIComponent(label)}`}
-                className="card-flat flex flex-col items-center gap-2 px-3 py-5 text-center transition-transform hover:scale-[1.03]"
+                className="group relative flex flex-col items-center justify-between p-4 text-center cursor-pointer rounded-3xl bg-white hover:bg-gradient-to-b hover:from-white hover:to-orange-50/50 border-2 border-slate-200/90 hover:border-orange-400 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
               >
-                <Icon size={20} className="text-signal" />
-                <span className="font-body text-[12px] text-text-muted">{label}</span>
+                <div className="my-2 transition-transform duration-300 group-hover:scale-110 drop-shadow-md">
+                  <ServiceLogo label={label} size={68} />
+                </div>
+                <span className="font-body text-[12.5px] font-black text-slate-900 group-hover:text-orange-600 leading-tight mt-2">
+                  {label}
+                </span>
               </a>
             </StaggerItem>
           ))}

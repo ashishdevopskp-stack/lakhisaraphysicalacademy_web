@@ -1,0 +1,8 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="60" cy="60" r="58" fill="#0284C7" stroke="#F59E0B" stroke-width="3"/>
+  <path d="M12 28L60 12L108 28V60C108 86 86 106 60 112C34 106 12 86 12 60V28Z" fill="#0369A1" stroke="#FBBF24" stroke-width="2"/>
+  <path d="M18 30L60 16L102 30V56H18V30Z" fill="#DC2626"/>
+  <circle cx="60" cy="54" r="22" fill="#FEF08A" stroke="#B45309" stroke-width="2"/>
+  <path d="M60 38C52 38 46 44 46 52C46 64 60 74 60 74C60 74 74 64 74 52C74 44 68 38 60 38Z" fill="#15803D"/>
+  <text x="60" y="98" text-anchor="middle" fill="#FFFFFF" font-size="10" font-weight="900" font-family="sans-serif">BIHAR POLICE</text>
+</svg>

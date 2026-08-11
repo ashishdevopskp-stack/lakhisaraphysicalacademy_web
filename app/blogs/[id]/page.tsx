@@ -9,6 +9,7 @@ import { getBlog, incrementBlogViews } from "@/app/lib/action/blogs";
 import Container from "../../components/Container";
 import Button from "../../components/Button";
 import Badge from "../../components/Badge";
+import RichContentRenderer from "../../components/RichContentRenderer";
 import { BlogSubNav } from "../_shared";
 
 type BlogDetailParams = { params: Promise<{ id: string }> };
@@ -102,8 +103,8 @@ export default async function BlogDetailPage({ params }: BlogDetailParams) {
           ) : null}
 
           {blog.content && (
-            <div className="font-body mt-10 whitespace-pre-line text-[15px] leading-[1.8] text-text">
-              {blog.content}
+            <div className="mt-10">
+              <RichContentRenderer content={blog.content} />
             </div>
           )}
         </div>
