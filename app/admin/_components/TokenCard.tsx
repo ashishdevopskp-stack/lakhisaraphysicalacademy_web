@@ -39,122 +39,154 @@ export function TokenCard({
     <div
       style={{
         width: '100%',
-        maxWidth: 600,
+        maxWidth: 580,
         minWidth: 280,
         margin: '0 auto',
         boxSizing: 'border-box',
-        border: '2px solid #222',
-        borderRadius: 10,
-        background: '#fdf6ee',
-        fontFamily: "'Trebuchet MS', Arial, sans-serif",
+        border: '2px solid #1e293b',
+        borderRadius: 12,
+        background: '#ffffff',
+        boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)',
+        fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
+        overflow: 'hidden',
       }}
     >
-      {/* Header */}
+      {/* Premium Navy Header */}
       <div
         style={{
-          padding: 'clamp(10px,3vw,16px) clamp(12px,4vw,18px) clamp(6px,2vw,10px)',
+          background: 'linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%)',
+          color: '#ffffff',
+          padding: '14px 18px',
           display: 'flex',
           alignItems: 'center',
-          gap: 'clamp(8px,3vw,14px)',
+          gap: 14,
         }}
       >
         <Logo />
         <div style={{ flex: 1, minWidth: 0 }}>
           <div
             style={{
-              color: '#1a1a5e',
+              color: '#fef08a',
               fontWeight: 900,
-              fontSize: 'clamp(18px,5.5vw,28px)',
+              fontSize: 'clamp(18px, 5vw, 24px)',
               letterSpacing: 1,
-              lineHeight: 1.15,
+              lineHeight: 1.1,
             }}
           >
-            {academyName}
+            {academyName} {academySub}
           </div>
-          <div
-            style={{
-              color: '#0b5d2e',
-              fontWeight: 800,
-              fontSize: 'clamp(11px,3vw,14px)',
-              marginTop: 4,
-              letterSpacing: 0.5,
-            }}
-          >
-            <span style={{ color: '#7a1f1f' }}>★</span> {academySub} <span style={{ color: '#7a1f1f' }}>★</span>
-          </div>
-          <div style={{ fontSize: 'clamp(9px,2.4vw,11px)', color: '#444', marginTop: 3 }}>
-            Contact: 7739776471, 7903594008
+          <div style={{ fontSize: 'clamp(10px, 2.5vw, 12px)', color: '#e2e8f0', marginTop: 4 }}>
+            <b>Contact:</b> 7739776471, 7903594008
           </div>
         </div>
       </div>
 
-      {/* Banner */}
+      {/* Emerald Banner */}
       <div
         style={{
-          background: '#0b5d2e',
-          color: '#f5d800',
+          background: 'linear-gradient(90deg, #047857 0%, #059669 100%)',
+          color: '#ffffff',
           textAlign: 'center',
           fontWeight: 800,
-          fontSize: 'clamp(13px,3.6vw,18px)',
-          padding: 'clamp(6px,2vw,8px) 0',
+          fontSize: 'clamp(13px, 3.5vw, 16px)',
+          padding: '6px 0',
           letterSpacing: 1,
         }}
       >
         ★ HOSTEL BHOJAN TOKEN ★
       </div>
 
-      {/* Body */}
-      <div style={{ display: 'flex', borderTop: '1px solid #222' }}>
+      {/* Main Details Body */}
+      <div style={{ display: 'flex', borderTop: '1px solid #e2e8f0' }}>
+        {/* Token # Badge */}
         <div
           style={{
-            width: 'clamp(70px,20%,120px)',
+            width: 'clamp(80px, 25%, 120px)',
             flexShrink: 0,
-            borderRight: '1px solid #222',
+            background: '#f8fafc',
+            borderRight: '1px solid #e2e8f0',
             textAlign: 'center',
-            padding: 'clamp(8px,3vw,12px) 4px',
+            padding: '16px 8px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
           }}
         >
-          <div style={{ fontSize: 'clamp(9px,2.4vw,11px)', fontWeight: 700, color: '#1a1a5e' }}>TOKEN NO.</div>
-          <div style={{ fontSize: 'clamp(24px,7vw,40px)', fontWeight: 900, color: '#7a1f1f', lineHeight: 1.2 }}>
+          <div style={{ fontSize: 11, fontWeight: 800, color: '#475569', letterSpacing: 0.5 }}>
+            TOKEN NO.
+          </div>
+          <div
+            style={{
+              fontSize: 'clamp(28px, 8vw, 42px)',
+              fontWeight: 900,
+              color: '#b91c1c',
+              lineHeight: 1.1,
+              marginTop: 2,
+            }}
+          >
             {data.tokenNo}
           </div>
+          <div style={{ fontSize: 9.5, color: '#64748b', marginTop: 4, fontWeight: 600 }}>
+            S/N: {data.serial}
+          </div>
         </div>
-        <div style={{ flex: 1, minWidth: 0, padding: 'clamp(6px,2.5vw,10px) clamp(8px,3.5vw,16px)', fontSize: 'clamp(11px,3vw,13.5px)' }}>
-          <Row label="S/N.">{data.serial}</Row>
-          <Row label="Student:">{data.studentName}</Row>
+
+        {/* Student Information Rows */}
+        <div
+          style={{
+            flex: 1,
+            minWidth: 0,
+            padding: '12px 16px',
+            fontSize: 'clamp(11px, 3vw, 13px)',
+            background: '#ffffff',
+          }}
+        >
+          <Row label="Student Name:">{data.studentName}</Row>
           <Row label="Hostel:">{data.hostelName}</Row>
-          <Row label="Room:">
-            {data.roomNumber}
-            {data.bedNumber ? `-${data.bedNumber}` : ''}
+          <Row label="Room & Bed:">
+            Room {data.roomNumber}
+            {data.bedNumber ? ` (Bed ${data.bedNumber})` : ''}
           </Row>
           <Row label="Meal Plan:" small>
-            {data.slots.join(' • ')}
+            <span
+              style={{
+                background: '#fef3c7',
+                color: '#92400e',
+                padding: '2px 6px',
+                borderRadius: 4,
+                fontWeight: 700,
+              }}
+            >
+              {data.slots.join(' • ')}
+            </span>
           </Row>
           <Row label="Date of Issue:">{data.issueDate}</Row>
           <Row label="Valid Till:" noBorder>
-            <span style={{ color: '#7a1f1f', fontWeight: 800 }}>{data.expiryDate}</span>
+            <span style={{ color: '#b91c1c', fontWeight: 800 }}>{data.expiryDate}</span>
           </Row>
         </div>
       </div>
 
-      {/* Hindi notice */}
+      {/* Hindi Notice Box */}
       <div
         style={{
-          borderTop: '1px solid #222',
-          padding: 'clamp(8px,3vw,10px) clamp(10px,3.5vw,16px)',
-          fontSize: 'clamp(9.5px,2.6vw,11px)',
-          color: '#333',
-          lineHeight: 1.6,
+          borderTop: '1px dashed #cbd5e1',
+          background: '#fafafa',
+          padding: '10px 16px',
+          fontSize: 'clamp(10px, 2.7vw, 11px)',
+          color: '#334155',
+          lineHeight: 1.5,
         }}
       >
-        <div style={{ fontWeight: 800, color: '#7a1f1f', marginBottom: 2 }}>नोटः</div>
+        <div style={{ fontWeight: 800, color: '#b91c1c', marginBottom: 2 }}>नोटः</div>
         <div>• प्रत्येक टोकन केवल एक बार मान्य होगा।</div>
         <div>• भोजन प्राप्त करने के लिए टोकन जमा करना अनिवार्य है।</div>
         <div>• बिना टोकन के भोजन नहीं दिया जाएगा।</div>
         <div>• टोकन खो जाने पर नया टोकन जारी नहीं किया जाएगा।</div>
       </div>
 
-      {/* Footer — director */}
+      {/* Director Footer */}
       <div
         style={{
           display: 'flex',
@@ -162,110 +194,167 @@ export function TokenCard({
           justifyContent: 'space-between',
           alignItems: 'center',
           gap: 8,
-          padding: 'clamp(8px,3vw,10px) clamp(10px,3.5vw,16px)',
-          borderTop: '1px solid #222',
-          fontSize: 'clamp(10px,2.8vw,12px)',
-          background: '#f3ead9',
-          borderRadius: '0 0 8px 8px',
+          padding: '8px 16px',
+          background: '#0f172a',
+          color: '#f8fafc',
+          fontSize: 'clamp(10px, 2.7vw, 11.5px)',
         }}
       >
         <span>
-          <b style={{ color: '#1a1a5e' }}>Hostel Director:</b> Vikesh Kumar
+          <b>Hostel Director:</b> Vikesh Kumar
         </span>
         <span>
-          <b style={{ color: '#1a1a5e' }}>Mobile:</b> 9370427046
+          <b>Mobile:</b> 9370427046
         </span>
       </div>
     </div>
   )
 }
 
-/** Compact A4 Print Token Card — 10 cards fit on a single A4 page (2 cols x 5 rows) */
+/** Compact A4 Print Token Card — Exactly 12 cards fit on 1 A4 page (3 cols x 4 rows) */
 export function CompactTokenCard({ data }: { data: TokenCardData }) {
   return (
     <div
       style={{
-        width: 275,
-        height: 152,
+        width: 178,
+        height: 194,
         boxSizing: 'border-box',
-        border: '1.5px solid #222',
+        border: '1.5px solid #1e293b',
         borderRadius: 6,
-        background: '#fdf6ee',
-        fontFamily: "'Trebuchet MS', Arial, sans-serif",
+        background: '#ffffff',
+        fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
         overflow: 'hidden',
-        fontSize: 10,
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
+        position: 'relative',
       }}
     >
-      {/* Top Banner */}
+      {/* Header Bar */}
       <div
         style={{
-          background: '#0b5d2e',
+          background: 'linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%)',
           color: '#ffffff',
-          padding: '3px 6px',
+          padding: '3px 4px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 4,
+        }}
+      >
+        <Logo />
+        <div style={{ flex: 1, minWidth: 0, lineHeight: 1.1 }}>
+          <div style={{ fontSize: 7.5, fontWeight: 900, color: '#fef08a', letterSpacing: 0.2 }}>
+            LAKHISARAI PHYSICAL ACADEMY
+          </div>
+          <div style={{ fontSize: 5.8, color: '#cbd5e1', marginTop: 1 }}>
+            ★ BHOJAN TOKEN ★ • 7739776471
+          </div>
+        </div>
+      </div>
+
+      {/* Token Number Banner */}
+      <div
+        style={{
+          background: 'linear-gradient(90deg, #047857 0%, #059669 100%)',
+          color: '#ffffff',
+          padding: '2px 5px',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          fontSize: 9,
-          fontWeight: 800,
         }}
       >
-        <span>★ LAKHISARAI PHYSICAL ACADEMY ★</span>
-        <span style={{ color: '#f5d800' }}>BHOJAN TOKEN</span>
-      </div>
-
-      {/* Main Content */}
-      <div style={{ display: 'flex', flex: 1, padding: 4 }}>
-        {/* Token # Box */}
-        <div
-          style={{
-            width: 65,
-            borderRight: '1px solid #ccc',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            paddingRight: 4,
-          }}
-        >
-          <span style={{ fontSize: 8, fontWeight: 700, color: '#1a1a5e' }}>TOKEN NO.</span>
-          <span style={{ fontSize: 24, fontWeight: 900, color: '#7a1f1f', lineHeight: 1 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+          <span style={{ fontSize: 6.5, fontWeight: 800, color: '#e2e8f0' }}>TOKEN:</span>
+          <span style={{ fontSize: 14, fontWeight: 900, color: '#fef08a', lineHeight: 1 }}>
             {data.tokenNo}
           </span>
-          <span style={{ fontSize: 7, color: '#666', marginTop: 2 }}>S/N: {data.serial}</span>
         </div>
+        <span
+          style={{
+            fontSize: 6,
+            fontWeight: 700,
+            background: 'rgba(255,255,255,0.2)',
+            padding: '1px 3px',
+            borderRadius: 3,
+          }}
+        >
+          S/N: {data.serial}
+        </span>
+      </div>
 
-        {/* Student & Date Details */}
-        <div style={{ flex: 1, paddingLeft: 6, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          <div style={{ fontWeight: 800, fontSize: 11, color: '#1a1a5e', truncate: true } as any}>
+      {/* Details Box */}
+      <div style={{ padding: '3px 5px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        <div>
+          <div
+            style={{
+              fontWeight: 800,
+              fontSize: 8.5,
+              color: '#0f172a',
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+          >
             {data.studentName}
           </div>
-          <div style={{ fontSize: 9, color: '#444', marginTop: 2 }}>
-            <b>Hostel:</b> {data.hostelName} · Room {data.roomNumber}
+          <div style={{ fontSize: 6.8, color: '#475569', marginTop: 1 }}>
+            <b>Hostel:</b> {data.hostelName} | <b>Room:</b> {data.roomNumber}
+            {data.bedNumber ? `-${data.bedNumber}` : ''}
           </div>
-          <div style={{ fontSize: 8.5, color: '#555', marginTop: 2 }}>
-            <b>Valid:</b> {data.issueDate} → <span style={{ color: '#7a1f1f', fontWeight: 800 }}>{data.expiryDate}</span>
+          <div style={{ marginTop: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
+            <span
+              style={{
+                background: '#fef3c7',
+                color: '#92400e',
+                border: '0.5px solid #fcd34d',
+                padding: '0.5px 3px',
+                borderRadius: 3,
+                fontSize: 5.8,
+                fontWeight: 800,
+              }}
+            >
+              {data.slots.join(' • ')}
+            </span>
           </div>
+          <div style={{ fontSize: 6.8, color: '#334155', marginTop: 2 }}>
+            <b>Valid:</b> {data.issueDate} →{' '}
+            <span style={{ color: '#b91c1c', fontWeight: 800 }}>{data.expiryDate}</span>
+          </div>
+        </div>
+
+        {/* Hindi Rules Notice */}
+        <div
+          style={{
+            background: '#f8fafc',
+            borderTop: '1px dashed #cbd5e1',
+            borderBottom: '1px dashed #cbd5e1',
+            padding: '2px 4px',
+            fontSize: 5.8,
+            lineHeight: 1.15,
+            color: '#334155',
+            marginTop: 2,
+          }}
+        >
+          <span style={{ fontWeight: 800, color: '#b91c1c' }}>नोट: </span>
+          <span>1 टोकन 1 बार मान्य • भोजन हेतु जमा अनिवार्य • बिना टोकन भोजन नहीं • खोने पर नया नहीं</span>
         </div>
       </div>
 
-      {/* Compact Footer */}
+      {/* Footer */}
       <div
         style={{
-          borderTop: '1px solid #ddd',
-          background: '#f3ead9',
-          padding: '2px 6px',
-          fontSize: 7.5,
-          color: '#333',
+          background: '#0f172a',
+          color: '#f8fafc',
+          padding: '2px 4px',
+          fontSize: 6,
+          fontWeight: 700,
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
         }}
       >
-        <span>• भोजन प्राप्त करने के लिए जमा करें</span>
-        <span style={{ fontWeight: 700, color: '#1a1a5e' }}>Director: 9370427046</span>
+        <span>Dir: Vikesh Kumar</span>
+        <span>Mob: 9370427046</span>
       </div>
     </div>
   )
@@ -290,12 +379,12 @@ function Row({
         justifyContent: 'space-between',
         alignItems: 'baseline',
         gap: '2px 10px',
-        padding: '5px 0',
-        borderBottom: noBorder ? 'none' : '1px solid #ddd',
+        padding: '4px 0',
+        borderBottom: noBorder ? 'none' : '1px solid #f1f5f9',
       }}
     >
       <span style={{ flexShrink: 0 }}>
-        <b style={{ color: '#1a1a5e' }}>{label}</b>
+        <b style={{ color: '#1e293b' }}>{label}</b>
       </span>
       <span
         style={{
@@ -303,7 +392,7 @@ function Row({
           textAlign: 'right',
           wordBreak: 'break-word',
           fontSize: small ? '0.9em' : undefined,
-          color: small ? '#333' : undefined,
+          color: small ? '#333' : '#0f172a',
         }}
       >
         {children}

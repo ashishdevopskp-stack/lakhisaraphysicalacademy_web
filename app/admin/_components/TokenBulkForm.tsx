@@ -6,7 +6,7 @@ import { bulkGenerateTokens } from '@/app/lib/action/tokens'
 import { TokenCard, CompactTokenCard, type TokenCardData } from './TokenCard'
 import { CheckSquare, Square, Download, Calendar, Layers, Check } from 'lucide-react'
 
-const CARDS_PER_PAGE = 10
+const CARDS_PER_PAGE = 12
 
 interface StudentSelection {
   student: StudentWithDetails
@@ -92,6 +92,30 @@ export function TokenBulkForm() {
 
   const selectedCount = studentSelections.filter((s) => s.selected).length
 
+  // Quick 12 Dummy Tokens generator for testing A4 print layout
+  function generate12DummyTokens() {
+    const today = new Date().toLocaleDateString('en-GB')
+    const nextMonth = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en-GB')
+
+    const dummyCards: TokenCardData[] = Array.from({ length: 12 }, (_, i) => {
+      const num = i + 1
+      return {
+        tokenNo: String(num).padStart(2, '0'),
+        serial: `LPA-2026-${1000 + num}`,
+        issueDate: today,
+        expiryDate: nextMonth,
+        studentName: `Dummy Student ${num}`,
+        hostelName: i % 2 === 0 ? 'JAY SHANKAR' : 'GIRLS HOSTEL',
+        roomNumber: `${101 + (i % 5)}`,
+        bedNumber: `${(i % 3) + 1}`,
+        slots: ['Breakfast', 'Lunch', 'Dinner'],
+      }
+    })
+
+    setMatchedCount(12)
+    setTokens(dummyCards)
+  }
+
   function generateSelectedTokens() {
     const selectedItems = studentSelections.filter((s) => s.selected)
     if (selectedItems.length === 0) return
@@ -139,15 +163,16 @@ export function TokenBulkForm() {
     const pageW = 595.28
     const pageH = 841.89
 
-    const marginX = 20
-    const marginY = 20
-    const colGap = 15
-    const rowGap = 10
+    const marginX = 15
+    const marginY = 15
+    const colGap = 8
+    const rowGap = 8
 
-    const cols = 2
-    const rows = 5
+    // 3 columns x 4 rows = 12 cards per A4 page
+    const cols = 3
+    const rows = 4
 
-    const cellW = (pageW - marginX * 2 - colGap) / cols
+    const cellW = (pageW - marginX * 2 - colGap * (cols - 1)) / cols
     const cellH = (pageH - marginY * 2 - rowGap * (rows - 1)) / rows
 
     const bank = document.getElementById('token-bulk-bank')!
@@ -155,7 +180,7 @@ export function TokenBulkForm() {
 
     let idx = 0
     for (const el of Array.from(cardEls)) {
-      const canvas = await html2canvas(el as HTMLElement, { scale: 2, backgroundColor: '#fdf6ee' })
+      const canvas = await html2canvas(el as HTMLElement, { scale: 3, backgroundColor: '#ffffff' })
       const img = canvas.toDataURL('image/png')
       const posInPage = idx % CARDS_PER_PAGE
 
@@ -171,7 +196,7 @@ export function TokenBulkForm() {
       idx++
     }
 
-    pdf.save('bhojan-tokens-10perA4.pdf')
+    pdf.save('bhojan-tokens-12perA4.pdf')
     setExporting(false)
   }
 
@@ -179,10 +204,20 @@ export function TokenBulkForm() {
     <div className="space-y-6">
       {/* Date Configuration Box */}
       <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-4 sm:p-6 space-y-5">
-        <h2 className="text-base font-semibold text-gray-900 flex items-center gap-2">
-          <Calendar size={18} className="text-indigo-600" />
-          Default Token Validity Dates
-        </h2>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <h2 className="text-base font-semibold text-gray-900 flex items-center gap-2">
+            <Calendar size={18} className="text-indigo-600" />
+            Default Token Validity Dates
+          </h2>
+          <button
+            type="button"
+            onClick={generate12DummyTokens}
+            className="px-3.5 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold hover:bg-emerald-100 flex items-center gap-1.5 transition-colors"
+          >
+            <Layers size={14} />
+            Generate 12 Dummy Tokens (Test A4 Print)
+          </button>
+        </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md">
           <div>
@@ -250,7 +285,7 @@ export function TokenBulkForm() {
                 className="px-4 py-2 rounded-lg border border-indigo-200 bg-indigo-50 text-indigo-700 text-sm font-semibold hover:bg-indigo-100 disabled:opacity-50 flex items-center gap-2"
               >
                 <Download size={16} />
-                {exporting ? 'Building PDF…' : 'Download PDF (10 per A4 Page)'}
+                {exporting ? 'Building PDF…' : 'Download PDF (12 per A4 Page)'}
               </button>
             )}
           </div>
@@ -322,7 +357,7 @@ export function TokenBulkForm() {
               Generated Tokens Preview ({tokens.length})
             </h3>
             <span className="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
-              Ready for 10-per-A4 PDF Download
+              Ready for 12-per-A4 PDF Download
             </span>
           </div>
 
@@ -340,7 +375,7 @@ export function TokenBulkForm() {
         </div>
       )}
 
-      {/* Hidden PDF Export Render Bank — Compact 10-per-A4 Cards */}
+      {/* Hidden PDF Export Render Bank — Compact 12-per-A4 Cards */}
       <div id="token-bulk-bank" style={{ position: 'fixed', left: -9999, top: 0 }}>
         {tokens.map((t) => (
           <div key={t.serial} className="compact-bulk-card">
