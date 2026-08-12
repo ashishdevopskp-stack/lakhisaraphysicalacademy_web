@@ -155,6 +155,12 @@ export function TokenBulkForm() {
   async function exportPDF() {
     if (tokens.length === 0) return
     setExporting(true)
+
+    // Ensure all web fonts are loaded prior to canvas conversion
+    if (typeof document !== 'undefined' && document.fonts) {
+      await document.fonts.ready
+    }
+
     const html2canvas = (await import('html2canvas-pro')).default
     const { jsPDF } = await import('jspdf')
 
@@ -176,36 +182,58 @@ export function TokenBulkForm() {
     const cellH = (pageH - marginY * 2 - rowGap * (rows - 1)) / rows
 
     const bank = document.getElementById('token-bulk-bank')!
-    const cardEls = bank.querySelectorAll('.compact-bulk-card')
+    const origPos = bank.style.position
+    const origLeft = bank.style.left
 
-    let idx = 0
-    for (const el of Array.from(cardEls)) {
-      const canvas = await html2canvas(el as HTMLElement, { scale: 3, backgroundColor: '#ffffff' })
-      const img = canvas.toDataURL('image/png')
-      const posInPage = idx % CARDS_PER_PAGE
+    // Temporarily position bank at viewport origin behind background for accurate canvas layout metrics
+    bank.style.position = 'fixed'
+    bank.style.left = '0px'
+    bank.style.top = '0px'
+    bank.style.zIndex = '-9999'
 
-      if (idx > 0 && posInPage === 0) pdf.addPage()
+    try {
+      const cardEls = bank.querySelectorAll('.compact-bulk-card')
 
-      const col = posInPage % cols
-      const row = Math.floor(posInPage / cols)
+      let idx = 0
+      for (const parentEl of Array.from(cardEls)) {
+        const targetEl = (parentEl.firstElementChild as HTMLElement) || (parentEl as HTMLElement)
+        const canvas = await html2canvas(targetEl, {
+          scale: 2.5,
+          backgroundColor: '#ffffff',
+          useCORS: true,
+          logging: false,
+        })
+        const img = canvas.toDataURL('image/png')
+        const posInPage = idx % CARDS_PER_PAGE
 
-      const imgRatio = canvas.width / canvas.height
-      let drawW = cellW
-      let drawH = drawW / imgRatio
-      if (drawH > cellH) {
-        drawH = cellH
-        drawW = drawH * imgRatio
+        if (idx > 0 && posInPage === 0) pdf.addPage()
+
+        const col = posInPage % cols
+        const row = Math.floor(posInPage / cols)
+
+        const imgRatio = canvas.width / canvas.height
+        let drawW = cellW
+        let drawH = drawW / imgRatio
+        if (drawH > cellH) {
+          drawH = cellH
+          drawW = drawH * imgRatio
+        }
+
+        const x = marginX + col * (cellW + colGap) + (cellW - drawW) / 2
+        const y = marginY + row * (cellH + rowGap) + (cellH - drawH) / 2
+
+        pdf.addImage(img, 'PNG', x, y, drawW, drawH)
+        idx++
       }
 
-      const x = marginX + col * (cellW + colGap) + (cellW - drawW) / 2
-      const y = marginY + row * (cellH + rowGap) + (cellH - drawH) / 2
-
-      pdf.addImage(img, 'PNG', x, y, drawW, drawH)
-      idx++
+      pdf.save('bhojan-tokens-9perA4.pdf')
+    } catch (err) {
+      console.error('PDF export failed:', err)
+    } finally {
+      bank.style.position = origPos || 'absolute'
+      bank.style.left = origLeft || '-9999px'
+      setExporting(false)
     }
-
-    pdf.save('bhojan-tokens-9perA4.pdf')
-    setExporting(false)
   }
 
   return (
@@ -383,11 +411,11 @@ export function TokenBulkForm() {
         </div>
       )}
 
-      {/* Hidden PDF Export Render Bank — Compact 12-per-A4 Cards */}
-      <div id="token-bulk-bank" style={{ position: 'fixed', left: -9999, top: 0 }}>
+      {/* Hidden PDF Export Render Bank — Full 9-per-A4 Preview Cards */}
+      <div id="token-bulk-bank" style={{ position: 'fixed', left: -9999, top: 0, width: 600 }}>
         {tokens.map((t) => (
-          <div key={t.serial} className="compact-bulk-card">
-            <CompactTokenCard data={t} />
+          <div key={t.serial} className="compact-bulk-card" style={{ width: 560, marginBottom: 20, display: 'block' }}>
+            <TokenCard data={t} />
           </div>
         ))}
       </div>
