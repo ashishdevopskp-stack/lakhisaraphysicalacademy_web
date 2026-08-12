@@ -14,7 +14,7 @@ const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], weight: ["500", "600"
 
 import { LAKHISARAI_SEO_KEYWORDS } from "./lib/seo-keywords";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://lakhisaraphysicalacademy.com";
+const SITE_URL = "https://lakhisaraphysicalacademy.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
