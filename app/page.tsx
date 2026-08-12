@@ -15,18 +15,20 @@ import { OrganizationSchema } from "./components/JsonLd";
 import { getBlogs } from "./lib/action/blogs";
 import { getResults } from "./lib/action/results";
 import { getBatches } from "./lib/action/batches";
+import { getActiveBanners } from "./lib/action/banners";
 
 export default async function Home() {
-  const [blogs, results, batches] = await Promise.all([
+  const [blogs, results, batches, banners] = await Promise.all([
     getBlogs(),
     getResults(),
     getBatches(),
+    getActiveBanners(),
   ]);
 
   return (
     <main>
       <OrganizationSchema />
-      <Hero />
+      <Hero banners={banners} />
 
       {/* Interactive Category & Subcategory Explorer Hub */}
       <CategoryExplorer />

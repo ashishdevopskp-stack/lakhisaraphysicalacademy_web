@@ -12,6 +12,7 @@ export interface AspectRatioOption {
 }
 
 export const ASPECT_RATIO_OPTIONS: AspectRatioOption[] = [
+  { value: "21:9", label: "21:9 Widescreen Banner", className: "aspect-[21/9]", iconRatio: "w-7 h-3" },
   { value: "16:9", label: "16:9 Banner", className: "aspect-[16/9]", iconRatio: "w-6 h-3.5" },
   { value: "4:3", label: "4:3 Card", className: "aspect-[4/3]", iconRatio: "w-5 h-3.5" },
   { value: "1:1", label: "1:1 Square", className: "aspect-square", iconRatio: "w-4 h-4" },

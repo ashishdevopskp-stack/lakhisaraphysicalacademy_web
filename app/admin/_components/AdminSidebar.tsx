@@ -20,6 +20,13 @@ type NavItem = {
 const NAV: NavItem[] = [
   { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
   {
+    label: 'Home Page Manager', href: '/admin/banners', icon: ImageIcon,
+    children: [
+      { label: 'All Banners', href: '/admin/banners' },
+      { label: 'Add New Banner', href: '/admin/banners/new' },
+    ],
+  },
+  {
     label: 'Batches', href: '/admin/batches', icon: ClipboardList,
     children: [
       { label: 'All Batches', href: '/admin/batches' },

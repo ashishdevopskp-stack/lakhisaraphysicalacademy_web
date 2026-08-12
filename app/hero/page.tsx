@@ -18,10 +18,12 @@ import {
   Download,
 } from "lucide-react";
 import Container from "../components/Container";
+import BannerSlider from "../components/BannerSlider";
+import { DbBanner } from "../lib/action/banners";
 
 const PHONE_NUMBER = "917739776471";
 
-export default function Hero() {
+export default function Hero({ banners }: { banners?: DbBanner[] }) {
   return (
     <section id="top" className="pb-12 pt-3 sm:pb-20 sm:pt-5 overflow-hidden">
       <Container>
@@ -159,6 +161,11 @@ export default function Hero() {
                 </div>
               </div>
             </div>
+
+            {/* Sliding Home Page Banner Placement matching user screenshot */}
+            {banners && banners.length > 0 && (
+              <BannerSlider banners={banners} className="mt-1" />
+            )}
           </div>
 
           {/* Right Column: Featured Course Card & Coaches (Col 8-12) */}
