@@ -89,7 +89,7 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: "google-site-verification-id-placeholder",
+    google: "5Hi9ejRfkH9BJm-i-RJL7F2v18qsOM9nxnQ1CfmMnqk",
   },
 };
 
@@ -123,6 +123,8 @@ export default function RootLayout({
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        {/* Google Search Console Verification Tag */}
+        <meta name="google-site-verification" content="5Hi9ejRfkH9BJm-i-RJL7F2v18qsOM9nxnQ1CfmMnqk" />
         {/* Geo-location Meta Tags for Top Local & Area-Wise Search Rankings */}
         <meta name="geo.region" content="IN-BR" />
         <meta name="geo.placename" content="Lakhisarai, Bihar, India" />
