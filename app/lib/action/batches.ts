@@ -190,7 +190,8 @@ export async function updateBatch(id: string, formData: FormData) {
     if (uploaded) thumbnailUrl = uploaded;
   }
 
-  const { error } = await supabase
+  // 1. Try updating existing row by ID
+  const { data: updatedRows, error } = await supabase
     .from("batches")
     .update({
       name,
@@ -205,10 +206,31 @@ export async function updateBatch(id: string, formData: FormData) {
       thumbnail_url: thumbnailUrl,
       aspect_ratio: aspectRatio,
     })
-    .eq("id", id);
+    .eq("id", id)
+    .select();
 
   if (error) {
     console.error("updateBatch DB error:", error.message);
+  }
+
+  // 2. If no row was updated (e.g. editing a default mock batch like 'batch-1' before DB insert), insert it as a new record!
+  if (!updatedRows || updatedRows.length === 0) {
+    const { error: insertErr } = await supabase.from("batches").insert({
+      name,
+      category,
+      time,
+      location,
+      target_exam: targetExam,
+      capacity,
+      status,
+      highlights,
+      is_visible: isVisible,
+      thumbnail_url: thumbnailUrl,
+      aspect_ratio: aspectRatio,
+    });
+    if (insertErr) {
+      console.error("insert fallback DB error:", insertErr.message);
+    }
   }
 
   revalidatePath("/admin/batches");

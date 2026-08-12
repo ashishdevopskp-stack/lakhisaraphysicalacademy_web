@@ -14,9 +14,14 @@ import Contact from "./contact/page";
 import { OrganizationSchema } from "./components/JsonLd";
 import { getBlogs } from "./lib/action/blogs";
 import { getResults } from "./lib/action/results";
+import { getBatches } from "./lib/action/batches";
 
 export default async function Home() {
-  const [blogs, results] = await Promise.all([getBlogs(), getResults()]);
+  const [blogs, results, batches] = await Promise.all([
+    getBlogs(),
+    getResults(),
+    getBatches(),
+  ]);
 
   return (
     <main>
@@ -30,7 +35,7 @@ export default async function Home() {
       {/* Blog carousel near the top as requested */}
       <BlogCarousel blogs={blogs} />
       <Courses />
-      <BatchTimetable />
+      <BatchTimetable liveBatches={batches} />
       <ResultsWall results={results} />
 
       <Events />
