@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/app/lib/supabase/server'
 import { getCurrentUserRole } from '@/app/lib/action/auth'
+import { uploadToCloudinary } from '@/app/lib/cloudinary'
 
 export interface DbBanner {
   id: string
@@ -24,7 +25,6 @@ async function requireAdmin() {
   const role = await getCurrentUserRole()
   if (role !== 'admin') redirect('/')
 }
-
 async function uploadBannerImage(
   supabase: Awaited<ReturnType<typeof createClient>>,
   file: File
@@ -36,6 +36,15 @@ async function uploadBannerImage(
     throw new Error('Image file exceeds the 5MB limit')
   }
 
+  // Try Cloudinary upload first
+  try {
+    const cloudinaryUrl = await uploadToCloudinary(file, 'lakhisarai_banners')
+    if (cloudinaryUrl) return cloudinaryUrl
+  } catch (err) {
+    console.warn('Cloudinary upload skipped/failed, falling back to Supabase:', err)
+  }
+
+  // Fallback to Supabase storage
   const ext = file.name.split('.').pop() || 'jpg'
   const fileName = `banner-${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
 
