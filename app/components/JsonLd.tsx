@@ -41,7 +41,7 @@ export function OrganizationSchema() {
     "priceRange": "₹₹",
     "sameAs": [
       "https://youtube.com/@lakhisaraphysicalacademy",
-      "https://facebook.com/lakhisaraphysicalacademy",
+      "https://www.facebook.com/share/19Nt5Nfw4x/",
       "https://instagram.com/lakhisaraphysicalacademy"
     ]
   };

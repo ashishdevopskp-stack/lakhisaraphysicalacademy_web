@@ -20,6 +20,7 @@ import {
   PHONE_NUMBER_ALT,
   EMAIL,
   ADDRESS,
+  FACEBOOK_URL,
   whatsappHref,
   telHref,
 } from "../lib/constants";
@@ -234,7 +235,7 @@ function ConnectWithUs() {
     {
       label: "Facebook",
       icon: FaFacebookF,
-      href: "https://www.facebook.com/trainer.ganesh.2025?rdid=VKCg5epDr9XWKwf5&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1SsmvbtHrj%2F",
+      href: FACEBOOK_URL,
       color: "#1877F2",
       bg: "rgba(24,119,242,0.08)",
     },

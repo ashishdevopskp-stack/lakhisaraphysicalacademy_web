@@ -25,6 +25,7 @@ import {
   PHONE_NUMBER_ALT,
   EMAIL,
   ADDRESS,
+  FACEBOOK_URL,
   whatsappHref,
   telHref,
 } from "../lib/constants";
@@ -74,6 +75,7 @@ const EXPLORE_LINKS = [
   { label: "Resources & Notes", href: "/resources" },
   { label: "Hostel Facility", href: "/hostel" },
   { label: "Circular Updates", href: "/notification" },
+  { label: "Admin Panel", href: "/admin/login" },
 ];
 
 const PROGRAM_PILLS = [
@@ -90,7 +92,7 @@ const SOCIALS = [
   {
     label: "Facebook",
     icon: FaFacebookF,
-    href: "https://www.facebook.com/trainer.ganesh.2025?rdid=VKCg5epDr9XWKwf5&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1SsmvbtHrj%2F",
+    href: FACEBOOK_URL,
     color: "hover:bg-blue-600",
   },
   {

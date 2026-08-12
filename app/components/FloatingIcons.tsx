@@ -3,12 +3,13 @@
 
 import { FaFacebookF, FaInstagram, FaYoutube } from "react-icons/fa";
 import { MessageCircle } from "lucide-react";
+import { FACEBOOK_URL } from "@/app/lib/constants";
 
 const SOCIALS = [
   {
     label: "Facebook",
     icon: FaFacebookF,
-    href: "https://www.facebook.com/trainer.ganesh.2025?rdid=VKCg5epDr9XWKwf5&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1SsmvbtHrj%2F",
+    href: FACEBOOK_URL,
     color: "#1877F2",
   },
   {
