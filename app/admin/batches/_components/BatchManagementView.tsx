@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import type { DbBatch } from "@/app/lib/action/batches";
 import { createBatch, updateBatch, deleteBatch } from "@/app/lib/action/batches";
+import { isBatchVisible } from "@/app/components/BatchTimetable";
 import { ConfirmDeleteModal } from "../../_components/ConfirmDeleteModal";
 
 export const ASPECT_RATIO_OPTIONS = [
@@ -94,7 +95,7 @@ export function BatchManagementView({
     setNameVal(batch.name);
     setCategoryVal(batch.category || "Physical");
     setStatusVal(batch.status || "Open");
-    setVisibilityVal(batch.is_visible !== false ? "show" : "hide");
+    setVisibilityVal(isBatchVisible(batch.is_visible) ? "show" : "hide");
     setTimeVal(batch.time || "");
     setLocationVal(batch.location || "");
     setTargetExamVal(batch.target_exam || "");
@@ -195,7 +196,7 @@ export function BatchManagementView({
         {filteredBatches.map((batch) => {
           const isPhysical = batch.category === "Physical";
           const isWritten = batch.category === "Written";
-          const isVisible = batch.is_visible !== false;
+          const isVisible = isBatchVisible(batch.is_visible);
 
           return (
             <div

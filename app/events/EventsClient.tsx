@@ -308,27 +308,6 @@ function getYouTubeThumbnail(url: string) {
   return match ? `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg` : null;
 }
 
-const DEFAULT_HIGHLIGHT_VIDEOS = [
-  {
-    title: "Bihar Police Constable Physical Training Camp & PET Drills",
-    href: "https://www.youtube.com/@lakhisaraphysicalacademy",
-    category: "Physical Test Camp",
-    duration: "HD Video",
-  },
-  {
-    title: "1600m Sunday Time Trial & Sprint Speed Training | Ganesh Sir",
-    href: "https://www.youtube.com/@lakhisaraphysicalacademy",
-    category: "Running Trial",
-    duration: "HD Video",
-  },
-  {
-    title: "High Jump Technique (Tiger & Scissor Jump) Masterclass",
-    href: "https://www.youtube.com/@lakhisaraphysicalacademy",
-    category: "Technique Drills",
-    duration: "HD Video",
-  },
-];
-
 function EventVideos({ events }: { events: EventItem[] }) {
   const dynamicVideos = events
     .filter((e): e is EventItem & { youtube: string } => Boolean(e.youtube))
@@ -339,7 +318,9 @@ function EventVideos({ events }: { events: EventItem[] }) {
       duration: "HD Video",
     }));
 
-  const allVideos = dynamicVideos.length >= 3 ? dynamicVideos : [...dynamicVideos, ...DEFAULT_HIGHLIGHT_VIDEOS].slice(0, 3);
+  const allVideos = dynamicVideos;
+
+  if (allVideos.length === 0) return null;
 
   return (
     <section className="py-16 sm:py-24 bg-gradient-to-b from-orange-50/70 via-[#faf7f0] to-white text-slate-900 border-t border-b border-orange-200/60 relative overflow-hidden">

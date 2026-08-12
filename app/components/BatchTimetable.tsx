@@ -4,58 +4,14 @@ import React, { useState } from "react";
 import { Clock, Dumbbell, BookOpen, ShieldCheck, Trophy, MapPin, CheckCircle, Flag, Users } from "lucide-react";
 import type { DbBatch } from "@/app/lib/action/batches";
 
-const DEFAULT_BATCHES: DbBatch[] = [
-  {
-    id: "batch-1",
-    name: "Morning Physical Training Batch (मॉर्निंग फिजिकल)",
-    category: "Physical",
-    time: "05:00 AM - 07:30 AM",
-    location: "K.R.K Field, Lakhisarai",
-
-    target_exam: "Bihar Police Constable, SI, Army Agniveer, RPF",
-    capacity: 150,
-    status: "Filling Fast",
-    highlights:
-      "1600m / 1000m Running Technique & Endurance\nHigh Jump Training (Tiger & Scissor style)\nShot Put (गोला फेंक) & Long Jump Drills\nDaily Stamina & Stretches under Head Coach",
-
-  },
-  {
-    id: "batch-2",
-    name: "Evening Physical & Stamina Batch (ईवनिंग बैच)",
-    category: "Physical",
-    time: "04:30 PM - 06:30 PM",
-    location: "Lakhisarai Sports Complex Ground",
-    target_exam: "SSC GD Physical Test, SSC CPO, Home Guard",
-    capacity: 100,
-    status: "Open",
-    highlights:
-      "Weight loss & Sprinting technique\nCore & Leg Strength conditioning\nIndividual Timing assessment every Saturday",
-  },
-  {
-    id: "batch-3",
-    name: "Written Exam Mastery Batch (लिखित परीक्षा स्पेशल)",
-    category: "Written",
-    time: "10:30 AM - 01:30 PM",
-    location: "Lakhisarai Academy Classroom Center",
-    target_exam: "Bihar Police CSBC, BPSSC SI, SSC GD Written",
-    capacity: 80,
-    status: "Open",
-    highlights:
-      "Bihar GK, Samanya Vigyan & General Studies\nMaths & Reasoning Shortcut Methods\nWeekly Mock Test with OMR Evaluation",
-  },
-  {
-    id: "batch-4",
-    name: "Sunday Special Time Trial & Medical Screening",
-    category: "Combo",
-    time: "06:00 AM - 09:30 AM",
-    location: "Academy Ground",
-    target_exam: "All Defence & Police Aspirants",
-    capacity: 200,
-    status: "Open",
-    highlights:
-      "Exact 1600m Digital Timer Run Test\nBody Measurement (Height, Chest, Weight)\nFlat foot, Knock Knee & Eye Sight Initial Check",
-  },
-];
+export function isBatchVisible(isVisible?: boolean | string | number | null): boolean {
+  if (isVisible === false) return false;
+  if (isVisible === "false") return false;
+  if (isVisible === "hide") return false;
+  if (isVisible === "off") return false;
+  if (isVisible === 0) return false;
+  return true;
+}
 
 export default function BatchTimetable({
   liveBatches,
@@ -64,10 +20,10 @@ export default function BatchTimetable({
 }) {
   const [filter, setFilter] = useState<"All" | "Physical" | "Written">("All");
 
-  const displayBatches = liveBatches && liveBatches.length > 0 ? liveBatches : DEFAULT_BATCHES;
+  const displayBatches = liveBatches ?? [];
 
   const filteredBatches = displayBatches.filter(
-    (b) => b.is_visible !== false && (filter === "All" || b.category === filter || b.category === "Combo")
+    (b) => isBatchVisible(b.is_visible) && (filter === "All" || b.category === filter || b.category === "Combo")
   );
 
   return (
@@ -102,8 +58,17 @@ export default function BatchTimetable({
         </div>
 
         {/* Batch Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {filteredBatches.map((batch) => {
+        {filteredBatches.length === 0 ? (
+          <div className="p-8 sm:p-12 rounded-3xl bg-white border-2 border-slate-200 text-center max-w-xl mx-auto shadow-sm">
+            <Dumbbell size={36} className="text-orange-500 mx-auto mb-3" />
+            <h3 className="text-lg font-black text-slate-900">No Batches Scheduled</h3>
+            <p className="text-xs font-semibold text-slate-500 mt-1">
+              No active batches have been added yet. Please check back later or contact admin.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {filteredBatches.map((batch) => {
             const isPhysical = batch.category === "Physical";
             const isWritten = batch.category === "Written";
             const highlightsList = batch.highlights
@@ -216,6 +181,7 @@ export default function BatchTimetable({
             );
           })}
         </div>
+        )}
       </div>
     </section>
   );

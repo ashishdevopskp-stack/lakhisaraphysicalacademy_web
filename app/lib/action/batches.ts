@@ -105,12 +105,12 @@ export async function getBatches(): Promise<DbBatch[]> {
       .select("*")
       .order("created_at", { ascending: false });
 
-    if (error || !data || data.length === 0) {
-      return DEFAULT_BATCHES;
+    if (error || !data) {
+      return [];
     }
     return data as DbBatch[];
   } catch {
-    return DEFAULT_BATCHES;
+    return [];
   }
 }
 

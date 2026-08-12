@@ -28,60 +28,6 @@ import { PHONE_NUMBER } from "@/app/lib/constants";
 import { FadeInUp, ScrollFadeUp, StaggerList, StaggerItem } from "./_ResourcesMotion";
 
 /* =========================================================
-   Default Curated Official Academy Resources
-   ========================================================= */
-const DEFAULT_ACADEMY_RESOURCES: ResourceItem[] = [
-  {
-    id: "def-1",
-    title: "1600m Running & Endurance Lap Pacing Chart (PDF)",
-    description: "Daily lap timing chart, breathing techniques, and 4-week 1600m stamina schedule by Ganesh Sir.",
-    category: "Running Chart",
-    publishDate: "2026-08-01",
-    downloads: 1420,
-    fileUrl: "https://whatsapp.com/channel/0029VaAoQ1gDjiOa3By7bM3s",
-    videoUrl: null,
-    thumbnailUrl: null,
-    hasVideo: false,
-  },
-  {
-    id: "def-2",
-    title: "Bihar Police & Daroga PET Physical Standards (Official PDF)",
-    description: "Exact height, chest, shot-put weight (16lb/12lb), and high jump scoring charts as per CSBC/BPSSC.",
-    category: "Physical Standards",
-    publishDate: "2026-07-28",
-    downloads: 2150,
-    fileUrl: "https://whatsapp.com/channel/0029VaAoQ1gDjiOa3By7bM3s",
-    videoUrl: null,
-    thumbnailUrl: null,
-    hasVideo: false,
-  },
-  {
-    id: "def-3",
-    title: "Defence Aspirants High-Protein Diet & Recovery Chart",
-    description: "Pre-workout energy meals, post-running recovery diet, and natural stamina boosters for morning batches.",
-    category: "Diet Plan",
-    publishDate: "2026-07-20",
-    downloads: 1890,
-    fileUrl: "https://whatsapp.com/channel/0029VaAoQ1gDjiOa3By7bM3s",
-    videoUrl: null,
-    thumbnailUrl: null,
-    hasVideo: false,
-  },
-  {
-    id: "def-4",
-    title: "Bihar Special GK & Samanya Vigyan Quick Revision Notes",
-    description: "Top 500+ expected MCQs for Bihar Police Constable & SI written exams with answer key.",
-    category: "Exam Notes",
-    publishDate: "2026-07-15",
-    downloads: 3100,
-    fileUrl: "https://whatsapp.com/channel/0029VaAoQ1gDjiOa3By7bM3s",
-    videoUrl: null,
-    thumbnailUrl: null,
-    hasVideo: false,
-  },
-];
-
-/* =========================================================
    1. Hero
    ========================================================= */
 function ResourcesHero() {
@@ -181,8 +127,7 @@ function ResourceGrid({ resources }: { resources: ResourceItem[] }) {
   const [category, setCategory] = useState("All");
   const [query, setQuery] = useState("");
 
-  const initialItems = resources.length > 0 ? resources : DEFAULT_ACADEMY_RESOURCES;
-  const [items, setItems] = useState(initialItems);
+  const [items, setItems] = useState(resources);
 
   const categoryOptions = useMemo(() => ["All", ...RESOURCE_CATEGORY_LABELS], []);
 
@@ -249,66 +194,76 @@ function ResourceGrid({ resources }: { resources: ResourceItem[] }) {
         </div>
 
         {/* Resource Cards */}
-        <StaggerList className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {filtered.map((resource) => (
-            <StaggerItem
-              key={resource.id}
-              className="group relative flex flex-col justify-between p-6 rounded-3xl bg-white border-2 border-slate-200/90 hover:border-orange-400 shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 overflow-hidden"
-            >
-              <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-orange-500 via-amber-400 to-emerald-500" />
+        {filtered.length === 0 ? (
+          <div className="mt-8 p-8 sm:p-12 rounded-3xl bg-white border-2 border-slate-200 text-center max-w-xl mx-auto shadow-sm">
+            <FileText size={36} className="text-orange-500 mx-auto mb-3" />
+            <h3 className="text-lg font-black text-slate-900">No Resources Found</h3>
+            <p className="text-xs font-semibold text-slate-500 mt-1">
+              No training materials or study notes have been uploaded yet. Check back soon!
+            </p>
+          </div>
+        ) : (
+          <StaggerList className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {filtered.map((resource) => (
+              <StaggerItem
+                key={resource.id}
+                className="group relative flex flex-col justify-between p-6 rounded-3xl bg-white border-2 border-slate-200/90 hover:border-orange-400 shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 overflow-hidden"
+              >
+                <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-orange-500 via-amber-400 to-emerald-500" />
 
-              <div>
-                <div className="flex items-center justify-between gap-2 mb-3">
-                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-orange-100 text-orange-800 border border-orange-200">
-                    {resource.category}
-                  </span>
-                  <span className="flex items-center gap-1 text-[11px] font-bold text-slate-500">
-                    <DownloadCloud size={13} className="text-orange-600" />
-                    <span>{resource.downloads.toLocaleString("en-IN")}</span>
-                  </span>
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-3">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-orange-100 text-orange-800 border border-orange-200">
+                      {resource.category}
+                    </span>
+                    <span className="flex items-center gap-1 text-[11px] font-bold text-slate-500">
+                      <DownloadCloud size={13} className="text-orange-600" />
+                      <span>{resource.downloads.toLocaleString("en-IN")}</span>
+                    </span>
+                  </div>
+
+                  {resource.thumbnailUrl ? (
+                    <div className="relative overflow-hidden rounded-2xl border border-slate-200 aspect-[16/10] mb-4">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={resource.thumbnailUrl}
+                        alt={resource.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex aspect-[16/10] items-center justify-center rounded-2xl bg-gradient-to-br from-orange-50 via-amber-50 to-emerald-50 border border-orange-200/80 mb-4">
+                      <FileText size={32} className="text-orange-600" />
+                    </div>
+                  )}
+
+                  <h3 className="text-base font-black text-slate-900 group-hover:text-orange-600 transition-colors leading-snug">
+                    {resource.title}
+                  </h3>
+                  <p className="text-xs font-semibold text-slate-600 mt-2 leading-relaxed line-clamp-3">
+                    {resource.description}
+                  </p>
                 </div>
 
-                {resource.thumbnailUrl ? (
-                  <div className="relative overflow-hidden rounded-2xl border border-slate-200 aspect-[16/10] mb-4">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={resource.thumbnailUrl}
-                      alt={resource.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  </div>
-                ) : (
-                  <div className="flex aspect-[16/10] items-center justify-center rounded-2xl bg-gradient-to-br from-orange-50 via-amber-50 to-emerald-50 border border-orange-200/80 mb-4">
-                    <FileText size={32} className="text-orange-600" />
-                  </div>
-                )}
+                <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+                  <span className="flex items-center gap-1 text-[11px] font-bold text-slate-500">
+                    <Calendar size={12} />
+                    <span>{resource.publishDate}</span>
+                  </span>
 
-                <h3 className="text-base font-black text-slate-900 group-hover:text-orange-600 transition-colors leading-snug">
-                  {resource.title}
-                </h3>
-                <p className="text-xs font-semibold text-slate-600 mt-2 leading-relaxed line-clamp-3">
-                  {resource.description}
-                </p>
-              </div>
-
-              <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
-                <span className="flex items-center gap-1 text-[11px] font-bold text-slate-500">
-                  <Calendar size={12} />
-                  <span>{resource.publishDate}</span>
-                </span>
-
-                <button
-                  type="button"
-                  onClick={() => handleDownload(resource)}
-                  className="px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-black text-xs shadow-md shadow-orange-500/20 transition-all flex items-center gap-1.5 cursor-pointer"
-                >
-                  <Download size={14} />
-                  <span>Download PDF</span>
-                </button>
-              </div>
-            </StaggerItem>
-          ))}
-        </StaggerList>
+                  <button
+                    type="button"
+                    onClick={() => handleDownload(resource)}
+                    className="px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-700 text-white font-black text-xs shadow-md shadow-orange-500/20 transition-all flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <Download size={14} />
+                    <span>Download PDF</span>
+                  </button>
+                </div>
+              </StaggerItem>
+            ))}
+          </StaggerList>
+        )}
       </Container>
     </section>
   );

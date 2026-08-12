@@ -18,42 +18,6 @@ export interface CandidateResult {
   district?: string;
 }
 
-const DEFAULT_DEMO_RESULTS: CandidateResult[] = [
-  {
-    id: "r1",
-    name: "Vikram Kumar",
-    post: "Bihar Police Constable",
-    exam: "Bihar Police",
-    year: "2024",
-    rankOrRoll: "Roll: 8410294",
-    imageUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80",
-    quote: "1600m की रनिंग और टाइगर जंप सिर्फ लखीसराय एकेडमी की मेहनत से 4:55 मिनट में पूरा किया!",
-    district: "Lakhisarai",
-  },
-  {
-    id: "r2",
-    name: "Rahul Sharma",
-    post: "Indian Army Agniveer (GD)",
-    exam: "Army Agniveer",
-    year: "2024",
-    rankOrRoll: "Physical: 100 Marks",
-    imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80",
-    quote: "60 नंबर रनing + 40 बीम नंबर! 100 में 100 अंक का श्रेय निदेशक सर को जाता है। जय हिन्द!",
-    district: "Munger",
-  },
-  {
-    id: "r3",
-    name: "Pooja Kumari",
-    post: "Bihar Police Constable (Mahila)",
-    exam: "Bihar Police",
-    year: "2023",
-    rankOrRoll: "Merit Rank: 142",
-    imageUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80",
-    quote: "महिलाओं के लिए सुरक्षित माहौल और बेहतरीन फिजिकल गाइडेंस लखीसराय एकेडमी में मिलती है।",
-    district: "Jamui",
-  },
-];
-
 export default function ResultsWall({ results }: { results?: DbResult[] }) {
   const [selectedExam, setSelectedExam] = useState<string>("All");
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -73,8 +37,10 @@ export default function ResultsWall({ results }: { results?: DbResult[] }) {
         district: row.district,
       }));
     }
-    return DEFAULT_DEMO_RESULTS;
+    return [];
   }, [results]);
+
+  if (displayCandidates.length === 0) return null;
 
   const filteredResults = displayCandidates.filter((r) => {
     if (selectedExam === "All") return true;
