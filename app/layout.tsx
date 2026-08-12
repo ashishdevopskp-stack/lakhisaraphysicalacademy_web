@@ -12,33 +12,19 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "sw
 const poppins = Poppins({ subsets: ["latin"], weight: ["500", "600", "700"], variable: "--font-poppins", display: "swap" });
 const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], weight: ["500", "600"], variable: "--font-jetbrains-mono", display: "swap" });
 
+import { LAKHISARAI_SEO_KEYWORDS } from "./lib/seo-keywords";
+
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://lakhisaraphysicalacademy.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Lakhisarai Physical Academy | Best Army & Bihar Police Training Academy in Lakhisarai Bihar",
-    template: "%s | Lakhisarai Physical Academy (Best Training Academy)",
+    default: "Lakhisarai Physical Academy | Best Physical & Defence Academy in Lakhisarai Bihar",
+    template: "%s | Lakhisarai Physical Academy",
   },
   description:
-    "Lakhisarai Physical Academy (लखीसराय फिजिकल एकेडमी) is Bihar's #1 best training academy at K.R.K Field Lakhisarai for Indian Army Agniveer, Bihar Police Constable, SI (Daroga), SSC GD, RPF & Defence ground physical tests. Top army training area-wise serving Lakhisarai, Munger, Jamui, Sheikhpura, Begusarai, Patna & Bihar candidates.",
-  keywords: [
-    "best training academy",
-    "lakhisaraphysicalacademy",
-    "lakhisarai physical academy",
-    "army training area wise",
-    "best army physical training academy in bihar",
-    "bihar police physical academy lakhisarai",
-    "army agniveer ground training krk field lakhisarai",
-    "best physical academy in munger jamui sheikhpura begusarai patna",
-    "physical teacher ganesh sir mahesh sir lakhisarai",
-    "ssc gd physical training center bihar",
-    "rpf constable physical ground lakhisarai",
-    "defence physical academy with hostel bihar",
-    "best physical training academy for girls bihar",
-    "1600m running speed training lakhisarai",
-    "high jump scissor tiger jump coaching bihar",
-  ],
+    "Lakhisarai Physical Academy (लखीसराय फिजिकल एकेडमी) - No.1 Best Physical Academy in Lakhisarai & Bihar for Indian Army Agniveer, Bihar Police Constable, SI (Daroga), SSC GD & Defence physical test training at K.R.K Field Lakhisarai.",
+  keywords: LAKHISARAI_SEO_KEYWORDS,
   authors: [{ name: "Lakhisarai Physical Academy", url: SITE_URL }],
   creator: "Ganesh Sir & Mahesh Sir",
   publisher: "Lakhisarai Physical Academy",
