@@ -12,6 +12,7 @@ import Videos from "./youtube-video/page";
 import FAQSection from "./components/FAQSection";
 import Contact from "./contact/page";
 import { OrganizationSchema } from "./components/JsonLd";
+import AreaWiseSeoSection from "./components/AreaWiseSeoSection";
 import { getBlogs } from "./lib/action/blogs";
 import { getResults } from "./lib/action/results";
 import { getBatches } from "./lib/action/batches";
@@ -32,6 +33,9 @@ export default async function Home() {
 
       {/* Interactive Category & Subcategory Explorer Hub */}
       <CategoryExplorer />
+
+      {/* Area-Wise Army & Police Training Network (Top SEO Ranking) */}
+      <AreaWiseSeoSection />
 
       <About />
       {/* Blog carousel near the top as requested */}

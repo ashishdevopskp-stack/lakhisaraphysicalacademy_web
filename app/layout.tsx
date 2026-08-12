@@ -12,17 +12,89 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "sw
 const poppins = Poppins({ subsets: ["latin"], weight: ["500", "600", "700"], variable: "--font-poppins", display: "swap" });
 const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], weight: ["500", "600"], variable: "--font-jetbrains-mono", display: "swap" });
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://lakhisaraphysicalacademy.com";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "Lakhisarai Physical Academy",
-    template: "%s | Lakhisarai Physical Academy",
+    default: "Lakhisarai Physical Academy | Best Army & Bihar Police Training Academy in Lakhisarai Bihar",
+    template: "%s | Lakhisarai Physical Academy (Best Training Academy)",
   },
   description:
-    "Disciplined physical training for Army, Bihar Police, Daroga (SI), SSC GD, CISF, CRPF, and BSF recruitment tests in Lakhisarai, Bihar.",
+    "Lakhisarai Physical Academy (लखीसराय फिजिकल एकेडमी) is Bihar's #1 best training academy at K.R.K Field Lakhisarai for Indian Army Agniveer, Bihar Police Constable, SI (Daroga), SSC GD, RPF & Defence ground physical tests. Top army training area-wise serving Lakhisarai, Munger, Jamui, Sheikhpura, Begusarai, Patna & Bihar candidates.",
+  keywords: [
+    "best training academy",
+    "lakhisaraphysicalacademy",
+    "lakhisarai physical academy",
+    "army training area wise",
+    "best army physical training academy in bihar",
+    "bihar police physical academy lakhisarai",
+    "army agniveer ground training krk field lakhisarai",
+    "best physical academy in munger jamui sheikhpura begusarai patna",
+    "physical teacher ganesh sir mahesh sir lakhisarai",
+    "ssc gd physical training center bihar",
+    "rpf constable physical ground lakhisarai",
+    "defence physical academy with hostel bihar",
+    "best physical training academy for girls bihar",
+    "1600m running speed training lakhisarai",
+    "high jump scissor tiger jump coaching bihar",
+  ],
+  authors: [{ name: "Lakhisarai Physical Academy", url: SITE_URL }],
+  creator: "Ganesh Sir & Mahesh Sir",
+  publisher: "Lakhisarai Physical Academy",
+  category: "Sports & Defence Physical Training Education",
+  alternates: {
+    canonical: SITE_URL,
+    languages: {
+      "hi-IN": `${SITE_URL}?lang=hi`,
+      "en-IN": `${SITE_URL}?lang=en`,
+    },
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_IN",
+    alternateLocale: ["hi_IN"],
+    url: SITE_URL,
+    title: "Lakhisarai Physical Academy | Best Army & Bihar Police Training Academy",
+    description:
+      "Join Bihar's #1 best training academy at K.R.K Field Lakhisarai. Specialized Indian Army Agniveer, Bihar Police, SI, SSC GD physical ground preparation under expert military coaches.",
+    siteName: "Lakhisarai Physical Academy",
+    images: [
+      {
+        url: `${SITE_URL}/logo.png`,
+        width: 1200,
+        height: 630,
+        alt: "Lakhisarai Physical Academy - Best Army Training Academy Bihar",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Lakhisarai Physical Academy | Best Training Academy",
+    description:
+      "Bihar's #1 Army & Police Physical Training Academy at K.R.K Field Lakhisarai. 1200+ Selections in Bihar Police, Agniveer & SSC GD.",
+    images: [`${SITE_URL}/logo.png`],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    nocache: false,
+    googleBot: {
+      index: true,
+      follow: true,
+      noimageindex: false,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  verification: {
+    google: "google-site-verification-id-placeholder",
+  },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f4f6fa",
+  themeColor: "#FF9933",
   width: "device-width",
   initialScale: 1,
 };
@@ -51,6 +123,11 @@ export default function RootLayout({
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        {/* Geo-location Meta Tags for Top Local & Area-Wise Search Rankings */}
+        <meta name="geo.region" content="IN-BR" />
+        <meta name="geo.placename" content="Lakhisarai, Bihar, India" />
+        <meta name="geo.position" content="25.1673;86.0945" />
+        <meta name="ICBM" content="25.1673, 86.0945" />
       </head>
       <body>
         <TricolorProgress />
