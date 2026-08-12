@@ -184,6 +184,8 @@ Open Monday – Sunday, during Morning (05:00 AM – 08:00 AM) and Evening
 FREQUENTLY ASKED QUESTIONS:
 - Which courses are available? Army, Bihar Police, Daroga, SSC GD, CISF, CRPF, BSF,
   Railway, Fireman, Running & Fitness Programs.
+- Lakhisarai Physical Academy में किन भर्तियों की तैयारी कराई जाती है? Bihar Police, Daroga, Delhi Police, Home Guard, Army, SSC-GD, CRPF, Chowkidar & other Police/Defence recruitment physical tests.
+- Coach Ganesh Sir की विशेषता क्या है? Focus on Physical Fitness, Running Performance, and correct technique for Physical Events. Provides custom guidance, regular practice, PET testing. Features: Running & Speed Training, High Jump & Long Jump Technique, Strength & Stamina, Performance Tests & strict discipline.
 - Is hostel facility available? Yes, subject to availability.
 - Can beginners join? Yes, beginners are welcome.
 - Are guest physical tests available? Yes, students can register for guest physical

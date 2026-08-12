@@ -55,12 +55,19 @@ const FAQS: FAQItem[] = [
   },
   {
     question: "Coach Ganesh Sir की विशेषता क्या है?",
-    answer: "Coach Ganesh Sir का मुख्य फोकस छात्रों की Physical Fitness, Running Performance और भर्ती के Physical Events की सही तकनीक पर रहता है। वे छात्रों को उनके स्तर के अनुसार Training, नियमित Practice और Physical Test के माध्यम से बेहतर तैयारी करने के लिए मार्गदर्शन देते हैं। (विशेषताएँ: Running & Speed Training, High Jump & Long Jump Technique, Strength & Stamina, नियमित Performance Test एवं अनुशासन)।",
+    answer: `Coach Ganesh Sir का मुख्य फोकस छात्रों की Physical Fitness, Running Performance और भर्ती के Physical Events की सही तकनीक पर रहता है। वे छात्रों को उनके स्तर के अनुसार Training, नियमित Practice और Physical Test के माध्यम से बेहतर तैयारी करने के लिए मार्गदर्शन देते हैं।
+
+मुख्य विशेषताएँ:
+• 🏃 Running एवं Speed Training
+• 🦘 High Jump & Long Jump Technique
+• 💪 Strength एवं Stamina Training
+• 🎯 भर्ती के Physical Test के अनुसार Practice
+• 📊 नियमित Performance Test एवं सुधार पर ध्यान
+• 👥 नए और अनुभवी दोनों छात्रों को Guidance
+• 🔥 अनुशासन और नियमित Training पर विशेष जोर`,
     category: "Physical Training",
   },
 ];
-
-
 
 export default function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
@@ -111,7 +118,7 @@ export default function FAQSection() {
                 </button>
 
                 {isOpen && (
-                  <div className="px-5 pb-5 text-text-muted text-sm leading-relaxed border-t border-line pt-3">
+                  <div className="px-5 pb-5 text-text-muted text-sm leading-relaxed border-t border-line pt-3 whitespace-pre-line">
                     <p>{faq.answer}</p>
                     <div className="mt-3 inline-block px-2.5 py-0.5 bg-bg text-text-faint text-xs rounded border border-line">
                       Category: {faq.category}
