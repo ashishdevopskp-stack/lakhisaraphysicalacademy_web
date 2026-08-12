@@ -4,15 +4,16 @@ import React from "react";
 import {
   CheckCircle2,
   Flame,
-  Target,
   ShieldCheck,
   Zap,
-  Sparkles,
   Dumbbell,
   ArrowRight,
-  Info,
   Footprints,
   Compass,
+  Trophy,
+  Activity,
+  Award,
+  Sparkles,
 } from "lucide-react";
 
 interface RichContentProps {
@@ -40,12 +41,13 @@ export default function RichContentRenderer({ content, className = "" }: RichCon
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
 
-    // Check if line looks like a Main Title
+    // 1. Check if line is a Main Title Banner
     if (
-      line.includes("हाई जंप") ||
-      line.includes("रनिंग स्पेशल") ||
+      line.startsWith("# ") ||
+      line.includes("सही तरीका") ||
       line.includes("गाइड") ||
-      line.startsWith("# ")
+      line.includes("रनिंग स्पेशल") ||
+      line.includes("विशेषता")
     ) {
       if (currentSection) sections.push(currentSection);
       currentSection = {
@@ -55,17 +57,20 @@ export default function RichContentRenderer({ content, className = "" }: RichCon
       continue;
     }
 
-    // Check if line looks like a Step / Technique Section Header (Approach, Take-off, Bar, Landing, etc.)
-    if (
+    // 2. Check if line is a Step / Technique Section Header
+    const isStepHeader =
+      line.startsWith("## ") ||
       line.includes("Approach") ||
       line.includes("Take-off") ||
+      line.includes("Landing") ||
       line.includes("रन-अप") ||
       line.includes("टेक-ऑफ") ||
       line.includes("बार पार") ||
       line.includes("लैंडिंग") ||
-      line.includes("Landing") ||
-      line.startsWith("## ")
-    ) {
+      line.includes("तरीका") ||
+      line.includes("तकनीक");
+
+    if (isStepHeader) {
       if (currentSection) sections.push(currentSection);
       currentSection = {
         type: "step",
@@ -76,29 +81,32 @@ export default function RichContentRenderer({ content, className = "" }: RichCon
       continue;
     }
 
-    // Check if line looks like Daily Routine / Exercise Section (रोज़ की प्रैक्टिस, वार्म-अप, etc.)
-    if (
+    // 3. Check if line is a Routine / Workout Schedule Header
+    const isRoutineHeader =
+      line.startsWith("### ") ||
       line.includes("प्रैक्टिस") ||
       line.includes("Routine") ||
       line.includes("वर्कआउट") ||
-      line.includes("वार्म-अप")
-    ) {
+      line.includes("वार्म-अप") ||
+      line.includes("विशेषताएँ");
+
+    if (isRoutineHeader) {
       if (currentSection) sections.push(currentSection);
       currentSection = {
         type: "routine",
-        title: line,
+        title: line.replace(/^#+\s*/, ""),
         items: [],
       };
       continue;
     }
 
-    // Check if line is an item belonging to an active section
+    // 4. If active section is step or routine, append item
     if (currentSection && (currentSection.type === "step" || currentSection.type === "routine")) {
-      currentSection.items?.push(line);
+      currentSection.items?.push(line.replace(/^[-•]\s*/, ""));
       continue;
     }
 
-    // Otherwise standard paragraph or bullet point
+    // 5. Check bullet point lists
     if (line.startsWith("- ") || line.startsWith("• ")) {
       if (!currentSection || currentSection.type !== "bullet_group") {
         if (currentSection) sections.push(currentSection);
@@ -109,13 +117,15 @@ export default function RichContentRenderer({ content, className = "" }: RichCon
       } else {
         currentSection.items?.push(line.replace(/^[-•]\s*/, ""));
       }
-    } else {
-      if (currentSection) sections.push(currentSection);
-      currentSection = {
-        type: "paragraph",
-        text: line,
-      };
+      continue;
     }
+
+    // 6. Regular Paragraph
+    if (currentSection) sections.push(currentSection);
+    currentSection = {
+      type: "paragraph",
+      text: line,
+    };
   }
   if (currentSection) sections.push(currentSection);
 
@@ -127,13 +137,13 @@ export default function RichContentRenderer({ content, className = "" }: RichCon
           return (
             <div
               key={idx}
-              className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-slate-800 to-slate-950 p-6 sm:p-8 text-white shadow-xl border border-orange-500/30"
+              className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#0f172a] via-[#1e293b] to-[#090d16] p-6 sm:p-8 text-white shadow-xl border-2 border-orange-500/40"
             >
-              <div className="absolute top-0 right-0 -mt-6 -mr-6 w-32 h-32 bg-orange-500/20 rounded-full blur-2xl pointer-events-none" />
-              <div className="flex items-center gap-3 mb-2">
-                <span className="px-3 py-1 rounded-full bg-orange-500/20 border border-orange-500/40 text-amber-400 text-[11px] font-black uppercase tracking-wider flex items-center gap-1.5">
+              <div className="absolute top-0 right-0 -mt-6 -mr-6 w-36 h-36 bg-orange-500/20 rounded-full blur-2xl pointer-events-none" />
+              <div className="flex items-center gap-2 mb-3">
+                <span className="px-3 py-1 rounded-full bg-orange-500/20 border border-orange-400/40 text-amber-400 text-[11px] font-black uppercase tracking-wider flex items-center gap-1.5 shadow-xs">
                   <Flame size={14} className="text-orange-400" />
-                  <span>Physical Fitness &amp; Technique Guide</span>
+                  <span>Physical Training &amp; Technique Guide</span>
                 </span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-black text-white leading-tight">
@@ -145,7 +155,7 @@ export default function RichContentRenderer({ content, className = "" }: RichCon
 
         // Render Step Technique Card
         if (section.type === "step") {
-          const stepIcons = [Footprints, Zap, Compass, ShieldCheck];
+          const stepIcons = [Footprints, Zap, Compass, ShieldCheck, Trophy, Activity];
           const StepIcon = stepIcons[(section.stepNumber! - 1) % stepIcons.length];
 
           return (
@@ -158,25 +168,27 @@ export default function RichContentRenderer({ content, className = "" }: RichCon
 
               <div className="flex items-start gap-4">
                 {/* Step Number Badge */}
-                <div className="p-3.5 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-600 text-white font-black text-sm shrink-0 shadow-md group-hover:scale-110 transition-transform">
-                  <span className="block text-[10px] uppercase font-bold text-amber-100">Step</span>
-                  <span>0{section.stepNumber}</span>
+                <div className="p-3.5 rounded-2xl bg-gradient-to-br from-orange-500 to-amber-600 text-white font-black text-sm shrink-0 shadow-md group-hover:scale-110 transition-transform text-center min-w-[58px]">
+                  <span className="block text-[9px] uppercase font-bold text-amber-100 tracking-wider">Step</span>
+                  <span className="text-base font-black">0{section.stepNumber}</span>
                 </div>
 
                 <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <StepIcon size={18} className="text-orange-600" />
+                  <div className="flex items-center gap-2.5 mb-3">
+                    <div className="p-1.5 rounded-xl bg-orange-100 text-orange-700">
+                      <StepIcon size={18} />
+                    </div>
                     <h3 className="text-lg sm:text-xl font-black text-slate-900 leading-tight">
                       {section.title}
                     </h3>
                   </div>
 
                   {section.items && section.items.length > 0 && (
-                    <div className="mt-3 space-y-2">
+                    <div className="space-y-2">
                       {section.items.map((item, itemIdx) => (
                         <div
                           key={itemIdx}
-                          className="flex items-start gap-2.5 p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-slate-800 text-xs sm:text-sm font-semibold"
+                          className="flex items-start gap-2.5 p-3 rounded-2xl bg-slate-50 border border-slate-200/80 text-slate-900 text-xs sm:text-sm font-bold shadow-2xs hover:bg-orange-50/40 transition-colors"
                         >
                           <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-emerald-600" />
                           <span className="leading-relaxed">{item}</span>
@@ -195,15 +207,15 @@ export default function RichContentRenderer({ content, className = "" }: RichCon
           return (
             <div
               key={idx}
-              className="rounded-3xl bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-emerald-500/10 border-2 border-amber-400/50 p-6 sm:p-8 shadow-lg"
+              className="rounded-3xl bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-emerald-500/10 border-2 border-amber-400/60 p-6 sm:p-8 shadow-lg relative overflow-hidden"
             >
               <div className="flex items-center gap-3 mb-6">
-                <div className="p-3 rounded-2xl bg-slate-900 text-amber-400 shadow-md">
+                <div className="p-3.5 rounded-2xl bg-slate-900 text-amber-400 shadow-md">
                   <Dumbbell size={22} />
                 </div>
                 <div>
-                  <span className="text-[10px] font-black uppercase tracking-wider text-orange-700 bg-orange-100 px-2.5 py-0.5 rounded-full border border-orange-200">
-                    Daily Practice Schedule
+                  <span className="text-[10px] font-black uppercase tracking-wider text-orange-800 bg-orange-100 px-2.5 py-0.5 rounded-full border border-orange-300">
+                    Daily Training &amp; Routine
                   </span>
                   <h3 className="text-xl sm:text-2xl font-black text-slate-900 mt-0.5">
                     {section.title}
@@ -212,13 +224,13 @@ export default function RichContentRenderer({ content, className = "" }: RichCon
               </div>
 
               {section.items && section.items.length > 0 && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {section.items.map((item, itemIdx) => (
                     <div
                       key={itemIdx}
-                      className="p-3.5 rounded-2xl bg-white border border-amber-300/80 shadow-sm flex items-center gap-3 hover:border-orange-500 transition-colors"
+                      className="p-3.5 rounded-2xl bg-white border-2 border-amber-200 shadow-xs flex items-center gap-3 hover:border-orange-500 transition-colors"
                     >
-                      <div className="w-8 h-8 rounded-xl bg-orange-100 text-orange-700 font-black text-xs flex items-center justify-center shrink-0">
+                      <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 text-white font-black text-xs flex items-center justify-center shrink-0 shadow-xs">
                         #{itemIdx + 1}
                       </div>
                       <span className="text-xs sm:text-sm font-extrabold text-slate-900 leading-snug">
@@ -235,10 +247,10 @@ export default function RichContentRenderer({ content, className = "" }: RichCon
         // Render Bullet Points List
         if (section.type === "bullet_group") {
           return (
-            <div key={idx} className="rounded-2xl bg-white border border-slate-200 p-5 shadow-xs">
-              <ul className="space-y-2.5">
+            <div key={idx} className="rounded-3xl bg-white border-2 border-slate-200 p-5 sm:p-6 shadow-sm">
+              <ul className="space-y-3">
                 {section.items?.map((item, itemIdx) => (
-                  <li key={itemIdx} className="flex items-start gap-2.5 text-xs sm:text-sm font-medium text-slate-700">
+                  <li key={itemIdx} className="flex items-start gap-3 p-2.5 rounded-xl bg-slate-50 border border-slate-100 text-xs sm:text-sm font-bold text-slate-800">
                     <ArrowRight size={16} className="mt-0.5 shrink-0 text-orange-600" />
                     <span className="leading-relaxed">{item}</span>
                   </li>
@@ -248,11 +260,11 @@ export default function RichContentRenderer({ content, className = "" }: RichCon
           );
         }
 
-        // Render Paragraph with Card container if standalone
+        // Render Paragraph with Card container
         return (
           <div
             key={idx}
-            className="rounded-2xl bg-slate-50/80 border border-slate-200/80 p-4 text-xs sm:text-sm font-medium text-slate-800 leading-relaxed shadow-2xs"
+            className="rounded-2xl bg-white border border-slate-200 p-4 text-xs sm:text-sm font-bold text-slate-800 leading-relaxed shadow-2xs"
           >
             {section.text}
           </div>

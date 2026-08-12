@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { CalendarDays, MessageCircle } from "lucide-react";
 import { MONTHS, type Category, type EventItem } from "@/app/lib/events-data";
 import Container from "../../components/Container";
 import { FadeInUp, ScrollFadeUp, StaggerList, StaggerItem } from "../_EventsMotion";
@@ -110,8 +111,42 @@ function FilteredGrid({
         </ScrollFadeUp>
 
         {filtered.length === 0 ? (
-          <ScrollFadeUp as="p" className="font-body mt-14 text-center text-[14px] text-text-muted">
-            No events match your filters right now. Try a different category or month.
+          <ScrollFadeUp className="mt-12 p-8 sm:p-12 rounded-3xl bg-gradient-to-br from-orange-50/80 via-white to-amber-50/60 border-2 border-orange-200 text-center shadow-lg max-w-2xl mx-auto">
+            <div className="w-16 h-16 rounded-3xl bg-gradient-to-br from-orange-500 to-amber-600 text-white font-black flex items-center justify-center mx-auto shadow-md mb-4">
+              <CalendarDays size={32} />
+            </div>
+            <span className="px-3 py-1 rounded-full bg-orange-100 text-orange-800 border border-orange-200 text-xs font-black uppercase">
+              Event Schedule Update
+            </span>
+            <h3 className="text-xl sm:text-2xl font-black text-slate-900 mt-3">
+              No Events Match Your Filter
+            </h3>
+            <p className="text-sm font-medium text-slate-600 max-w-md mx-auto mt-2 leading-relaxed">
+              We hold weekly 1600m Sunday Time Trials and physical test camps at K.R.K Field Lakhisarai. Try resetting your search or filter.
+            </p>
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setTimeframe("Upcoming");
+                  setMonth("All");
+                  setQuery("");
+                  onCategory("All");
+                }}
+                className="px-5 py-2.5 rounded-full bg-slate-900 hover:bg-slate-800 text-white text-xs font-black shadow-md transition-all cursor-pointer"
+              >
+                Reset All Filters
+              </button>
+              <a
+                href="https://wa.me/917739776471?text=Jai%20Hind!%20When%20is%20the%20next%201600m%20Sunday%20Trial%20/%20Event%20at%20Lakhisarai%20Physical%20Academy%3F"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-5 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black shadow-md transition-all flex items-center gap-1.5"
+              >
+                <MessageCircle size={14} />
+                <span>Ask Next Event Date</span>
+              </a>
+            </div>
           </ScrollFadeUp>
         ) : (
           <StaggerList className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">

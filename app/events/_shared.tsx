@@ -177,63 +177,63 @@ export function EventCard({ event }: { event: EventItem }) {
   );
 
   return (
-    <div className="card-flat flex flex-col overflow-hidden">
-      <div
-        className="relative flex h-36 items-center justify-center border-b border-line"
-        style={{
-          background:
-            "radial-gradient(circle at 30% 20%, rgba(255,255,255,0.06) 0%, transparent 75%)",
-        }}
-      >
-        <Icon size={40} className="text-signal-strong" strokeWidth={1.5} />
-        <span className="glass absolute right-3 top-3 rounded-full px-2.5 py-1 text-[11px] font-medium text-text-muted">
+    <div className="group relative flex flex-col overflow-hidden rounded-3xl bg-white border-2 border-slate-200/90 hover:border-orange-500 shadow-md hover:shadow-2xl transition-all duration-300">
+      {/* Top Graphic Header Banner */}
+      <div className="relative flex h-36 items-center justify-center bg-gradient-to-r from-orange-500 via-amber-500 to-emerald-600 text-white overflow-hidden">
+        <div className="absolute top-0 right-0 -mt-6 -mr-6 w-32 h-32 bg-white/20 rounded-full blur-xl pointer-events-none" />
+
+        <div className="p-4 rounded-2xl bg-white/20 backdrop-blur-md border border-white/30 text-white shadow-lg group-hover:scale-110 transition-transform">
+          <Icon size={36} strokeWidth={1.8} />
+        </div>
+
+        <span className="absolute right-3 top-3 rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-wider bg-slate-900/80 backdrop-blur-md text-amber-300 border border-slate-700 shadow-xs">
           {event.category}
         </span>
       </div>
 
-      <div className="flex flex-1 flex-col p-5">
+      <div className="flex flex-1 flex-col p-6">
         <div className="flex items-center justify-between gap-2">
           <span
-            className={`rounded-full border px-2.5 py-0.5 text-[11px] font-medium ${
+            className={`rounded-full border px-3 py-1 text-[11px] font-black uppercase tracking-wider ${
               event.status === "Open"
-                ? "border-transparent bg-signal-dim text-signal-strong"
-                : "border-line-strong bg-bg-raised-2 text-text-faint"
+                ? "border-emerald-300 bg-emerald-50 text-emerald-800"
+                : "border-slate-200 bg-slate-100 text-slate-500"
             }`}
           >
-            {event.status === "Open" ? "Registration Open" : "Registration Closed"}
+            {event.status === "Open" ? "🟢 Registration Open" : "⚪ Closed"}
           </span>
         </div>
 
-        <h3 className="font-display mt-3 text-[17px] font-semibold text-text">
+        <h3 className="text-lg font-black text-slate-900 group-hover:text-orange-600 transition-colors mt-3 leading-snug">
           {event.title}
         </h3>
-        <p className="font-body mt-1 text-[13px] text-text-muted">{event.subtitle}</p>
+        <p className="text-xs font-semibold text-slate-600 mt-1">{event.subtitle}</p>
 
-        <div className="mt-4 flex flex-col gap-1.5 text-[13px] text-text-muted">
-          <span className="flex items-center gap-1.5">
-            <CalendarDays size={14} className="text-signal-strong" />
-            {event.dateLabel}
+        <div className="mt-4 space-y-2 text-xs font-extrabold text-slate-800 bg-slate-50 p-3 rounded-2xl border border-slate-200/80">
+          <span className="flex items-center gap-2">
+            <CalendarDays size={14} className="text-orange-600 shrink-0" />
+            <span>{event.dateLabel}</span>
           </span>
-          <span className="flex items-center gap-1.5">
-            <Clock size={14} className="text-signal-strong" />
-            {event.time}
+          <span className="flex items-center gap-2">
+            <Clock size={14} className="text-orange-600 shrink-0" />
+            <span>{event.time}</span>
           </span>
-          <span className="flex items-center gap-1.5">
-            <MapPin size={14} className="text-signal-strong" />
-            {event.venue}
+          <span className="flex items-center gap-2">
+            <MapPin size={14} className="text-orange-600 shrink-0" />
+            <span className="truncate">{event.venue}</span>
           </span>
         </div>
 
-        <p className="font-body mt-4 text-[13px] leading-relaxed text-text-muted">
+        <p className="text-xs text-slate-600 leading-relaxed mt-4 font-medium line-clamp-3">
           {event.description}
         </p>
 
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}
-          className="mt-4 flex items-center gap-1.5 text-[13px] font-medium text-signal-strong"
+          className="mt-4 inline-flex items-center gap-1.5 text-xs font-black text-orange-600 hover:text-orange-800 transition-colors"
         >
-          View Details
+          <span>{open ? "Hide Details" : "View Details & Eligibility"}</span>
           <ChevronDown
             size={15}
             className={`transition-transform duration-300 ${open ? "rotate-180" : ""}`}
@@ -249,41 +249,43 @@ export function EventCard({ event }: { event: EventItem }) {
               transition={{ duration: 0.3, ease: EASE }}
               className="overflow-hidden"
             >
-              <div className="mt-4 border-t border-line pt-4">
-                <p className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-text-faint">
-                  Highlights
-                </p>
-                <ul className="mt-2 flex flex-col gap-1.5">
-                  {event.highlights.map((h) => (
-                    <li key={h} className="flex items-start gap-2 text-[13px] text-text-muted">
-                      <ChevronRight size={14} className="mt-0.5 shrink-0 text-signal-strong" />
-                      {h}
-                    </li>
-                  ))}
-                </ul>
+              <div className="mt-4 border-t border-slate-100 pt-4 space-y-3">
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-wider text-orange-700">
+                    Event Highlights
+                  </p>
+                  <ul className="mt-2 space-y-1.5">
+                    {event.highlights.map((h) => (
+                      <li key={h} className="flex items-start gap-2 text-xs font-bold text-slate-800">
+                        <ChevronRight size={14} className="mt-0.5 shrink-0 text-orange-600" />
+                        <span>{h}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
 
                 {event.eligibility && (
-                  <>
-                    <p className="font-mono mt-4 text-[11px] font-medium uppercase tracking-[0.14em] text-text-faint">
+                  <div>
+                    <p className="text-[10px] font-black uppercase tracking-wider text-orange-700">
                       Eligibility
                     </p>
-                    <p className="font-body mt-1.5 text-[13px] text-text-muted">
+                    <p className="text-xs font-bold text-slate-800 mt-1">
                       {event.eligibility}
                     </p>
-                  </>
+                  </div>
                 )}
 
-                <div className="mt-4 flex flex-wrap gap-x-6 gap-y-1.5 text-[12px] text-text-muted">
+                <div className="flex flex-wrap gap-4 text-xs font-extrabold text-slate-700 pt-2 border-t border-slate-100">
                   {event.seats && (
                     <span className="flex items-center gap-1.5">
-                      <Users size={13} className="text-signal-strong" />
-                      {event.seats}
+                      <Users size={13} className="text-orange-600" />
+                      <span>{event.seats}</span>
                     </span>
                   )}
                   {event.lastRegistration && (
                     <span className="flex items-center gap-1.5">
-                      <Tag size={13} className="text-signal-strong" />
-                      Last date: {event.lastRegistration}
+                      <Tag size={13} className="text-orange-600" />
+                      <span>Last date: {event.lastRegistration}</span>
                     </span>
                   )}
                 </div>
@@ -292,14 +294,14 @@ export function EventCard({ event }: { event: EventItem }) {
           )}
         </AnimatePresence>
 
-        <div className="mt-5 flex flex-wrap gap-2.5">
+        <div className="mt-5 flex flex-wrap gap-2 pt-2 border-t border-slate-100">
           {event.status === "Open" && (
             <Button href={registerHref} variant="primary" icon={ClipboardList}>
               Register Now
             </Button>
           )}
           <Button href={directionsHref} variant="ghost" icon={Navigation}>
-            Get Directions
+            Directions
           </Button>
         </div>
       </div>

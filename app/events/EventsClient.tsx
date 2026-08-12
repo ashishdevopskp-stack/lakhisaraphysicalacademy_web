@@ -30,36 +30,55 @@ function EventsHero() {
   );
 
   return (
-    <section id="top" className="relative overflow-hidden pb-16 pt-14 sm:pb-24 sm:pt-20">
+    <section id="top" className="relative overflow-hidden pb-16 pt-14 sm:pb-24 sm:pt-20 bg-gradient-to-b from-orange-50/80 via-[#faf7f0] to-white border-b border-orange-200/60">
       <div
         aria-hidden
         className="pointer-events-none absolute left-1/2 top-0 -z-10 h-[480px] w-[880px] -translate-x-1/2 rounded-full opacity-60 blur-3xl"
         style={{
           background:
-            "radial-gradient(ellipse 60% 60% at 50% 0%, rgba(59,130,246,0.16), transparent 70%)",
+            "radial-gradient(ellipse 60% 60% at 50% 0%, rgba(234,88,12,0.15), transparent 70%)",
         }}
       />
       <Container>
-        <FadeInUp className="max-w-[62ch]">
-          <p className="font-mono text-[12px] font-semibold uppercase tracking-[0.22em] text-signal">
-            Events &amp; Activities
-          </p>
+        <FadeInUp className="max-w-[70ch]">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-orange-500/10 via-amber-500/10 to-emerald-500/10 border border-orange-300 text-xs font-black text-orange-800 shadow-2xs mb-4">
+            <span>🇮🇳 JAI HIND · ACADEMY EVENTS &amp; ACTIVITIES</span>
+          </div>
 
-          <h1 className="font-display mt-5 max-w-[22ch] text-[32px] font-bold sm:text-[42px] lg:text-[50px]">
-            Training Camps, Competitions &amp; Special Academy Events
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 leading-tight">
+            Training Camps, Competitions &amp; <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 via-amber-600 to-emerald-600">Special Academy Events</span>
           </h1>
 
-          <p className="font-body mt-5 text-[15px] font-medium text-text">
-            Explore our training camps, competitions, workshops, and special academy events.
+          <p className="mt-4 text-base sm:text-lg font-bold text-slate-800 leading-relaxed">
+            Stay updated with physical test camps, 1600m trials, workshops, seminars, and student felicitation ceremonies at Lakhisarai Physical Academy.
           </p>
 
-          <p className="font-body mt-4 text-[15px] leading-relaxed text-text-muted">
-            Stay updated with all upcoming and past events at Lakhisarai Physical Academy,
-            including physical test camps, workshops, seminars, fitness challenges,
-            recruitment awareness programs, and student achievement celebrations.
-          </p>
+          {/* Quick Stat Highlights */}
+          <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div className="p-3 rounded-2xl bg-white border border-orange-200 shadow-2xs flex items-center gap-2.5">
+              <span className="text-lg">🏃</span>
+              <div>
+                <p className="text-xs font-black text-slate-900">Weekly 1600m Trials</p>
+                <p className="text-[10px] font-semibold text-slate-500">Every Sunday Morning</p>
+              </div>
+            </div>
+            <div className="p-3 rounded-2xl bg-white border border-amber-200 shadow-2xs flex items-center gap-2.5">
+              <span className="text-lg">🏆</span>
+              <div>
+                <p className="text-xs font-black text-slate-900">100+ Events Held</p>
+                <p className="text-[10px] font-semibold text-slate-500">Camps &amp; Competitions</p>
+              </div>
+            </div>
+            <div className="p-3 rounded-2xl bg-white border border-emerald-200 shadow-2xs flex items-center gap-2.5 col-span-2 sm:col-span-1">
+              <span className="text-lg">🏅</span>
+              <div>
+                <p className="text-xs font-black text-slate-900">Selection Honors</p>
+                <p className="text-[10px] font-semibold text-slate-500">Felicitation Days</p>
+              </div>
+            </div>
+          </div>
 
-          <div className="mt-9 flex flex-wrap items-center gap-3">
+          <div className="mt-8 flex flex-wrap items-center gap-3">
             <Button href="#upcoming" variant="primary" icon={CalendarDays}>
               Upcoming Events
             </Button>
@@ -282,52 +301,144 @@ function EventGallery({ gallery }: { gallery: GalleryTile[] }) {
 }
 
 /* =========================================================
-   6. Event Videos
+   6. Event Videos - Cinema YouTube Showcase
    ========================================================= */
-function EventVideos({ events }: { events: EventItem[] }) {
-  const videos = events
-    .filter((e): e is EventItem & { youtube: string } => Boolean(e.youtube))
-    .map((e) => ({ title: e.title, href: e.youtube }));
+function getYouTubeThumbnail(url: string) {
+  const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+  return match ? `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg` : null;
+}
 
-  if (videos.length === 0) return null;
+const DEFAULT_HIGHLIGHT_VIDEOS = [
+  {
+    title: "Bihar Police Constable Physical Training Camp & PET Drills",
+    href: "https://www.youtube.com/@lakhisaraphysicalacademy",
+    category: "Physical Test Camp",
+    duration: "HD Video",
+  },
+  {
+    title: "1600m Sunday Time Trial & Sprint Speed Training | Ganesh Sir",
+    href: "https://www.youtube.com/@lakhisaraphysicalacademy",
+    category: "Running Trial",
+    duration: "HD Video",
+  },
+  {
+    title: "High Jump Technique (Tiger & Scissor Jump) Masterclass",
+    href: "https://www.youtube.com/@lakhisaraphysicalacademy",
+    category: "Technique Drills",
+    duration: "HD Video",
+  },
+];
+
+function EventVideos({ events }: { events: EventItem[] }) {
+  const dynamicVideos = events
+    .filter((e): e is EventItem & { youtube: string } => Boolean(e.youtube))
+    .map((e) => ({
+      title: e.title,
+      href: e.youtube,
+      category: e.category,
+      duration: "HD Video",
+    }));
+
+  const allVideos = dynamicVideos.length >= 3 ? dynamicVideos : [...dynamicVideos, ...DEFAULT_HIGHLIGHT_VIDEOS].slice(0, 3);
 
   return (
-    <section className="py-16 sm:py-24">
-      <Container>
-        <ScrollFadeUp as="h2" className="font-display text-[28px] font-bold sm:text-[34px]">
-          Event Videos
-        </ScrollFadeUp>
-        <ScrollFadeUp as="p" delay={0.05} className="font-body mt-3 max-w-[60ch] text-[15px] text-text-muted">
-          Watch highlights from our camps and celebrations on YouTube.
-        </ScrollFadeUp>
+    <section className="py-16 sm:py-24 bg-gradient-to-b from-orange-50/70 via-[#faf7f0] to-white text-slate-900 border-t border-b border-orange-200/60 relative overflow-hidden">
+      {/* Background Glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-red-500/10 blur-[120px] pointer-events-none rounded-full" />
 
-        <StaggerList className="mt-9 grid grid-cols-1 gap-5 sm:grid-cols-3">
-          {videos.map((video) => (
-            <StaggerItem
-              key={video.href}
-              as="a"
-              href={video.href}
+      <Container>
+        <div className="flex flex-wrap items-end justify-between gap-4 mb-10">
+          <ScrollFadeUp>
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-100 border border-red-200 text-red-700 text-xs font-black uppercase tracking-wider mb-3 shadow-2xs">
+              <Youtube size={15} className="text-red-600" />
+              <span>Video Highlights</span>
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-black text-slate-900 leading-tight">
+              Watch Academy <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 via-orange-600 to-amber-600">Event Videos</span>
+            </h2>
+            <p className="mt-2 text-slate-600 text-sm max-w-xl font-medium">
+              Watch live action from 1600m running trials, high jump technique sessions, and student celebrations on YouTube.
+            </p>
+          </ScrollFadeUp>
+
+          <ScrollFadeUp delay={0.1}>
+            <a
+              href="https://www.youtube.com/@lakhisaraphysicalacademy"
               target="_blank"
               rel="noopener noreferrer"
-              className="card-flat group overflow-hidden"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-red-600 hover:bg-red-700 text-white text-xs font-black shadow-lg shadow-red-600/25 hover:scale-105 transition-all"
             >
-              <div
-                className="relative flex h-36 items-center justify-center border-b border-line"
-                style={{
-                  background:
-                    "radial-gradient(circle at 50% 40%, rgba(255,255,255,0.06) 0%, transparent 75%)",
-                }}
-              >
-                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-signal text-on-signal shadow-[0_4px_16px_rgba(37,99,235,0.4)] transition-transform duration-300 group-hover:scale-110">
-                  <Play size={16} fill="currentColor" />
-                </span>
-              </div>
-              <div className="flex items-center gap-2 p-4">
-                <Youtube size={16} className="shrink-0 text-signal-strong" />
-                <p className="font-body text-[13px] font-medium text-text">{video.title}</p>
-              </div>
-            </StaggerItem>
-          ))}
+              <Youtube size={16} />
+              <span>Subscribe on YouTube</span>
+            </a>
+          </ScrollFadeUp>
+        </div>
+
+        <StaggerList className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {allVideos.map((video, idx) => {
+            const thumb = getYouTubeThumbnail(video.href);
+            return (
+              <StaggerItem key={idx}>
+                <a
+                  href={video.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group relative flex flex-col rounded-3xl bg-white border-2 border-slate-200/90 hover:border-red-500 overflow-hidden shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 h-full"
+                >
+                  {/* Thumbnail / Video Screen Banner */}
+                  <div className="relative aspect-video w-full bg-slate-950 overflow-hidden flex items-center justify-center">
+                    {thumb ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={thumb}
+                        alt={video.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-slate-900 via-slate-950 to-red-950/40 flex flex-col items-center justify-center p-6 text-center">
+                        <div className="w-14 h-14 rounded-2xl bg-red-600/20 border border-red-500/40 text-red-400 flex items-center justify-center mb-2">
+                          <Youtube size={32} />
+                        </div>
+                        <span className="text-[11px] font-black uppercase text-amber-400 tracking-wider">
+                          Lakhisarai Physical Academy
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Dark Overlay gradient */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent" />
+
+                    {/* Red Play Pulse Icon */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="w-14 h-14 rounded-full bg-red-600 text-white flex items-center justify-center shadow-xl shadow-red-600/50 group-hover:scale-115 group-hover:bg-red-500 transition-all duration-300">
+                        <Play size={22} className="fill-white translate-x-0.5" />
+                      </div>
+                    </div>
+
+                    {/* Top Category Badge */}
+                    <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-slate-900/90 backdrop-blur-md border border-slate-700 text-[10px] font-black text-amber-300 uppercase tracking-wider">
+                      {video.category}
+                    </div>
+                  </div>
+
+                  {/* Info Box */}
+                  <div className="p-5 flex-1 flex flex-col justify-between">
+                    <h3 className="text-sm sm:text-base font-black text-slate-900 group-hover:text-red-600 transition-colors leading-snug line-clamp-2">
+                      {video.title}
+                    </h3>
+
+                    <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-slate-600 group-hover:text-red-600">
+                      <span className="flex items-center gap-1.5">
+                        <Youtube size={14} className="text-red-600" />
+                        <span>Watch Video</span>
+                      </span>
+                      <span className="text-slate-400 group-hover:text-red-600">↗</span>
+                    </div>
+                  </div>
+                </a>
+              </StaggerItem>
+            );
+          })}
         </StaggerList>
       </Container>
     </section>
