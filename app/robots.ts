@@ -5,13 +5,7 @@ function getBaseUrl(): string {
   if (envUrl && !envUrl.includes("localhost")) {
     return envUrl.replace(/\/$/, "");
   }
-  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
-    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
-  }
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`;
-  }
-  return "https://lakhisaraphysicalacademy.vercel.app";
+  return "https://www.lakhisaraiphysicalacademy.com";
 }
 
 export default function robots(): MetadataRoute.Robots {

@@ -28,8 +28,22 @@ async function getAdminProfile(request: NextRequest, user: User) {
 }
 
 export async function middleware(request: NextRequest) {
-  const { supabaseResponse, user } = await updateSession(request)
+  const host = request.headers.get('host') || ''
+  const proto = request.headers.get('x-forwarded-proto') || 'https'
   const path = request.nextUrl.pathname
+  const search = request.nextUrl.search
+
+  const targetUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.lakhisaraiphysicalacademy.com'
+  const targetHost = targetUrl.replace(/^https?:\/\//, '').replace(/\/$/, '')
+
+  const isLocalhost = host.includes('localhost') || host.includes('127.0.0.1')
+
+  // Enforce 301 Permanent Redirect for HTTP, .vercel.app, or non-www requests to primary www HTTPS domain
+  if (!isLocalhost && (proto === 'http' || host.endsWith('.vercel.app') || !host.startsWith('www.') || host !== targetHost)) {
+    return NextResponse.redirect(`https://${targetHost}${path}${search}`, 301)
+  }
+
+  const { supabaseResponse, user } = await updateSession(request)
 
   const isAdminRoute = path.startsWith('/admin') && path !== '/admin/login'
   const isAdminLoginRoute = path === '/admin/login'
@@ -72,5 +86,10 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: [
+    /*
+     * Match all request paths except static files & images
+     */
+    '/((?!_next/static|_next/image|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)',
+  ],
 }

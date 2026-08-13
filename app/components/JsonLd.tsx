@@ -1,7 +1,7 @@
 import Script from "next/script";
 
 export function OrganizationSchema() {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://lakhisaraphysicalacademy.com";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.lakhisaraiphysicalacademy.com";
 
   const schema = {
     "@context": "https://schema.org",

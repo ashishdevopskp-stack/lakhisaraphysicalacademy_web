@@ -14,7 +14,7 @@ const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], weight: ["500", "600"
 
 import { LAKHISARAI_SEO_KEYWORDS } from "./lib/seo-keywords";
 
-const SITE_URL = "https://lakhisaraphysicalacademy.com";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.lakhisaraiphysicalacademy.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -76,6 +76,18 @@ export const metadata: Metadata = {
   },
   verification: {
     google: ["5Hi9ejRfkH9BJm-i-RJL7F2v18qsOM9nxnQ1CfmMnqk", "googlec99dd0ccfd3361d6"],
+  },
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/favicon-96x96.png", sizes: "96x96", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
+  manifest: "/site.webmanifest",
+  appleWebApp: {
+    title: "Lakhisarai Physical Academy",
   },
 };
 
