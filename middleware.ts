@@ -33,10 +33,13 @@ export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname
   const search = request.nextUrl.search
 
-  const targetUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.lakhisaraiphysicalacademy.com'
-  const targetHost = targetUrl.replace(/^https?:\/\//, '').replace(/\/$/, '')
-
   const isLocalhost = host.includes('localhost') || host.includes('127.0.0.1')
+
+  let targetHost = 'www.lakhisaraiphysicalacademy.com'
+  const envUrl = process.env.NEXT_PUBLIC_SITE_URL
+  if (envUrl && !envUrl.includes('localhost')) {
+    targetHost = envUrl.replace(/^https?:\/\//, '').replace(/\/$/, '')
+  }
 
   // Enforce 301 Permanent Redirect for HTTP, .vercel.app, or non-www requests to primary www HTTPS domain
   if (!isLocalhost && (proto === 'http' || host.endsWith('.vercel.app') || !host.startsWith('www.') || host !== targetHost)) {

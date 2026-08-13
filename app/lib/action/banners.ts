@@ -114,6 +114,12 @@ export async function getBannerById(id: string): Promise<DbBanner | null> {
   }
 }
 
+function isRedirectError(err: unknown): boolean {
+  if (!err || typeof err !== 'object') return false
+  const digest = (err as { digest?: unknown }).digest
+  return typeof digest === 'string' && digest.startsWith('NEXT_REDIRECT')
+}
+
 export async function createBanner(formData: FormData) {
   await requireAdmin()
   const supabase = await createClient()
@@ -127,7 +133,7 @@ export async function createBanner(formData: FormData) {
     const sortOrder = parseInt((formData.get('sortOrder') as string) || '0', 10)
     const isActive = formData.get('isActive') === 'on' || formData.get('isActive') === 'true'
 
-    const imageFile = formData.get('image') as File | null
+    const imageFile = ((formData.get('image') as File) || (formData.get('thumbnail') as File)) as File | null
     const imageUrlInput = (formData.get('thumbnailUrl') as string)?.trim() || null
 
     let image_url = imageUrlInput
@@ -155,6 +161,7 @@ export async function createBanner(formData: FormData) {
       throw new Error(error.message)
     }
   } catch (err) {
+    if (isRedirectError(err)) throw err
     const msg = err instanceof Error ? err.message : 'Failed to create banner'
     redirect(`/admin/banners/new?error=${encodeURIComponent(msg)}`)
   }
@@ -177,7 +184,7 @@ export async function updateBanner(id: string, formData: FormData) {
     const sortOrder = parseInt((formData.get('sortOrder') as string) || '0', 10)
     const isActive = formData.get('isActive') === 'on' || formData.get('isActive') === 'true'
 
-    const imageFile = formData.get('image') as File | null
+    const imageFile = ((formData.get('image') as File) || (formData.get('thumbnail') as File)) as File | null
     const imageUrlInput = (formData.get('thumbnailUrl') as string)?.trim() || null
 
     const updates: Record<string, unknown> = {
@@ -205,6 +212,7 @@ export async function updateBanner(id: string, formData: FormData) {
       throw new Error(error.message)
     }
   } catch (err) {
+    if (isRedirectError(err)) throw err
     const msg = err instanceof Error ? err.message : 'Failed to update banner'
     redirect(`/admin/banners/${id}/edit?error=${encodeURIComponent(msg)}`)
   }
