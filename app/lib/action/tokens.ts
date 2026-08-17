@@ -56,30 +56,53 @@ async function nextSerial(supabase: Awaited<ReturnType<typeof createClient>>) {
   return count ?? 0
 }
 
+function getDatesInRange(startDateStr: string, endDateStr: string): string[] {
+  const dates: string[] = []
+  if (!startDateStr || !endDateStr) return dates
+  const start = new Date(startDateStr)
+  const end = new Date(endDateStr)
+
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) return dates
+
+  const current = new Date(start)
+  while (current <= end) {
+    dates.push(current.toISOString().split('T')[0])
+    current.setDate(current.getDate() + 1)
+  }
+  return dates
+}
+
 export async function generateSingleToken(params: {
   studentId: string
   validFrom: string
   validTill: string
-}) {
+}): Promise<TokenRow[]> {
   if (!params.studentId) throw new Error('Select a student')
   if (!params.validFrom || !params.validTill) throw new Error('Valid From and Valid Till are required')
+
+  const dates = getDatesInRange(params.validFrom, params.validTill)
+  if (dates.length === 0) throw new Error('Invalid date range')
+
   const supabase = await createClient()
   const base = await nextSerial(supabase)
-  const payload = {
+
+  const rows = dates.map((date, idx) => ({
     student_id: params.studentId,
     selected_slots: [] as string[],
-    serial_number: serialFor(base),
-    date_of_allotment: params.validFrom,
-    expiry_date: params.validTill,
+    serial_number: serialFor(base + idx),
+    token_number: idx + 1,
+    date_of_allotment: date,
+    expiry_date: date,
     status: 'active' as const,
-  }
-  const { data, error } = await supabase.from('tokens').insert(payload).select(TOKEN_SELECT).single()
+  }))
+
+  const { data, error } = await supabase.from('tokens').insert(rows).select(TOKEN_SELECT)
   if (error) throw error
   revalidatePath('/admin/token')
-  return data as unknown as TokenRow
+  return (data ?? []) as unknown as TokenRow[]
 }
 
-// generate a token for a walk-in / not-yet-registered student, no students row required
+// generate tokens for a walk-in / not-yet-registered student, date-wise
 export async function generateManualToken(params: {
   name: string
   hostelName?: string
@@ -87,52 +110,74 @@ export async function generateManualToken(params: {
   bedNumber?: string
   validFrom: string
   validTill: string
-}) {
+}): Promise<TokenRow[]> {
   const name = params.name.trim()
   if (!name) throw new Error('Student name is required')
   if (!params.validFrom || !params.validTill) throw new Error('Valid From and Valid Till are required')
+
+  const dates = getDatesInRange(params.validFrom, params.validTill)
+  if (dates.length === 0) throw new Error('Invalid date range')
+
   const supabase = await createClient()
   const base = await nextSerial(supabase)
-  const payload = {
+
+  const rows = dates.map((date, idx) => ({
     student_id: null,
     manual_name: name,
     manual_hostel_name: params.hostelName?.trim() || null,
     manual_room_number: params.roomNumber?.trim() || null,
     manual_bed_number: params.bedNumber?.trim() || null,
     selected_slots: [] as string[],
-    serial_number: serialFor(base),
-    date_of_allotment: params.validFrom,
-    expiry_date: params.validTill,
-    status: 'active' as const,
-  }
-  const { data, error } = await supabase.from('tokens').insert(payload).select(TOKEN_SELECT).single()
-  if (error) throw error
-  revalidatePath('/admin/token')
-  return data as unknown as TokenRow
-}
-
-export async function bulkGenerateTokens(params: {
-  studentIds: string[]
-  validFrom: string
-  validTill: string
-}) {
-  if (!params.validFrom || !params.validTill) throw new Error('Valid From and Valid Till are required')
-  const supabase = await createClient()
-  const base = await nextSerial(supabase)
-
-  const rows = params.studentIds.map((studentId, i) => ({
-    student_id: studentId,
-    selected_slots: [] as string[],
-    serial_number: serialFor(base + i),
-    date_of_allotment: params.validFrom,
-    expiry_date: params.validTill,
+    serial_number: serialFor(base + idx),
+    token_number: idx + 1,
+    date_of_allotment: date,
+    expiry_date: date,
     status: 'active' as const,
   }))
 
   const { data, error } = await supabase.from('tokens').insert(rows).select(TOKEN_SELECT)
   if (error) throw error
   revalidatePath('/admin/token')
-  return data as unknown as TokenRow[]
+  return (data ?? []) as unknown as TokenRow[]
+}
+
+export async function bulkGenerateTokens(params: {
+  studentConfigs: {
+    studentId: string
+    validFrom: string
+    validTill: string
+  }[]
+}): Promise<TokenRow[]> {
+  if (!params.studentConfigs || params.studentConfigs.length === 0) return []
+
+  const supabase = await createClient()
+  let base = await nextSerial(supabase)
+
+  const allRows: any[] = []
+
+  for (const config of params.studentConfigs) {
+    if (!config.studentId || !config.validFrom || !config.validTill) continue
+    const dates = getDatesInRange(config.validFrom, config.validTill)
+
+    dates.forEach((date, idx) => {
+      allRows.push({
+        student_id: config.studentId,
+        selected_slots: [] as string[],
+        serial_number: serialFor(base++),
+        token_number: idx + 1,
+        date_of_allotment: date,
+        expiry_date: date,
+        status: 'active' as const,
+      })
+    })
+  }
+
+  if (allRows.length === 0) return []
+
+  const { data, error } = await supabase.from('tokens').insert(allRows).select(TOKEN_SELECT)
+  if (error) throw error
+  revalidatePath('/admin/token')
+  return (data ?? []) as unknown as TokenRow[]
 }
 
 export async function cancelToken(id: string) {

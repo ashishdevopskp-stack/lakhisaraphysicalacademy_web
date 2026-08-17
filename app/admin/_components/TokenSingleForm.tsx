@@ -1,18 +1,25 @@
 'use client'
 
-import { useRef, useState, useTransition } from 'react'
-import { generateSingleToken, generateManualToken } from '@/app/lib/action/tokens'
-import { TokenCard, type TokenCardData } from './TokenCard'
+import { useState, useTransition } from 'react'
+import { generateSingleToken, generateManualToken, type TokenRow } from '@/app/lib/action/tokens'
+import { TokenCard, A4GridTokenCard, type TokenCardData } from './TokenCard'
 import type { Student, Hostel } from '@/app/lib/action/students'
+import { Calendar, Printer, Download, Layers, CheckCircle2, AlertCircle } from 'lucide-react'
 
 type Mode = 'existing' | 'manual'
 
 const inputClass =
-  'w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500'
+  'w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 font-semibold text-gray-800'
 
-// Target output width (px) for the downloaded/printed image, regardless
-// of how small the card is actually rendered on the viewer's screen.
-const CAPTURE_TARGET_WIDTH = 1800
+const CARDS_PER_PAGE = 12
+
+function chunkArray<T>(array: T[], chunkSize: number): T[][] {
+  const results: T[][] = []
+  for (let i = 0; i < array.length; i += chunkSize) {
+    results.push(array.slice(i, i + chunkSize))
+  }
+  return results
+}
 
 export function TokenSingleForm({
   students,
@@ -33,32 +40,48 @@ export function TokenSingleForm({
   const [validFrom, setValidFrom] = useState('')
   const [validTill, setValidTill] = useState('')
 
-  const [saved, setSaved] = useState<TokenCardData | null>(null)
+  const [savedTokens, setSavedTokens] = useState<TokenCardData[]>([])
   const [error, setError] = useState<string | null>(null)
   const [pending, startTransition] = useTransition()
-  const [busy, setBusy] = useState<'print' | 'download' | null>(null)
-  const cardRef = useRef<HTMLDivElement>(null)
+  const [exporting, setExporting] = useState(false)
 
   const canGenerate =
     !!validFrom &&
     !!validTill &&
     (mode === 'existing' ? !!studentId : manualName.trim().length > 0)
 
-  function toCardData(row: any): TokenCardData {
+  // Calculate day count
+  const dayCount =
+    validFrom && validTill
+      ? Math.max(
+          1,
+          Math.round(
+            (new Date(validTill).getTime() - new Date(validFrom).getTime()) / (1000 * 60 * 60 * 24)
+          ) + 1
+        )
+      : 0
+
+  function toCardData(row: TokenRow): TokenCardData {
     const hostelName = row.students?.hostels?.name ?? row.manual_hostel_name ?? 'Hostel'
     const roomNumber = row.students?.rooms?.room_number ?? row.manual_room_number ?? '—'
     const bedNumber = row.students?.bed_number ?? row.manual_bed_number ?? null
     const name = row.students?.name ?? row.manual_name ?? ''
+    const formattedDate = new Date(row.date_of_allotment).toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    })
     return {
       tokenNo: String(row.token_number).padStart(2, '0'),
       serial: row.serial_number,
-      issueDate: new Date(row.date_of_allotment).toLocaleDateString('en-GB'),
-      expiryDate: new Date(row.expiry_date).toLocaleDateString('en-GB'),
+      issueDate: formattedDate,
+      expiryDate: formattedDate,
+      mealDate: formattedDate,
       studentName: name,
       hostelName,
       roomNumber,
       bedNumber,
-      slots: row.selected_slots ?? [],
+      slots: row.selected_slots ?? ['Breakfast', 'Lunch', 'Dinner'],
     }
   }
 
@@ -67,7 +90,7 @@ export function TokenSingleForm({
     setError(null)
     startTransition(async () => {
       try {
-        const row =
+        const rows =
           mode === 'existing'
             ? await generateSingleToken({ studentId, validFrom, validTill })
             : await generateManualToken({
@@ -78,237 +101,385 @@ export function TokenSingleForm({
                 validFrom,
                 validTill,
               })
-        setSaved(toCardData(row))
+        setSavedTokens(rows.map(toCardData))
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Could not generate token')
+        setError(err instanceof Error ? err.message : 'Could not generate tokens')
       }
     })
   }
 
-  async function renderCanvas() {
-    if (!cardRef.current) return null
-    const html2canvas = (await import('html2canvas-pro')).default
-    // The card is fluid on screen (mobile-responsive), so its rendered
-    // width varies by device. Scale capture up/down to hit a consistent
-    // target resolution either way — sharp on a phone, not oversized on desktop.
-    const renderedWidth = cardRef.current.offsetWidth || 600
-    const scale = Math.min(5, Math.max(2, CAPTURE_TARGET_WIDTH / renderedWidth))
-    return html2canvas(cardRef.current, { scale, backgroundColor: '#fdf6ee' })
+  function handleNativePrint() {
+    if (savedTokens.length === 0) return
+    window.print()
   }
 
-  async function downloadImage() {
-    setBusy('download')
+  async function exportPDF() {
+    if (savedTokens.length === 0) return
+    setExporting(true)
+
     try {
-      const canvas = await renderCanvas()
-      if (!canvas) return
-      canvas.toBlob((blob) => {
-        if (!blob) return
-        const url = URL.createObjectURL(blob)
-        const a = document.createElement('a')
-        a.href = url
-        a.download = `token-${saved?.serial ?? 'card'}.png`
-        document.body.appendChild(a)
-        a.click()
-        a.remove()
-        URL.revokeObjectURL(url)
-      }, 'image/png')
-    } finally {
-      setBusy(null)
-    }
-  }
-
-  async function printCard() {
-    setBusy('print')
-    try {
-      const canvas = await renderCanvas()
-      if (!canvas) return
-      const img = canvas.toDataURL('image/png')
-
-      const printWindow = window.open('', '_blank', 'width=800,height=900')
-      if (!printWindow) return
-
-      printWindow.document.write(`
-        <html>
-          <head>
-            <title>Bhojan Token</title>
-            <meta charset="utf-8" />
-            <style>
-              @page { size: A4; margin: 0; }
-              html, body {
-                margin: 0;
-                width: 210mm;
-                height: 297mm;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                background: #fff;
-              }
-              img {
-                width: 140mm;
-                height: auto;
-                border: 1px dashed #999;
-              }
-            </style>
-          </head>
-          <body>
-            <img src="${img}" />
-          </body>
-        </html>
-      `)
-      printWindow.document.close()
-
-      const printImg = printWindow.document.querySelector('img')
-      const triggerPrint = () => {
-        printWindow.focus()
-        printWindow.print()
-        printWindow.close()
+      if (typeof document !== 'undefined' && document.fonts) {
+        await document.fonts.ready
       }
-      if (printImg && !printImg.complete) {
-        printImg.addEventListener('load', triggerPrint)
-        printImg.addEventListener('error', triggerPrint)
-        setTimeout(triggerPrint, 1200)
-      } else {
-        setTimeout(triggerPrint, 150)
+
+      const html2canvas = (await import('html2canvas-pro')).default
+      const { jsPDF } = await import('jspdf')
+
+      // A4 portrait: 595.28 pt x 841.89 pt
+      const pdf = new jsPDF({ unit: 'pt', format: 'a4' })
+      const pageW = 595.28
+      const pageH = 841.89
+
+      const marginX = 14
+      const marginY = 14
+      const colGap = 8
+      const rowGap = 8
+
+      // 3 columns x 4 rows = 12 cards per A4 page
+      const cols = 3
+      const rows = 4
+
+      const cellW = (pageW - marginX * 2 - colGap * (cols - 1)) / cols
+      const cellH = (pageH - marginY * 2 - rowGap * (rows - 1)) / rows
+
+      const bank = document.getElementById('token-single-bank')!
+      const origPos = bank.style.position
+      const origLeft = bank.style.left
+
+      bank.style.position = 'fixed'
+      bank.style.left = '0px'
+      bank.style.top = '0px'
+      bank.style.zIndex = '-9999'
+
+      const cardEls = bank.querySelectorAll('.compact-grid-card')
+
+      let idx = 0
+      for (const parentEl of Array.from(cardEls)) {
+        const targetEl = (parentEl.firstElementChild as HTMLElement) || (parentEl as HTMLElement)
+        const canvas = await html2canvas(targetEl, {
+          scale: 2.5,
+          backgroundColor: '#ffffff',
+          useCORS: true,
+          logging: false,
+        })
+        const img = canvas.toDataURL('image/png')
+        const posInPage = idx % CARDS_PER_PAGE
+
+        if (idx > 0 && posInPage === 0) pdf.addPage()
+
+        const col = posInPage % cols
+        const row = Math.floor(posInPage / cols)
+
+        const x = marginX + col * (cellW + colGap)
+        const y = marginY + row * (cellH + rowGap)
+
+        pdf.addImage(img, 'PNG', x, y, cellW, cellH)
+        idx++
       }
+
+      pdf.save(`bhojan-tokens-${savedTokens.length}days.pdf`)
+    } catch (err) {
+      console.error('PDF export failed:', err)
     } finally {
-      setBusy(null)
+      const bank = document.getElementById('token-single-bank')
+      if (bank) {
+        bank.style.position = 'fixed'
+        bank.style.left = '-9999px'
+      }
+      setExporting(false)
     }
   }
 
   return (
-    <div className="grid lg:grid-cols-2 gap-6 items-start">
-      <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-4 sm:p-6 space-y-5">
-        {error && <div className="px-4 py-3 rounded-lg bg-red-50 text-red-600 text-sm">{error}</div>}
-
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={() => setMode('existing')}
-            className={
-              'flex-1 px-3 py-2 rounded-lg text-sm font-medium border ' +
-              (mode === 'existing' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-600 border-gray-300')
-            }
-          >
-            Existing Student
-          </button>
-          <button
-            type="button"
-            onClick={() => setMode('manual')}
-            className={
-              'flex-1 px-3 py-2 rounded-lg text-sm font-medium border ' +
-              (mode === 'manual' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-600 border-gray-300')
-            }
-          >
-            Manual Entry
-          </button>
-        </div>
-
-        {mode === 'existing' ? (
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Student</label>
-            <select value={studentId} onChange={(e) => setStudentId(e.target.value)} className={inputClass}>
-              <option value="">Select student</option>
-              {students.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.name} — {s.hostels?.name ?? 'Hostel'} Room {s.rooms?.room_number ?? '—'}
-                </option>
-              ))}
-            </select>
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 gap-3">
-            <div className="col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-              <input value={manualName} onChange={(e) => setManualName(e.target.value)} className={inputClass} />
+    <div className="space-y-6">
+      <div className="grid lg:grid-cols-12 gap-6 items-start">
+        {/* Form Controls Column (5 cols) */}
+        <div className="lg:col-span-5 bg-white border border-gray-200 rounded-2xl shadow-sm p-5 space-y-5">
+          {error && (
+            <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-bold flex items-center gap-2">
+              <AlertCircle size={16} className="shrink-0" />
+              <span>{error}</span>
             </div>
+          )}
+
+          <div className="flex gap-2 p-1 bg-gray-100 rounded-xl">
+            <button
+              type="button"
+              onClick={() => setMode('existing')}
+              className={
+                'flex-1 px-3 py-2 rounded-lg text-xs font-bold transition-all ' +
+                (mode === 'existing'
+                  ? 'bg-white text-indigo-700 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900')
+              }
+            >
+              Registered Student
+            </button>
+            <button
+              type="button"
+              onClick={() => setMode('manual')}
+              className={
+                'flex-1 px-3 py-2 rounded-lg text-xs font-bold transition-all ' +
+                (mode === 'manual'
+                  ? 'bg-white text-indigo-700 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900')
+              }
+            >
+              Manual / Walk-In
+            </button>
+          </div>
+
+          {mode === 'existing' ? (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Hostel</label>
-              <input
-                list="hostel-suggestions"
-                value={manualHostel}
-                onChange={(e) => setManualHostel(e.target.value)}
-                className={inputClass}
-              />
-              <datalist id="hostel-suggestions">
-                {hostels.map((h) => (
-                  <option key={h.id} value={h.name} />
+              <label className="block text-xs font-bold text-gray-700 mb-1.5">Select Student *</label>
+              <select value={studentId} onChange={(e) => setStudentId(e.target.value)} className={inputClass}>
+                <option value="">Choose student...</option>
+                {students.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name} — {s.hostels?.name ?? 'Hostel'} Room {s.rooms?.room_number ?? '—'}
+                  </option>
                 ))}
-              </datalist>
+              </select>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Room</label>
-              <input value={manualRoom} onChange={(e) => setManualRoom(e.target.value)} className={inputClass} />
+          ) : (
+            <div className="grid grid-cols-2 gap-3">
+              <div className="col-span-2">
+                <label className="block text-xs font-bold text-gray-700 mb-1">Student Name *</label>
+                <input
+                  value={manualName}
+                  onChange={(e) => setManualName(e.target.value)}
+                  placeholder="e.g. Rahul Kumar"
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">Hostel</label>
+                <input
+                  list="hostel-suggestions"
+                  value={manualHostel}
+                  onChange={(e) => setManualHostel(e.target.value)}
+                  placeholder="e.g. Jay Shankar"
+                  className={inputClass}
+                />
+                <datalist id="hostel-suggestions">
+                  {hostels.map((h) => (
+                    <option key={h.id} value={h.name} />
+                  ))}
+                </datalist>
+              </div>
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">Room No.</label>
+                <input
+                  value={manualRoom}
+                  onChange={(e) => setManualRoom(e.target.value)}
+                  placeholder="104"
+                  className={inputClass}
+                />
+              </div>
+              <div className="col-span-2">
+                <label className="block text-xs font-bold text-gray-700 mb-1">Bed No.</label>
+                <input
+                  value={manualBed}
+                  onChange={(e) => setManualBed(e.target.value)}
+                  placeholder="02"
+                  className={inputClass}
+                />
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Bed</label>
-              <input value={manualBed} onChange={(e) => setManualBed(e.target.value)} className={inputClass} />
-            </div>
-          </div>
-        )}
+          )}
 
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Valid From</label>
-            <input
-              type="date"
-              value={validFrom}
-              onChange={(e) => setValidFrom(e.target.value)}
-              className={inputClass}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Valid Till</label>
-            <input
-              type="date"
-              value={validTill}
-              min={validFrom || undefined}
-              onChange={(e) => setValidTill(e.target.value)}
-              className={inputClass}
-            />
-          </div>
-        </div>
+          {/* Date Range Selection Box */}
+          <div className="bg-indigo-50/50 border border-indigo-100 rounded-xl p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-black uppercase tracking-wider text-indigo-900 flex items-center gap-1.5">
+                <Calendar size={15} className="text-indigo-600" />
+                <span>Token Validity Date Range</span>
+              </span>
+              {dayCount > 0 && (
+                <span className="px-2.5 py-0.5 rounded-full bg-indigo-600 text-white text-[11px] font-black">
+                  {dayCount} Tokens ({dayCount} Days)
+                </span>
+              )}
+            </div>
 
-        <div className="flex flex-wrap gap-3 pt-2">
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-[11px] font-bold text-gray-700 mb-1">Valid From *</label>
+                <input
+                  type="date"
+                  value={validFrom}
+                  onChange={(e) => setValidFrom(e.target.value)}
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label className="block text-[11px] font-bold text-gray-700 mb-1">Valid Till *</label>
+                <input
+                  type="date"
+                  value={validTill}
+                  min={validFrom || undefined}
+                  onChange={(e) => setValidTill(e.target.value)}
+                  className={inputClass}
+                />
+              </div>
+            </div>
+
+            <p className="text-[11px] text-slate-500 font-medium leading-normal">
+              ⚡ Selected date range ke har din ke liye automatic alag Bhojan Token (Token 1, Token 2... Token {dayCount || 'N'}) generate hoga.
+            </p>
+          </div>
+
           <button
             onClick={handleGenerate}
             disabled={pending || !canGenerate}
-            className="px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 disabled:opacity-50"
+            className="w-full py-3 rounded-xl bg-indigo-600 text-white text-xs font-black uppercase tracking-wider hover:bg-indigo-700 disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/20 transition-all cursor-pointer"
           >
-            {pending ? 'Saving…' : 'Save Token'}
+            <Layers size={16} />
+            <span>
+              {pending
+                ? 'Generating Date-wise Tokens…'
+                : `Generate ${dayCount > 0 ? dayCount : ''} Date-Wise Tokens`}
+            </span>
           </button>
-          {saved && (
-            <>
-              <button
-                onClick={printCard}
-                disabled={busy !== null}
-                className="px-4 py-2 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-              >
-                {busy === 'print' ? 'Printing…' : 'Print'}
-              </button>
-              <button
-                onClick={downloadImage}
-                disabled={busy !== null}
-                className="px-4 py-2 rounded-lg border border-gray-300 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-              >
-                {busy === 'download' ? 'Saving…' : 'Download Image'}
-              </button>
-            </>
+        </div>
+
+        {/* Generated Tokens Display & Print Controls (7 cols) */}
+        <div className="lg:col-span-7 space-y-4">
+          {savedTokens.length > 0 ? (
+            <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 pb-3">
+                <div>
+                  <h3 className="text-sm font-black text-gray-900 flex items-center gap-2">
+                    <CheckCircle2 size={18} className="text-emerald-600" />
+                    <span>Generated Tokens ({savedTokens.length} Total)</span>
+                  </h3>
+                  <p className="text-xs text-gray-500 font-medium">
+                    12 Tokens per A4 Page layout ready for print &amp; cutting.
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleNativePrint}
+                    className="px-3.5 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 flex items-center gap-1.5 transition-all shadow-md cursor-pointer"
+                  >
+                    <Printer size={15} />
+                    <span>Print All (12/Page)</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={exportPDF}
+                    disabled={exporting}
+                    className="px-3.5 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700 disabled:opacity-50 flex items-center gap-1.5 transition-all shadow-md cursor-pointer"
+                  >
+                    <Download size={15} />
+                    <span>{exporting ? 'Building PDF…' : 'Download PDF'}</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Sample Card Live Preview */}
+              <div className="space-y-3">
+                <p className="text-xs font-extrabold text-gray-600">Sample Card Preview (Token #01):</p>
+                <div className="max-w-[480px] mx-auto">
+                  <TokenCard data={savedTokens[0]} />
+                </div>
+              </div>
+
+              {/* All Generated Tokens List Table */}
+              <div className="pt-2">
+                <p className="text-xs font-extrabold text-gray-700 mb-2">
+                  Generated Tokens List ({savedTokens.length} Tokens):
+                </p>
+                <div className="max-h-60 overflow-y-auto border border-gray-200 rounded-xl overflow-hidden">
+                  <table className="w-full text-xs">
+                    <thead className="bg-gray-100 font-bold text-gray-700 sticky top-0">
+                      <tr>
+                        <th className="px-3 py-2 text-left">Token #</th>
+                        <th className="px-3 py-2 text-left">Meal Date</th>
+                        <th className="px-3 py-2 text-left">Serial No</th>
+                        <th className="px-3 py-2 text-left">Student</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {savedTokens.map((t) => (
+                        <tr key={t.serial} className="hover:bg-gray-50 font-medium text-gray-800">
+                          <td className="px-3 py-2 font-black text-red-600">Token {t.tokenNo}</td>
+                          <td className="px-3 py-2 font-bold text-emerald-700">{t.mealDate}</td>
+                          <td className="px-3 py-2 text-gray-500">S/N: {t.serial}</td>
+                          <td className="px-3 py-2 font-bold">{t.studentName}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-white border-2 border-dashed border-gray-200 rounded-2xl h-[340px] flex flex-col items-center justify-center text-center p-6 text-gray-400 space-y-2">
+              <Calendar size={40} className="text-gray-300" />
+              <p className="text-sm font-bold text-gray-600">No Tokens Generated Yet</p>
+              <p className="text-xs text-gray-400 max-w-xs">
+                Select student and date range (Valid From &amp; Valid Till) to generate date-wise Bhojan Tokens.
+              </p>
+            </div>
           )}
         </div>
       </div>
 
-      {/* Preview column: centers and shrinks the card to fit any screen,
-         no horizontal scrolling ever needed here */}
-      <div className="w-full flex justify-center px-1">
-        {saved ? (
-          <div ref={cardRef} className="w-full max-w-[600px]">
-            <TokenCard data={saved} />
+      {/* Hidden Render Bank for html2canvas PDF Export (12-per-page A4 cards) */}
+      <div id="token-single-bank" style={{ position: 'fixed', left: -9999, top: 0, width: 230 }}>
+        {savedTokens.map((t) => (
+          <div key={t.serial} className="compact-grid-card" style={{ width: 226, height: 250, marginBottom: 12 }}>
+            <A4GridTokenCard data={t} />
           </div>
-        ) : (
-          <div className="w-full max-w-[600px] h-[280px] sm:h-[340px] border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center text-gray-400 text-sm text-center px-4">
-            Card preview appears here after saving
+        ))}
+      </div>
+
+      {/* Printable Area for Native Browser Print (@media print 12 cards per A4 page) */}
+      <style jsx global>{`
+        @media print {
+          body * {
+            visibility: hidden !important;
+          }
+          #printable-a4-tokens-single,
+          #printable-a4-tokens-single * {
+            visibility: visible !important;
+          }
+          #printable-a4-tokens-single {
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 210mm !important;
+            background: #ffffff !important;
+          }
+          .a4-print-page {
+            width: 210mm !important;
+            height: 297mm !important;
+            padding: 6mm !important;
+            box-sizing: border-box !important;
+            display: grid !important;
+            grid-template-columns: repeat(3, 1fr) !important;
+            grid-template-rows: repeat(4, 1fr) !important;
+            gap: 4mm !important;
+            page-break-after: always !important;
+            break-after: page !important;
+          }
+        }
+      `}</style>
+
+      <div id="printable-a4-tokens-single" className="hidden print:block">
+        {chunkArray(savedTokens, CARDS_PER_PAGE).map((pageTokens, pageIdx) => (
+          <div key={pageIdx} className="a4-print-page">
+            {pageTokens.map((t) => (
+              <div key={t.serial} style={{ height: '100%', width: '100%' }}>
+                <A4GridTokenCard data={t} />
+              </div>
+            ))}
           </div>
-        )}
+        ))}
       </div>
     </div>
   )
