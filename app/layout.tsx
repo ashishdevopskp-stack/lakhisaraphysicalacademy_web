@@ -13,8 +13,9 @@ const poppins = Poppins({ subsets: ["latin"], weight: ["500", "600", "700"], var
 const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], weight: ["500", "600"], variable: "--font-jetbrains-mono", display: "swap" });
 
 import { LAKHISARAI_SEO_KEYWORDS } from "./lib/seo-keywords";
+import { getSiteUrl } from "./lib/site-url";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.lakhisaraiphysicalacademy.com";
+const SITE_URL = getSiteUrl();
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
