@@ -157,7 +157,7 @@ export function TokenSingleForm({
       for (const parentEl of Array.from(cardEls)) {
         const targetEl = (parentEl.firstElementChild as HTMLElement) || (parentEl as HTMLElement)
         const canvas = await html2canvas(targetEl, {
-          scale: 2.5,
+          scale: 3,
           backgroundColor: '#ffffff',
           useCORS: true,
           logging: false,
@@ -430,9 +430,9 @@ export function TokenSingleForm({
       </div>
 
       {/* Hidden Render Bank for html2canvas PDF Export (12-per-page A4 cards) */}
-      <div id="token-single-bank" style={{ position: 'fixed', left: -9999, top: 0, width: 240 }}>
+      <div id="token-single-bank" style={{ position: 'fixed', left: -9999, top: 0, width: 390 }}>
         {savedTokens.map((t) => (
-          <div key={t.serial} className="compact-grid-card" style={{ width: 236, height: 254, marginBottom: 12 }}>
+          <div key={t.serial} className="compact-grid-card" style={{ width: 380, height: 400, marginBottom: 12 }}>
             <A4GridTokenCard data={t} />
           </div>
         ))}
