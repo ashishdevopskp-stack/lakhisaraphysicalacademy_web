@@ -202,16 +202,17 @@ export function TokenCard({
       <div
         style={{
           borderTop: '1px dashed #cbd5e1',
-          background: '#fafafa',
+          background: '#fffbeb',
           padding: '8px 16px',
           fontSize: 'clamp(10px, 2.5vw, 11px)',
-          color: '#334155',
+          color: '#1e293b',
           lineHeight: 1.4,
         }}
       >
         <div style={{ fontWeight: 800, color: '#b91c1c', marginBottom: 2 }}>नोटः</div>
         <div>• यह टोकन केवल निर्दिष्ट तारीख ({displayDate}) के लिए मान्य है।</div>
-        <div>• भोजन प्राप्त करने के लिए टोकन जमा करना अनिवार्य है।</div>
+        <div>• बिना टोकन के भोजन नहीं दिया जाएगा।</div>
+        <div>• टोकन खो जाने पर नया टोकन जारी नहीं किया जाएगा।</div>
       </div>
 
       {/* Director Footer */}
@@ -265,7 +266,7 @@ export function A4GridTokenCard({ data }: { data: TokenCardData }) {
         style={{
           background: '#0f172a',
           color: '#ffffff',
-          padding: '6px 8px',
+          padding: '5px 8px',
           display: 'flex',
           alignItems: 'center',
           gap: 6,
@@ -275,29 +276,29 @@ export function A4GridTokenCard({ data }: { data: TokenCardData }) {
         <img
           src="/logo.png"
           alt="LPA Logo"
-          width={24}
-          height={24}
+          width={22}
+          height={22}
           style={{ objectFit: 'contain', borderRadius: '50%', flexShrink: 0 }}
           onError={(e) => {
             ;(e.target as HTMLImageElement).style.display = 'none'
           }}
         />
         <div style={{ flex: 1, minWidth: 0, lineHeight: 1.1 }}>
-          <div style={{ color: '#fde047', fontWeight: 900, fontSize: 10, letterSpacing: 0.3 }}>
+          <div style={{ color: '#fde047', fontWeight: 900, fontSize: 9.5, letterSpacing: 0.3 }}>
             LAKHISARAI PHYSICAL ACADEMY
           </div>
-          <div style={{ color: '#059669', fontWeight: 900, fontSize: 8.5, marginTop: 1 }}>
+          <div style={{ color: '#34d399', fontWeight: 900, fontSize: 8, marginTop: 1 }}>
             ★ HOSTEL BHOJAN TOKEN ★
           </div>
         </div>
       </div>
 
       {/* Main Body */}
-      <div style={{ flex: 1, display: 'flex', padding: '6px 8px', gap: 6, alignItems: 'center' }}>
+      <div style={{ flex: 1, display: 'flex', padding: '5px 8px', gap: 6, alignItems: 'center' }}>
         {/* Token # Box */}
         <div
           style={{
-            width: 64,
+            width: 60,
             height: '100%',
             background: '#f8fafc',
             border: '1px solid #e2e8f0',
@@ -310,19 +311,19 @@ export function A4GridTokenCard({ data }: { data: TokenCardData }) {
             padding: 2,
           }}
         >
-          <span style={{ fontSize: 7.5, fontWeight: 800, color: '#475569', letterSpacing: 0.3 }}>
+          <span style={{ fontSize: 7, fontWeight: 800, color: '#475569', letterSpacing: 0.3 }}>
             TOKEN NO.
           </span>
-          <span style={{ fontSize: 24, fontWeight: 900, color: '#dc2626', lineHeight: 1 }}>
+          <span style={{ fontSize: 22, fontWeight: 900, color: '#dc2626', lineHeight: 1 }}>
             {data.tokenNo}
           </span>
-          <span style={{ fontSize: 7, color: '#64748b', fontWeight: 700, marginTop: 2 }}>
+          <span style={{ fontSize: 6.5, color: '#64748b', fontWeight: 700, marginTop: 2 }}>
             S/N: {data.serial}
           </span>
         </div>
 
         {/* Student Meta Details */}
-        <div style={{ flex: 1, minWidth: 0, fontSize: 9.5, lineHeight: 1.3, color: '#1e293b' }}>
+        <div style={{ flex: 1, minWidth: 0, fontSize: 9, lineHeight: 1.25, color: '#1e293b' }}>
           <div style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
             <b style={{ color: '#0f172a' }}>Name: </b>
             <span style={{ fontWeight: 800, color: '#1e1b4b' }}>{data.studentName}</span>
@@ -337,7 +338,7 @@ export function A4GridTokenCard({ data }: { data: TokenCardData }) {
                 padding: '1px 4px',
                 borderRadius: 4,
                 fontWeight: 900,
-                fontSize: 9,
+                fontSize: 8.5,
                 border: '1px solid #86efac',
               }}
             >
@@ -359,22 +360,39 @@ export function A4GridTokenCard({ data }: { data: TokenCardData }) {
         </div>
       </div>
 
+      {/* Hindi Notice Box */}
+      <div
+        style={{
+          background: '#fffbeb',
+          borderTop: '1px dashed #fcd34d',
+          borderBottom: '1px dashed #fcd34d',
+          padding: '4px 8px',
+          fontSize: 7.5,
+          color: '#1e293b',
+          lineHeight: 1.35,
+        }}
+      >
+        <div style={{ fontWeight: 800, color: '#b91c1c', fontSize: 8, marginBottom: 1 }}>नोट:</div>
+        <div>1. यह टोकन केवल निर्दिष्ट तारीख ({displayDate}) के लिए मान्य है।</div>
+        <div>2. बिना टोकन के भोजन नहीं दिया जाएगा।</div>
+        <div>3. टोकन खो जाने पर नया टोकन जारी नहीं किया जाएगा।</div>
+      </div>
+
       {/* Footer Cut & Rules Strip */}
       <div
         style={{
-          background: '#f1f5f9',
+          background: '#0f172a',
+          color: '#ffffff',
           padding: '3px 8px',
-          borderTop: '1px solid #e2e8f0',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           fontSize: 7.5,
-          color: '#475569',
           fontWeight: 700,
         }}
       >
-        <span>✂️ Cut along dotted lines</span>
-        <span style={{ color: '#dc2626', fontWeight: 800 }}>बिना टोकन भोजन नहीं</span>
+        <span style={{ color: '#cbd5e1' }}>✂️ Cut along dotted lines</span>
+        <span style={{ color: '#fef08a', fontWeight: 800 }}>LPA Hostel</span>
       </div>
     </div>
   )
