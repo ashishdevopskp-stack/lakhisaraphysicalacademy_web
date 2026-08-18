@@ -12,6 +12,7 @@ import {
   Calendar,
   User,
   Tag,
+  Star,
 } from "lucide-react";
 import type { DbBlog } from "@/app/lib/action/blogs";
 import { deleteBlog } from "@/app/lib/action/blogs";
@@ -143,6 +144,15 @@ export function BlogManagementView({ initialBlogs }: { initialBlogs: DbBlog[] })
 
             {/* Actions */}
             <div className="flex items-center gap-2.5 self-end md:self-center shrink-0">
+              <Link
+                href={`/admin/blogs/${blog.id}/reviews`}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-amber-900 bg-amber-50 hover:bg-amber-100 border border-amber-200 transition-colors"
+                title="View & Moderate Reviews/Comments for this Blog"
+              >
+                <Star size={14} className="fill-amber-400 text-amber-500" />
+                <span>Reviews</span>
+              </Link>
+
               <Link
                 href={`/blogs/${blog.id}`}
                 target="_blank"

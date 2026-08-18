@@ -17,13 +17,17 @@ import { getBlogs } from "./lib/action/blogs";
 import { getResults } from "./lib/action/results";
 import { getBatches } from "./lib/action/batches";
 import { getActiveBanners } from "./lib/action/banners";
+import { getApprovedWebsiteReviews, getWebsiteReviewStats } from "./lib/action/reviews";
+import { ReviewsSection } from "./components/ReviewsSection";
 
 export default async function Home() {
-  const [blogs, results, batches, banners] = await Promise.all([
+  const [blogs, results, batches, banners, websiteReviews, reviewStats] = await Promise.all([
     getBlogs(),
     getResults(),
     getBatches(),
     getActiveBanners(),
+    getApprovedWebsiteReviews(),
+    getWebsiteReviewStats(),
   ]);
 
   return (
@@ -48,6 +52,7 @@ export default async function Home() {
       <Resources />
       <Jobs />
       <Videos />
+      <ReviewsSection reviews={websiteReviews} stats={reviewStats} />
       <FAQSection />
       <Contact />
     </main>

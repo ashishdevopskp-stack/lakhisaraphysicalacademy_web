@@ -6,6 +6,8 @@ import {
   Calendar, Clock, User, Eye, PlayCircle, Download, ArrowLeft, Newspaper,
 } from "lucide-react";
 import { getBlog, incrementBlogViews } from "@/app/lib/action/blogs";
+import { getApprovedBlogReviews } from "@/app/lib/action/reviews";
+import { BlogCommentsSection } from "../_components/BlogCommentsSection";
 import Container from "../../components/Container";
 import Button from "../../components/Button";
 import Badge from "../../components/Badge";
@@ -29,7 +31,10 @@ export async function generateMetadata({ params }: BlogDetailParams) {
 
 export default async function BlogDetailPage({ params }: BlogDetailParams) {
   const { id } = await params;
-  const blog = await getBlog(id);
+  const [blog, approvedComments] = await Promise.all([
+    getBlog(id),
+    getApprovedBlogReviews(id),
+  ]);
   if (!blog) notFound();
 
   // Note: runs on every view including refreshes/crawlers — pre-existing
@@ -107,6 +112,13 @@ export default async function BlogDetailPage({ params }: BlogDetailParams) {
               <RichContentRenderer content={blog.content} />
             </div>
           )}
+
+          {/* Reader Comment & Review Section */}
+          <BlogCommentsSection
+            blogId={id}
+            blogTitle={blog.title}
+            approvedComments={approvedComments}
+          />
         </div>
       </Container>
     </section>

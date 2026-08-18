@@ -7,7 +7,7 @@ import {
   ClipboardList,
   LayoutDashboard, Package, ShoppingCart, FileText, Calendar,
   Award, BookOpen, Briefcase, PlayCircle, Menu, X, ChevronDown,
-  Users, Utensils, Image as ImageIcon,
+  Users, Utensils, Image as ImageIcon, Star,
 } from 'lucide-react'
 
 type NavItem = {
@@ -19,6 +19,15 @@ type NavItem = {
 
 const NAV: NavItem[] = [
   { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
+  {
+    label: 'Reviews', href: '/admin/reviews', icon: Star,
+    children: [
+      { label: 'All Reviews', href: '/admin/reviews' },
+      { label: 'Website Reviews', href: '/admin/reviews?type=website' },
+      { label: 'Blog Reviews', href: '/admin/reviews?type=blog' },
+      { label: 'Pending Approval', href: '/admin/reviews?status=pending' },
+    ],
+  },
   {
     label: 'Home Page Manager', href: '/admin/banners', icon: ImageIcon,
     children: [
