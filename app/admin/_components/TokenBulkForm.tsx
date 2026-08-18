@@ -188,8 +188,6 @@ export function TokenBulkForm() {
       const cellH = (pageH - marginY * 2 - rowGap * (rows - 1)) / rows
 
       const bank = document.getElementById('token-bulk-bank')!
-      const origPos = bank.style.position
-      const origLeft = bank.style.left
 
       bank.style.position = 'fixed'
       bank.style.left = '0px'
@@ -218,7 +216,20 @@ export function TokenBulkForm() {
         const x = marginX + col * (cellW + colGap)
         const y = marginY + row * (cellH + rowGap)
 
-        pdf.addImage(img, 'PNG', x, y, cellW, cellH)
+        // Preserve aspect ratio: fit card image within the cell
+        const imgAspect = canvas.width / canvas.height
+        const cellAspect = cellW / cellH
+        let drawW = cellW
+        let drawH = cellH
+        if (imgAspect > cellAspect) {
+          // Image is wider relative to cell — fit by width
+          drawH = cellW / imgAspect
+        } else {
+          // Image is taller relative to cell — fit by height
+          drawW = cellH * imgAspect
+        }
+
+        pdf.addImage(img, 'PNG', x, y, drawW, drawH)
         idx++
       }
 
@@ -431,11 +442,11 @@ export function TokenBulkForm() {
         </div>
       )}
 
-      {/* Hidden Render Bank for html2canvas PDF Export (12-per-page A4 cards) */}
-      <div id="token-bulk-bank" style={{ position: 'fixed', left: -9999, top: 0, width: 390 }}>
+      {/* Hidden Render Bank for html2canvas PDF Export — uses same TokenCard as preview */}
+      <div id="token-bulk-bank" style={{ position: 'fixed', left: -9999, top: 0, width: 520 }}>
         {tokens.map((t) => (
-          <div key={t.serial} className="compact-grid-card-bulk" style={{ width: 380, height: 400, marginBottom: 12 }}>
-            <A4GridTokenCard data={t} />
+          <div key={t.serial} className="compact-grid-card-bulk" style={{ width: 500, marginBottom: 16 }}>
+            <TokenCard data={t} />
           </div>
         ))}
       </div>
@@ -476,8 +487,8 @@ export function TokenBulkForm() {
         {chunkArray(tokens, CARDS_PER_PAGE).map((pageTokens, pageIdx) => (
           <div key={pageIdx} className="a4-print-page-bulk">
             {pageTokens.map((t) => (
-              <div key={t.serial} style={{ height: '100%', width: '100%' }}>
-                <A4GridTokenCard data={t} />
+              <div key={t.serial} style={{ height: '100%', width: '100%', overflow: 'hidden' }}>
+                <TokenCard data={t} />
               </div>
             ))}
           </div>
