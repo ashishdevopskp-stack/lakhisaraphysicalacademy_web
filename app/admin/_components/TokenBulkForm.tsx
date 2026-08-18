@@ -432,9 +432,9 @@ export function TokenBulkForm() {
       )}
 
       {/* Hidden Render Bank for html2canvas PDF Export (12-per-page A4 cards) */}
-      <div id="token-bulk-bank" style={{ position: 'fixed', left: -9999, top: 0, width: 230 }}>
+      <div id="token-bulk-bank" style={{ position: 'fixed', left: -9999, top: 0, width: 240 }}>
         {tokens.map((t) => (
-          <div key={t.serial} className="compact-grid-card-bulk" style={{ width: 226, height: 250, marginBottom: 12 }}>
+          <div key={t.serial} className="compact-grid-card-bulk" style={{ width: 236, height: 254, marginBottom: 12 }}>
             <A4GridTokenCard data={t} />
           </div>
         ))}

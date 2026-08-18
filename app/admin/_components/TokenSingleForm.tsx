@@ -430,9 +430,9 @@ export function TokenSingleForm({
       </div>
 
       {/* Hidden Render Bank for html2canvas PDF Export (12-per-page A4 cards) */}
-      <div id="token-single-bank" style={{ position: 'fixed', left: -9999, top: 0, width: 230 }}>
+      <div id="token-single-bank" style={{ position: 'fixed', left: -9999, top: 0, width: 240 }}>
         {savedTokens.map((t) => (
-          <div key={t.serial} className="compact-grid-card" style={{ width: 226, height: 250, marginBottom: 12 }}>
+          <div key={t.serial} className="compact-grid-card" style={{ width: 236, height: 254, marginBottom: 12 }}>
             <A4GridTokenCard data={t} />
           </div>
         ))}
