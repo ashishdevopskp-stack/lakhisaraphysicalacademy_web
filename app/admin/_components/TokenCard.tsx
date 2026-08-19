@@ -288,29 +288,28 @@ export function A4GridTokenCard({
           WebkitPrintColorAdjust: 'exact',
           printColorAdjust: 'exact',
           color: '#ffffff',
-          padding: '4px 6px',
+          padding: '6px 8px',
           display: 'flex',
           alignItems: 'center',
-          gap: 6,
+          gap: 7,
+          minHeight: 38,
+          boxSizing: 'border-box',
         }}
       >
-        <Logo size={22} />
-        <div style={{ flex: 1, minWidth: 0 }}>
+        <Logo size={24} />
+        <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           <div
             style={{
               color: '#fef08a',
               fontWeight: 900,
-              fontSize: 9.5,
+              fontSize: 10,
               letterSpacing: '0.3px',
-              lineHeight: 1.1,
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
+              lineHeight: '13px',
             }}
           >
             {academyName} {academySub}
           </div>
-          <div style={{ fontSize: 7, color: '#e2e8f0', marginTop: 1, whiteSpace: 'nowrap' }}>
+          <div style={{ fontSize: 7.5, color: '#e2e8f0', marginTop: 1, lineHeight: '10px' }}>
             <b>Contact:</b> 7739776471, 7903594008
           </div>
         </div>
@@ -325,21 +324,21 @@ export function A4GridTokenCard({
           color: '#ffffff',
           textAlign: 'center',
           fontWeight: 800,
-          fontSize: 8,
-          padding: '2.5px 0',
+          fontSize: 8.5,
+          padding: '3px 0',
           letterSpacing: '0.5px',
-          lineHeight: '11px',
+          lineHeight: '12px',
         }}
       >
         ★ HOSTEL BHOJAN TOKEN ★
       </div>
 
       {/* Main Details Body */}
-      <div style={{ display: 'flex', flex: 1, borderTop: '1px solid #e2e8f0' }}>
+      <div style={{ display: 'flex', flex: 1, borderTop: '1px solid #e2e8f0', alignItems: 'stretch' }}>
         {/* Token # Badge */}
         <div
           style={{
-            width: 62,
+            width: 65,
             flexShrink: 0,
             background: '#f8fafc',
             WebkitPrintColorAdjust: 'exact',
@@ -353,7 +352,7 @@ export function A4GridTokenCard({
             alignItems: 'center',
           }}
         >
-          <div style={{ fontSize: 7, fontWeight: 800, color: '#475569', letterSpacing: '0.3px' }}>
+          <div style={{ fontSize: 7.5, fontWeight: 800, color: '#475569', letterSpacing: '0.3px' }}>
             TOKEN NO.
           </div>
           <div
@@ -361,13 +360,13 @@ export function A4GridTokenCard({
               fontSize: 22,
               fontWeight: 900,
               color: '#b91c1c',
-              lineHeight: 1.1,
+              lineHeight: '24px',
               marginTop: 1,
             }}
           >
             {data.tokenNo}
           </div>
-          <div style={{ fontSize: 6.5, color: '#64748b', marginTop: 1, fontWeight: 600 }}>
+          <div style={{ fontSize: 7, color: '#64748b', marginTop: 1, fontWeight: 600 }}>
             S/N: {data.serial}
           </div>
         </div>
@@ -377,29 +376,28 @@ export function A4GridTokenCard({
           style={{
             flex: 1,
             minWidth: 0,
-            padding: '4px 6px',
-            fontSize: 8,
+            padding: '4px 7px',
+            fontSize: 8.5,
             background: '#ffffff',
             display: 'flex',
             flexDirection: 'column',
-            justifyContent: 'center',
-            gap: 1.5,
+            justifyContent: 'space-evenly',
           }}
         >
-          <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #f1f5f9', paddingBottom: 1 }}>
-            <span style={{ fontWeight: 800, color: '#1e293b', flexShrink: 0 }}>Student Name:</span>
-            <span style={{ fontWeight: 700, color: '#0f172a', textAlign: 'right', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{data.studentName}</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', paddingBottom: 1.5 }}>
+            <span style={{ fontWeight: 800, color: '#1e293b', flexShrink: 0, marginRight: 4 }}>Name:</span>
+            <span style={{ fontWeight: 800, color: '#0f172a', textAlign: 'right', wordBreak: 'break-word' }}>{data.studentName}</span>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #f1f5f9', paddingBottom: 1 }}>
-            <span style={{ fontWeight: 800, color: '#1e293b', flexShrink: 0 }}>Meal Date:</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', paddingBottom: 1.5 }}>
+            <span style={{ fontWeight: 800, color: '#1e293b', flexShrink: 0, marginRight: 4 }}>Meal Date:</span>
             <span style={{ color: '#047857', fontWeight: 900, textAlign: 'right' }}>{displayDate}</span>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #f1f5f9', paddingBottom: 1 }}>
-            <span style={{ fontWeight: 800, color: '#1e293b', flexShrink: 0 }}>Hostel:</span>
-            <span style={{ fontWeight: 700, color: '#0f172a', textAlign: 'right', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{data.hostelName}</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', paddingBottom: 1.5 }}>
+            <span style={{ fontWeight: 800, color: '#1e293b', flexShrink: 0, marginRight: 4 }}>Hostel:</span>
+            <span style={{ fontWeight: 700, color: '#0f172a', textAlign: 'right', wordBreak: 'break-word' }}>{data.hostelName}</span>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <span style={{ fontWeight: 800, color: '#1e293b', flexShrink: 0 }}>Room & Bed:</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontWeight: 800, color: '#1e293b', flexShrink: 0, marginRight: 4 }}>Room/Bed:</span>
             <span style={{ fontWeight: 700, color: '#0f172a', textAlign: 'right' }}>
               Room {data.roomNumber}
               {data.bedNumber ? ` (Bed ${data.bedNumber})` : ''}
@@ -415,13 +413,13 @@ export function A4GridTokenCard({
           background: '#fffbeb',
           WebkitPrintColorAdjust: 'exact',
           printColorAdjust: 'exact',
-          padding: '2.5px 6px',
-          fontSize: 6.8,
+          padding: '3px 7px',
+          fontSize: 7,
           color: '#1e293b',
-          lineHeight: 1.3,
+          lineHeight: '10.5px',
         }}
       >
-        <div style={{ fontWeight: 800, color: '#b91c1c', marginBottom: 0.5 }}>नोटः</div>
+        <div style={{ fontWeight: 800, color: '#b91c1c', marginBottom: 1, fontSize: 7.5 }}>नोटः</div>
         <div>• यह टोकन केवल निर्दिष्ट तारीख ({displayDate}) के लिए मान्य है।</div>
         <div>• बिना टोकन के भोजन नहीं दिया जाएगा।</div>
         <div>• टोकन खो जाने पर नया टोकन जारी नहीं किया जाएगा।</div>
@@ -434,19 +432,20 @@ export function A4GridTokenCard({
           justifyContent: 'space-between',
           alignItems: 'center',
           gap: 2,
-          padding: '2.5px 6px',
+          padding: '3px 7px',
           background: '#0f172a',
           WebkitPrintColorAdjust: 'exact',
           printColorAdjust: 'exact',
           color: '#f8fafc',
-          fontSize: 6.8,
+          fontSize: 7.2,
+          lineHeight: '10px',
         }}
       >
         <span>
-          <b>Hostel Director:</b> Vikesh Kumar
+          <b>Director:</b> Vikesh Kumar
         </span>
         <span>
-          <b>Mobile:</b> 9370427046
+          <b>Mob:</b> 9370427046
         </span>
       </div>
     </div>

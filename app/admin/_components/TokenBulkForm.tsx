@@ -31,6 +31,7 @@ export function TokenBulkForm() {
   const [loadingStudents, setLoadingStudents] = useState(true)
 
   const [tokens, setTokens] = useState<TokenCardData[]>([])
+  const [previewPage, setPreviewPage] = useState(0)
   const [pending, startTransition] = useTransition()
   const [exporting, setExporting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -147,6 +148,7 @@ export function TokenBulkForm() {
         const rows = await bulkGenerateTokens({ studentConfigs })
         const generatedCards = (rows || []).map(toCardData)
         setTokens(generatedCards)
+        setPreviewPage(0)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Could not generate bulk tokens')
       }
@@ -392,17 +394,67 @@ export function TokenBulkForm() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {tokens.slice(0, 6).map((t) => (
-              <TokenCard key={t.serial} data={t} />
-            ))}
-          </div>
+          {/* A4 Sheet Live Preview Navigation */}
+          {(() => {
+            const pageChunks = chunkArray(tokens, CARDS_PER_PAGE)
+            const currentPageTokens = pageChunks[previewPage] || pageChunks[0] || []
 
-          {tokens.length > 6 && (
-            <p className="text-xs text-gray-500 mt-2 text-center font-bold">
-              +{tokens.length - 6} more tokens ready in Print &amp; PDF download layout ({Math.ceil(tokens.length / 12)} A4 Pages total).
-            </p>
-          )}
+            return (
+              <div className="space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                  <span className="text-xs font-black text-slate-700 flex items-center gap-1.5">
+                    <span>📄 A4 Print Sheet Live Preview (Page {previewPage + 1} of {pageChunks.length})</span>
+                  </span>
+                  {pageChunks.length > 1 && (
+                    <div className="flex items-center gap-1.5 font-bold">
+                      {pageChunks.map((_, pIdx) => (
+                        <button
+                          key={pIdx}
+                          type="button"
+                          onClick={() => setPreviewPage(pIdx)}
+                          className={`px-3 py-1 rounded-lg text-xs transition-all cursor-pointer ${
+                            previewPage === pIdx
+                              ? 'bg-indigo-600 text-white shadow-sm'
+                              : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-100'
+                          }`}
+                        >
+                          Page {pIdx + 1}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Interactive A4 Sheet Live Display */}
+                <div className="bg-slate-200/70 p-4 rounded-2xl border border-slate-300 overflow-x-auto flex justify-center shadow-inner">
+                  <div
+                    style={{
+                      width: '100%',
+                      maxWidth: 760,
+                      minWidth: 320,
+                      aspectRatio: '210 / 297',
+                      background: '#ffffff',
+                      padding: '12px',
+                      boxSizing: 'border-box',
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(3, 1fr)',
+                      gridTemplateRows: 'repeat(4, 1fr)',
+                      gap: '8px',
+                      boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.15)',
+                      borderRadius: 8,
+                      border: '1px solid #cbd5e1',
+                    }}
+                  >
+                    {currentPageTokens.map((t) => (
+                      <div key={t.serial} style={{ height: '100%', width: '100%', overflow: 'hidden' }}>
+                        <A4GridTokenCard data={t} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )
+          })()}
         </div>
       )}
 

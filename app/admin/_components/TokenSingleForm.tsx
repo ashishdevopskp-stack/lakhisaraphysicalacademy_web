@@ -41,6 +41,7 @@ export function TokenSingleForm({
   const [validTill, setValidTill] = useState('')
 
   const [savedTokens, setSavedTokens] = useState<TokenCardData[]>([])
+  const [previewPage, setPreviewPage] = useState(0)
   const [error, setError] = useState<string | null>(null)
   const [pending, startTransition] = useTransition()
   const [exporting, setExporting] = useState(false)
@@ -102,6 +103,7 @@ export function TokenSingleForm({
                 validTill,
               })
         setSavedTokens(rows.map(toCardData))
+        setPreviewPage(0)
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Could not generate tokens')
       }
@@ -355,13 +357,67 @@ export function TokenSingleForm({
                 </div>
               </div>
 
-              {/* Sample Card Live Preview */}
-              <div className="space-y-3">
-                <p className="text-xs font-extrabold text-gray-600">Sample Card Preview (Token #01):</p>
-                <div className="max-w-[480px] mx-auto">
-                  <TokenCard data={savedTokens[0]} />
-                </div>
-              </div>
+              {/* A4 Sheet Live Preview Navigation */}
+              {(() => {
+                const pageChunks = chunkArray(savedTokens, CARDS_PER_PAGE)
+                const currentPageTokens = pageChunks[previewPage] || pageChunks[0] || []
+
+                return (
+                  <div className="space-y-4">
+                    <div className="flex flex-wrap items-center justify-between gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                      <span className="text-xs font-black text-slate-700 flex items-center gap-1.5">
+                        <span>📄 A4 Print Sheet Live Preview (Page {previewPage + 1} of {pageChunks.length})</span>
+                      </span>
+                      {pageChunks.length > 1 && (
+                        <div className="flex items-center gap-1.5 font-bold">
+                          {pageChunks.map((_, pIdx) => (
+                            <button
+                              key={pIdx}
+                              type="button"
+                              onClick={() => setPreviewPage(pIdx)}
+                              className={`px-3 py-1 rounded-lg text-xs transition-all cursor-pointer ${
+                                previewPage === pIdx
+                                  ? 'bg-indigo-600 text-white shadow-sm'
+                                  : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-100'
+                              }`}
+                            >
+                              Page {pIdx + 1}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Interactive A4 Sheet Live Display */}
+                    <div className="bg-slate-200/70 p-4 rounded-2xl border border-slate-300 overflow-x-auto flex justify-center shadow-inner">
+                      <div
+                        style={{
+                          width: '100%',
+                          maxWidth: 760,
+                          minWidth: 320,
+                          aspectRatio: '210 / 297',
+                          background: '#ffffff',
+                          padding: '12px',
+                          boxSizing: 'border-box',
+                          display: 'grid',
+                          gridTemplateColumns: 'repeat(3, 1fr)',
+                          gridTemplateRows: 'repeat(4, 1fr)',
+                          gap: '8px',
+                          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.15)',
+                          borderRadius: 8,
+                          border: '1px solid #cbd5e1',
+                        }}
+                      >
+                        {currentPageTokens.map((t) => (
+                          <div key={t.serial} style={{ height: '100%', width: '100%', overflow: 'hidden' }}>
+                            <A4GridTokenCard data={t} />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )
+              })()}
 
               {/* All Generated Tokens List Table */}
               <div className="pt-2">
