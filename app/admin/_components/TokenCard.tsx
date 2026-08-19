@@ -11,15 +11,15 @@ export type TokenCardData = {
   slots?: string[]
 }
 
-function Logo() {
+function Logo({ size = 44 }: { size?: number }) {
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
       src="/logo.png"
       alt="Logo"
-      width={44}
-      height={44}
-      style={{ objectFit: 'contain', flexShrink: 0, borderRadius: '50%', maxWidth: '16%', height: 'auto' }}
+      width={size}
+      height={size}
+      style={{ objectFit: 'contain', flexShrink: 0, borderRadius: '50%', width: size, height: size }}
       onError={(e) => {
         ;(e.target as HTMLImageElement).style.visibility = 'hidden'
       }}
@@ -93,12 +93,16 @@ export function TokenCard({
         boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)',
         fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
         overflow: 'hidden',
+        WebkitPrintColorAdjust: 'exact',
+        printColorAdjust: 'exact',
       }}
     >
       {/* Premium Navy Header */}
       <div
         style={{
           background: 'linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%)',
+          WebkitPrintColorAdjust: 'exact',
+          printColorAdjust: 'exact',
           color: '#ffffff',
           padding: '14px 18px',
           display: 'flex',
@@ -129,6 +133,8 @@ export function TokenCard({
       <div
         style={{
           background: 'linear-gradient(90deg, #047857 0%, #059669 100%)',
+          WebkitPrintColorAdjust: 'exact',
+          printColorAdjust: 'exact',
           color: '#ffffff',
           textAlign: 'center',
           fontWeight: 800,
@@ -148,6 +154,8 @@ export function TokenCard({
             width: 'clamp(90px, 28%, 130px)',
             flexShrink: 0,
             background: '#f8fafc',
+            WebkitPrintColorAdjust: 'exact',
+            printColorAdjust: 'exact',
             borderRight: '1px solid #e2e8f0',
             textAlign: 'center',
             padding: '14px 8px',
@@ -203,6 +211,8 @@ export function TokenCard({
         style={{
           borderTop: '1px dashed #cbd5e1',
           background: '#fffbeb',
+          WebkitPrintColorAdjust: 'exact',
+          printColorAdjust: 'exact',
           padding: '8px 16px',
           fontSize: 'clamp(10px, 2.5vw, 11px)',
           color: '#1e293b',
@@ -225,6 +235,8 @@ export function TokenCard({
           gap: 8,
           padding: '7px 16px',
           background: '#0f172a',
+          WebkitPrintColorAdjust: 'exact',
+          printColorAdjust: 'exact',
           color: '#f8fafc',
           fontSize: 'clamp(10px, 2.5vw, 11px)',
         }}
@@ -240,8 +252,16 @@ export function TokenCard({
   )
 }
 
-/** 12-Per-Page A4 Compact Grid Token Card — Optimized for 3×4 A4 PDF export via html2canvas */
-export function A4GridTokenCard({ data }: { data: TokenCardData }) {
+/** 12-Per-Page A4 Compact Grid Token Card — Optimized for 3×4 A4 Print & PDF export */
+export function A4GridTokenCard({
+  data,
+  academyName = 'LAKHISARAI',
+  academySub = 'PHYSICAL ACADEMY',
+}: {
+  data: TokenCardData
+  academyName?: string
+  academySub?: string
+}) {
   const displayDate = data.mealDate || data.expiryDate || data.issueDate
 
   return (
@@ -250,177 +270,184 @@ export function A4GridTokenCard({ data }: { data: TokenCardData }) {
         width: '100%',
         height: '100%',
         boxSizing: 'border-box',
-        border: '2px solid #334155',
+        border: '1.5px solid #1e293b',
+        borderRadius: 6,
         background: '#ffffff',
-        fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif",
+        fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
         display: 'flex',
         flexDirection: 'column',
+        overflow: 'hidden',
+        WebkitPrintColorAdjust: 'exact',
+        printColorAdjust: 'exact',
       }}
     >
-      {/* Header Bar — navy with logo + title */}
+      {/* Header — Navy with logo + title + contact */}
       <div
         style={{
-          background: '#0f172a',
+          background: 'linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%)',
+          WebkitPrintColorAdjust: 'exact',
+          printColorAdjust: 'exact',
           color: '#ffffff',
-          padding: '6px 10px',
+          padding: '4px 6px',
           display: 'flex',
           alignItems: 'center',
-          gap: 8,
-          borderBottom: '3px solid #ea580c',
+          gap: 6,
         }}
       >
-        <img
-          src="/logo.png"
-          alt="LPA"
-          width={28}
-          height={28}
-          style={{ objectFit: 'contain', borderRadius: '50%', flexShrink: 0, display: 'block' }}
-          onError={(e) => {
-            ;(e.target as HTMLImageElement).style.display = 'none'
-          }}
-        />
-        <div>
+        <Logo size={22} />
+        <div style={{ flex: 1, minWidth: 0 }}>
           <div
             style={{
-              color: '#fde047',
+              color: '#fef08a',
               fontWeight: 900,
-              fontSize: 12,
-              lineHeight: '14px',
-              letterSpacing: '0.5px',
+              fontSize: 9.5,
+              letterSpacing: '0.3px',
+              lineHeight: 1.1,
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
             }}
           >
-            LAKHISARAI PHYSICAL ACADEMY
+            {academyName} {academySub}
           </div>
-          <div style={{ color: '#34d399', fontWeight: 900, fontSize: 10, lineHeight: '12px', marginTop: 2 }}>
-            ★ HOSTEL BHOJAN TOKEN ★
+          <div style={{ fontSize: 7, color: '#e2e8f0', marginTop: 1, whiteSpace: 'nowrap' }}>
+            <b>Contact:</b> 7739776471, 7903594008
           </div>
         </div>
       </div>
 
-      {/* Main Body — Token # box + student details */}
+      {/* Emerald Banner */}
       <div
         style={{
-          flex: 1,
-          display: 'flex',
-          padding: '8px 10px',
-          gap: 10,
-          alignItems: 'stretch',
+          background: 'linear-gradient(90deg, #047857 0%, #059669 100%)',
+          WebkitPrintColorAdjust: 'exact',
+          printColorAdjust: 'exact',
+          color: '#ffffff',
+          textAlign: 'center',
+          fontWeight: 800,
+          fontSize: 8,
+          padding: '2.5px 0',
+          letterSpacing: '0.5px',
+          lineHeight: '11px',
         }}
       >
-        {/* Token # Box */}
+        ★ HOSTEL BHOJAN TOKEN ★
+      </div>
+
+      {/* Main Details Body */}
+      <div style={{ display: 'flex', flex: 1, borderTop: '1px solid #e2e8f0' }}>
+        {/* Token # Badge */}
         <div
           style={{
-            width: 72,
+            width: 62,
+            flexShrink: 0,
             background: '#f8fafc',
-            border: '2px solid #e2e8f0',
-            borderLeft: '4px solid #dc2626',
-            borderRadius: 6,
+            WebkitPrintColorAdjust: 'exact',
+            printColorAdjust: 'exact',
+            borderRight: '1px solid #e2e8f0',
+            textAlign: 'center',
+            padding: '4px 2px',
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'center',
             justifyContent: 'center',
-            flexShrink: 0,
-            padding: '6px 4px',
-            boxSizing: 'border-box',
+            alignItems: 'center',
           }}
         >
-          <span style={{ fontSize: 9, fontWeight: 800, color: '#475569', letterSpacing: '0.5px', lineHeight: '11px' }}>
+          <div style={{ fontSize: 7, fontWeight: 800, color: '#475569', letterSpacing: '0.3px' }}>
             TOKEN NO.
-          </span>
-          <span style={{ fontSize: 30, fontWeight: 900, color: '#dc2626', lineHeight: '32px', margin: '3px 0' }}>
+          </div>
+          <div
+            style={{
+              fontSize: 22,
+              fontWeight: 900,
+              color: '#b91c1c',
+              lineHeight: 1.1,
+              marginTop: 1,
+            }}
+          >
             {data.tokenNo}
-          </span>
-          <span style={{ fontSize: 8, color: '#64748b', fontWeight: 700, lineHeight: '10px' }}>
+          </div>
+          <div style={{ fontSize: 6.5, color: '#64748b', marginTop: 1, fontWeight: 600 }}>
             S/N: {data.serial}
-          </span>
+          </div>
         </div>
 
-        {/* Student Details */}
+        {/* Student Information Rows */}
         <div
           style={{
             flex: 1,
             minWidth: 0,
+            padding: '4px 6px',
+            fontSize: 8,
+            background: '#ffffff',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
-            gap: 5,
+            gap: 1.5,
           }}
         >
-          {/* Name */}
-          <div style={{ fontSize: 11, lineHeight: '14px' }}>
-            <span style={{ fontWeight: 800, color: '#334155', marginRight: 4 }}>Name:</span>
-            <span style={{ fontWeight: 800, color: '#0f172a' }}>{data.studentName}</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #f1f5f9', paddingBottom: 1 }}>
+            <span style={{ fontWeight: 800, color: '#1e293b', flexShrink: 0 }}>Student Name:</span>
+            <span style={{ fontWeight: 700, color: '#0f172a', textAlign: 'right', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{data.studentName}</span>
           </div>
-
-          {/* Meal Date */}
-          <div style={{ fontSize: 11, lineHeight: '14px', display: 'flex', alignItems: 'center' }}>
-            <span style={{ fontWeight: 800, color: '#334155', marginRight: 4, flexShrink: 0 }}>Meal Date:</span>
-            <span
-              style={{
-                display: 'inline-block',
-                background: '#dcfce7',
-                color: '#15803d',
-                padding: '2px 6px',
-                borderRadius: 4,
-                fontWeight: 900,
-                fontSize: 10,
-                lineHeight: '13px',
-                border: '1px solid #86efac',
-              }}
-            >
-              {displayDate}
-            </span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #f1f5f9', paddingBottom: 1 }}>
+            <span style={{ fontWeight: 800, color: '#1e293b', flexShrink: 0 }}>Meal Date:</span>
+            <span style={{ color: '#047857', fontWeight: 900, textAlign: 'right' }}>{displayDate}</span>
           </div>
-
-          {/* Hostel */}
-          <div style={{ fontSize: 11, lineHeight: '14px' }}>
-            <span style={{ fontWeight: 800, color: '#334155', marginRight: 4 }}>Hostel:</span>
-            <span style={{ fontWeight: 700, color: '#1e293b' }}>{data.hostelName}</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #f1f5f9', paddingBottom: 1 }}>
+            <span style={{ fontWeight: 800, color: '#1e293b', flexShrink: 0 }}>Hostel:</span>
+            <span style={{ fontWeight: 700, color: '#0f172a', textAlign: 'right', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{data.hostelName}</span>
           </div>
-
-          {/* Room/Bed */}
-          <div style={{ fontSize: 11, lineHeight: '14px' }}>
-            <span style={{ fontWeight: 800, color: '#334155', marginRight: 4 }}>Room/Bed:</span>
-            <span style={{ fontWeight: 700, color: '#1e293b' }}>
-              {data.roomNumber} {data.bedNumber ? `(Bed ${data.bedNumber})` : ''}
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <span style={{ fontWeight: 800, color: '#1e293b', flexShrink: 0 }}>Room & Bed:</span>
+            <span style={{ fontWeight: 700, color: '#0f172a', textAlign: 'right' }}>
+              Room {data.roomNumber}
+              {data.bedNumber ? ` (Bed ${data.bedNumber})` : ''}
             </span>
           </div>
         </div>
       </div>
 
-      {/* Hindi Notice */}
+      {/* Hindi Notice Box */}
       <div
         style={{
+          borderTop: '1px dashed #cbd5e1',
           background: '#fffbeb',
-          borderTop: '1px dashed #f59e0b',
-          borderBottom: '1px dashed #f59e0b',
-          padding: '4px 10px',
-          fontSize: 9,
+          WebkitPrintColorAdjust: 'exact',
+          printColorAdjust: 'exact',
+          padding: '2.5px 6px',
+          fontSize: 6.8,
           color: '#1e293b',
+          lineHeight: 1.3,
         }}
       >
-        <div style={{ fontWeight: 800, color: '#b91c1c', fontSize: 10, lineHeight: '13px', marginBottom: 2 }}>नोट:</div>
-        <div style={{ lineHeight: '12px' }}>1. यह टोकन केवल निर्दिष्ट तारीख ({displayDate}) के लिए मान्य है।</div>
-        <div style={{ lineHeight: '12px' }}>2. बिना टोकन के भोजन नहीं दिया जाएगा।</div>
-        <div style={{ lineHeight: '12px' }}>3. टोकन खो जाने पर नया टोकन जारी नहीं किया जाएगा।</div>
+        <div style={{ fontWeight: 800, color: '#b91c1c', marginBottom: 0.5 }}>नोटः</div>
+        <div>• यह टोकन केवल निर्दिष्ट तारीख ({displayDate}) के लिए मान्य है।</div>
+        <div>• बिना टोकन के भोजन नहीं दिया जाएगा।</div>
+        <div>• टोकन खो जाने पर नया टोकन जारी नहीं किया जाएगा।</div>
       </div>
 
-      {/* Footer */}
+      {/* Director Footer */}
       <div
         style={{
-          background: '#0f172a',
-          color: '#ffffff',
-          padding: '4px 10px',
           display: 'flex',
-          alignItems: 'center',
           justifyContent: 'space-between',
-          fontSize: 9,
-          lineHeight: '11px',
-          fontWeight: 700,
+          alignItems: 'center',
+          gap: 2,
+          padding: '2.5px 6px',
+          background: '#0f172a',
+          WebkitPrintColorAdjust: 'exact',
+          printColorAdjust: 'exact',
+          color: '#f8fafc',
+          fontSize: 6.8,
         }}
       >
-        <span style={{ color: '#cbd5e1' }}>✂ Cut along dotted lines</span>
-        <span style={{ color: '#fef08a', fontWeight: 800 }}>LPA Hostel</span>
+        <span>
+          <b>Hostel Director:</b> Vikesh Kumar
+        </span>
+        <span>
+          <b>Mobile:</b> 9370427046
+        </span>
       </div>
     </div>
   )

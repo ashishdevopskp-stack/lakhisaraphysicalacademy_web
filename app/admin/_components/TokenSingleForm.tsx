@@ -126,63 +126,29 @@ export function TokenSingleForm({
       const { jsPDF } = await import('jspdf')
 
       // A4 portrait: 595.28 pt x 841.89 pt
-      const pdf = new jsPDF({ unit: 'pt', format: 'a4' })
-      const pageW = 595.28
-      const pageH = 841.89
+      const pdf = new jsPDF({ unit: 'pt', format: 'a4', compress: true })
 
-      const marginX = 14
-      const marginY = 14
-      const colGap = 8
-      const rowGap = 8
-
-      // 3 columns x 4 rows = 12 cards per A4 page
-      const cols = 3
-      const rows = 4
-
-      const cellW = (pageW - marginX * 2 - colGap * (cols - 1)) / cols
-      const cellH = (pageH - marginY * 2 - rowGap * (rows - 1)) / rows
-
-      const bank = document.getElementById('token-single-bank')!
-
+      const bank = document.getElementById('token-single-pdf-bank')!
       bank.style.position = 'fixed'
       bank.style.left = '0px'
       bank.style.top = '0px'
       bank.style.zIndex = '-9999'
 
-      const cardEls = bank.querySelectorAll('.compact-grid-card')
+      const pageEls = bank.querySelectorAll('.a4-pdf-page-single')
 
       let idx = 0
-      for (const parentEl of Array.from(cardEls)) {
-        const targetEl = (parentEl.firstElementChild as HTMLElement) || (parentEl as HTMLElement)
-        const canvas = await html2canvas(targetEl, {
-          scale: 3,
+      for (const pageEl of Array.from(pageEls)) {
+        const canvas = await html2canvas(pageEl as HTMLElement, {
+          scale: 2,
           backgroundColor: '#ffffff',
           useCORS: true,
           logging: false,
         })
-        const img = canvas.toDataURL('image/png')
-        const posInPage = idx % CARDS_PER_PAGE
+        const imgData = canvas.toDataURL('image/jpeg', 0.80)
 
-        if (idx > 0 && posInPage === 0) pdf.addPage()
+        if (idx > 0) pdf.addPage()
 
-        const col = posInPage % cols
-        const row = Math.floor(posInPage / cols)
-
-        const x = marginX + col * (cellW + colGap)
-        const y = marginY + row * (cellH + rowGap)
-
-        // Preserve aspect ratio: fit card image within the cell
-        const imgAspect = canvas.width / canvas.height
-        const cellAspect = cellW / cellH
-        let drawW = cellW
-        let drawH = cellH
-        if (imgAspect > cellAspect) {
-          drawH = cellW / imgAspect
-        } else {
-          drawW = cellH * imgAspect
-        }
-
-        pdf.addImage(img, 'PNG', x, y, drawW, drawH)
+        pdf.addImage(imgData, 'JPEG', 0, 0, 595.28, 841.89, undefined, 'FAST')
         idx++
       }
 
@@ -190,7 +156,7 @@ export function TokenSingleForm({
     } catch (err) {
       console.error('PDF export failed:', err)
     } finally {
-      const bank = document.getElementById('token-single-bank')
+      const bank = document.getElementById('token-single-pdf-bank')
       if (bank) {
         bank.style.position = 'fixed'
         bank.style.left = '-9999px'
@@ -438,11 +404,31 @@ export function TokenSingleForm({
         </div>
       </div>
 
-      {/* Hidden Render Bank for html2canvas PDF Export — uses same TokenCard as preview */}
-      <div id="token-single-bank" style={{ position: 'fixed', left: -9999, top: 0, width: 520 }}>
-        {savedTokens.map((t) => (
-          <div key={t.serial} className="compact-grid-card" style={{ width: 500, marginBottom: 16 }}>
-            <TokenCard data={t} />
+      {/* Hidden Render Bank for html2canvas PDF Export — 1 A4 page per block */}
+      <div id="token-single-pdf-bank" style={{ position: 'fixed', left: -9999, top: 0, width: '210mm' }}>
+        {chunkArray(savedTokens, CARDS_PER_PAGE).map((pageTokens, pageIdx) => (
+          <div
+            key={pageIdx}
+            className="a4-pdf-page-single"
+            style={{
+              width: '210mm',
+              height: '297mm',
+              padding: '4mm',
+              boxSizing: 'border-box',
+              background: '#ffffff',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              gridTemplateRows: 'repeat(4, 1fr)',
+              gap: '3mm',
+              WebkitPrintColorAdjust: 'exact',
+              printColorAdjust: 'exact',
+            }}
+          >
+            {pageTokens.map((t) => (
+              <div key={t.serial} style={{ height: '100%', width: '100%', overflow: 'hidden' }}>
+                <A4GridTokenCard data={t} />
+              </div>
+            ))}
           </div>
         ))}
       </div>
@@ -450,6 +436,22 @@ export function TokenSingleForm({
       {/* Printable Area for Native Browser Print (@media print 12 cards per A4 page) */}
       <style jsx global>{`
         @media print {
+          @page {
+            size: A4 portrait;
+            margin: 4mm;
+          }
+          *,
+          *::before,
+          *::after {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+          }
+          body {
+            margin: 0 !important;
+            padding: 0 !important;
+            background: #ffffff !important;
+          }
           body * {
             visibility: hidden !important;
           }
@@ -461,20 +463,24 @@ export function TokenSingleForm({
             position: absolute !important;
             left: 0 !important;
             top: 0 !important;
-            width: 210mm !important;
+            width: 202mm !important;
+            margin: 0 !important;
+            padding: 0 !important;
             background: #ffffff !important;
           }
           .a4-print-page {
-            width: 210mm !important;
-            height: 297mm !important;
-            padding: 6mm !important;
+            width: 202mm !important;
+            height: 289mm !important;
             box-sizing: border-box !important;
             display: grid !important;
             grid-template-columns: repeat(3, 1fr) !important;
             grid-template-rows: repeat(4, 1fr) !important;
-            gap: 4mm !important;
+            gap: 3mm !important;
             page-break-after: always !important;
             break-after: page !important;
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+            overflow: hidden !important;
           }
         }
       `}</style>
@@ -484,7 +490,7 @@ export function TokenSingleForm({
           <div key={pageIdx} className="a4-print-page">
             {pageTokens.map((t) => (
               <div key={t.serial} style={{ height: '100%', width: '100%', overflow: 'hidden' }}>
-                <TokenCard data={t} />
+                <A4GridTokenCard data={t} />
               </div>
             ))}
           </div>
