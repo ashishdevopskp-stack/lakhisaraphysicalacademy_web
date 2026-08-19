@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   publisher: "Lakhisarai Physical Academy",
   category: "Sports & Defence Physical Training Education",
   alternates: {
-    canonical: SITE_URL,
+    canonical: "./",
   },
   openGraph: {
     type: "website",

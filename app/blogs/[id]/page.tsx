@@ -26,6 +26,11 @@ export async function generateMetadata({ params }: BlogDetailParams) {
   return {
     title: `${blog.title} | Academy Blog`,
     description,
+    openGraph: {
+      title: `${blog.title} | Lakhisarai Physical Academy`,
+      description,
+      images: blog.image_url ? [{ url: blog.image_url }] : [],
+    },
   };
 }
 
