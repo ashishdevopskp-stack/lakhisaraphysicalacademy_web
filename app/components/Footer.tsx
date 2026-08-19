@@ -377,9 +377,9 @@ export default function Footer() {
       </section>
 
       {/* Bottom Copyright & Credit Bar */}
-      <div className="py-6 bg-slate-950 text-slate-500 text-xs">
+      <div className="py-6 bg-slate-950 text-slate-500 text-xs border-t border-slate-900">
         <Container>
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               <p className="font-semibold text-slate-400">
@@ -387,10 +387,21 @@ export default function Footer() {
               </p>
             </div>
 
-            <div className="flex items-center gap-3 text-slate-400 font-extrabold">
-              <span>Coaches: **Ganesh Sir** &amp; **Mahesh Sir**</span>
-              <span>•</span>
-              <span className="text-[#ea580c]">Lakhisarai, Bihar</span>
+            <div className="flex flex-wrap items-center justify-center md:justify-end gap-3 text-slate-400 font-bold">
+              <span>Coaches: Ganesh Sir &amp; Mahesh Sir</span>
+              <span className="hidden sm:inline">•</span>
+              <span className="flex items-center gap-1.5 text-slate-300">
+                Made with <Heart size={13} className="text-red-500 fill-red-500 animate-pulse shrink-0" /> by{" "}
+                <a
+                  href="https://www.sabkasaathidigitalservices.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white hover:text-[#ea580c] font-black underline underline-offset-4 decoration-orange-500/60 hover:decoration-orange-500 transition-colors inline-flex items-center gap-1"
+                >
+                  <span>Sabka Saathi Digital Services</span>
+                  <ExternalLink size={12} className="text-orange-400 shrink-0" />
+                </a>
+              </span>
             </div>
           </div>
         </Container>
