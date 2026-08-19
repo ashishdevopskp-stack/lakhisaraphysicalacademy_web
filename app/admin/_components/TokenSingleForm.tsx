@@ -134,7 +134,8 @@ export function TokenSingleForm({
       bank.style.position = 'fixed'
       bank.style.left = '0px'
       bank.style.top = '0px'
-      bank.style.zIndex = '-9999'
+      bank.style.zIndex = '99999'
+      bank.style.visibility = 'visible'
 
       const pageEls = bank.querySelectorAll('.a4-pdf-page-single')
 
@@ -145,8 +146,9 @@ export function TokenSingleForm({
           backgroundColor: '#ffffff',
           useCORS: true,
           logging: false,
+          windowWidth: 1200,
         })
-        const imgData = canvas.toDataURL('image/jpeg', 0.80)
+        const imgData = canvas.toDataURL('image/jpeg', 0.82)
 
         if (idx > 0) pdf.addPage()
 
@@ -162,6 +164,7 @@ export function TokenSingleForm({
       if (bank) {
         bank.style.position = 'fixed'
         bank.style.left = '-9999px'
+        bank.style.zIndex = '-9999'
       }
       setExporting(false)
     }
@@ -460,28 +463,28 @@ export function TokenSingleForm({
         </div>
       </div>
 
-      {/* Hidden Render Bank for html2canvas PDF Export — 1 A4 page per block */}
-      <div id="token-single-pdf-bank" style={{ position: 'fixed', left: -9999, top: 0, width: '210mm' }}>
+      {/* Hidden Render Bank for html2canvas PDF Export — Explicit Pixel Dimensions for 100% Perfect Alignment */}
+      <div id="token-single-pdf-bank" style={{ position: 'fixed', left: -9999, top: 0, width: 794, zIndex: -9999 }}>
         {chunkArray(savedTokens, CARDS_PER_PAGE).map((pageTokens, pageIdx) => (
           <div
             key={pageIdx}
             className="a4-pdf-page-single"
             style={{
-              width: '210mm',
-              height: '297mm',
-              padding: '4mm',
+              width: 794,
+              height: 1123,
+              padding: 16,
               boxSizing: 'border-box',
               background: '#ffffff',
               display: 'grid',
-              gridTemplateColumns: 'repeat(3, 1fr)',
-              gridTemplateRows: 'repeat(4, 1fr)',
-              gap: '3mm',
+              gridTemplateColumns: 'repeat(3, 246px)',
+              gridTemplateRows: 'repeat(4, 264px)',
+              gap: 8,
               WebkitPrintColorAdjust: 'exact',
               printColorAdjust: 'exact',
             }}
           >
             {pageTokens.map((t) => (
-              <div key={t.serial} style={{ height: '100%', width: '100%', overflow: 'hidden' }}>
+              <div key={t.serial} style={{ height: 264, width: 246, overflow: 'hidden', boxSizing: 'border-box' }}>
                 <A4GridTokenCard data={t} />
               </div>
             ))}

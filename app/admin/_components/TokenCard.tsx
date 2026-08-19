@@ -276,6 +276,7 @@ export function A4GridTokenCard({
         fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
         display: 'flex',
         flexDirection: 'column',
+        justifyContent: 'space-between',
         overflow: 'hidden',
         WebkitPrintColorAdjust: 'exact',
         printColorAdjust: 'exact',
@@ -288,12 +289,13 @@ export function A4GridTokenCard({
           WebkitPrintColorAdjust: 'exact',
           printColorAdjust: 'exact',
           color: '#ffffff',
-          padding: '6px 8px',
+          padding: '5px 8px',
           display: 'flex',
           alignItems: 'center',
           gap: 7,
-          minHeight: 38,
+          height: 38,
           boxSizing: 'border-box',
+          flexShrink: 0,
         }}
       >
         <Logo size={24} />
@@ -304,7 +306,7 @@ export function A4GridTokenCard({
               fontWeight: 900,
               fontSize: 10,
               letterSpacing: '0.3px',
-              lineHeight: '13px',
+              lineHeight: '12px',
             }}
           >
             {academyName} {academySub}
@@ -325,20 +327,31 @@ export function A4GridTokenCard({
           textAlign: 'center',
           fontWeight: 800,
           fontSize: 8.5,
-          padding: '3px 0',
+          height: 18,
+          lineHeight: '18px',
           letterSpacing: '0.5px',
-          lineHeight: '12px',
+          boxSizing: 'border-box',
+          flexShrink: 0,
         }}
       >
         ★ HOSTEL BHOJAN TOKEN ★
       </div>
 
       {/* Main Details Body */}
-      <div style={{ display: 'flex', flex: 1, borderTop: '1px solid #e2e8f0', alignItems: 'stretch' }}>
+      <div
+        style={{
+          display: 'flex',
+          flex: 1,
+          borderTop: '1px solid #e2e8f0',
+          alignItems: 'stretch',
+          minHeight: 110,
+          boxSizing: 'border-box',
+        }}
+      >
         {/* Token # Badge */}
         <div
           style={{
-            width: 65,
+            width: 66,
             flexShrink: 0,
             background: '#f8fafc',
             WebkitPrintColorAdjust: 'exact',
@@ -350,6 +363,7 @@ export function A4GridTokenCard({
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
+            boxSizing: 'border-box',
           }}
         >
           <div style={{ fontSize: 7.5, fontWeight: 800, color: '#475569', letterSpacing: '0.3px' }}>
@@ -382,10 +396,11 @@ export function A4GridTokenCard({
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'space-evenly',
+            boxSizing: 'border-box',
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', paddingBottom: 1.5 }}>
-            <span style={{ fontWeight: 800, color: '#1e293b', flexShrink: 0, marginRight: 4 }}>Name:</span>
+            <span style={{ fontWeight: 800, color: '#1e293b', flexShrink: 0, marginRight: 4 }}>Student Name:</span>
             <span style={{ fontWeight: 800, color: '#0f172a', textAlign: 'right', wordBreak: 'break-word' }}>{data.studentName}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #f1f5f9', paddingBottom: 1.5 }}>
@@ -397,7 +412,7 @@ export function A4GridTokenCard({
             <span style={{ fontWeight: 700, color: '#0f172a', textAlign: 'right', wordBreak: 'break-word' }}>{data.hostelName}</span>
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontWeight: 800, color: '#1e293b', flexShrink: 0, marginRight: 4 }}>Room/Bed:</span>
+            <span style={{ fontWeight: 800, color: '#1e293b', flexShrink: 0, marginRight: 4 }}>Room & Bed:</span>
             <span style={{ fontWeight: 700, color: '#0f172a', textAlign: 'right' }}>
               Room {data.roomNumber}
               {data.bedNumber ? ` (Bed ${data.bedNumber})` : ''}
@@ -417,6 +432,8 @@ export function A4GridTokenCard({
           fontSize: 7,
           color: '#1e293b',
           lineHeight: '10.5px',
+          flexShrink: 0,
+          boxSizing: 'border-box',
         }}
       >
         <div style={{ fontWeight: 800, color: '#b91c1c', marginBottom: 1, fontSize: 7.5 }}>नोटः</div>
@@ -433,6 +450,8 @@ export function A4GridTokenCard({
           alignItems: 'center',
           gap: 2,
           padding: '3px 7px',
+          height: 22,
+          boxSizing: 'border-box',
           background: '#0f172a',
           WebkitPrintColorAdjust: 'exact',
           printColorAdjust: 'exact',
