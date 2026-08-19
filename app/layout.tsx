@@ -20,11 +20,11 @@ const SITE_URL = getSiteUrl();
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Lakhisarai Physical Academy | Best Physical & Defence Academy in Lakhisarai Bihar",
+    default: "Lakhisarai Physical Academy | Best Physical Academy Bihar",
     template: "%s | Lakhisarai Physical Academy",
   },
   description:
-    "Lakhisarai Physical Academy (लखीसराय फिजिकल एकेडमी) - No.1 Best Physical Academy in Lakhisarai & Bihar for Indian Army Agniveer, Bihar Police Constable, SI (Daroga), SSC GD & Defence physical test training at K.R.K Field Lakhisarai.",
+    "Lakhisarai Physical Academy is Bihar's #1 physical training academy at K.R.K Field Lakhisarai for Indian Army Agniveer, Bihar Police Constable, SI Daroga, SSC GD & Defence tests.",
   keywords: LAKHISARAI_SEO_KEYWORDS,
   authors: [{ name: "Lakhisarai Physical Academy", url: SITE_URL }],
   creator: "Ganesh Sir & Mahesh Sir",
@@ -32,10 +32,6 @@ export const metadata: Metadata = {
   category: "Sports & Defence Physical Training Education",
   alternates: {
     canonical: SITE_URL,
-    languages: {
-      "hi-IN": `${SITE_URL}?lang=hi`,
-      "en-IN": `${SITE_URL}?lang=en`,
-    },
   },
   openGraph: {
     type: "website",
