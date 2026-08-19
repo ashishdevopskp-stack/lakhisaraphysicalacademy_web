@@ -86,28 +86,42 @@ function parseProductForm(formData: FormData): ParsedProduct {
 }
 
 async function uploadImageIfProvided(formData: FormData): Promise<{ url?: string; error?: string }> {
-  const file = formData.get('image') as File | null
-  if (!file || file.size === 0) return {}
+  const file = (formData.get('thumbnail') || formData.get('image')) as File | null
+  const urlInput = (formData.get('thumbnailUrl') as string)?.trim()
 
-  // 5MB limit — adjust if you need larger product photos
-  if (file.size > 5 * 1024 * 1024) {
-    return { error: 'Image must be under 5MB' }
+  if (file && file instanceof File && file.size > 0 && file.name) {
+    // 5MB limit — adjust if you need larger product photos
+    if (file.size > 5 * 1024 * 1024) {
+      return { error: 'Image must be under 5MB' }
+    }
+
+    const supabase = await createClient()
+    const ext = file.name.split('.').pop() || 'jpg'
+    const fileName = `products/${Date.now()}-${crypto.randomUUID()}.${ext}`
+
+    let { error: uploadError } = await supabase.storage
+      .from('product-images')
+      .upload(fileName, file, { upsert: true })
+
+    if (uploadError) {
+      // Fallback to 'events' bucket if 'product-images' bucket is not created
+      const fallbackRes = await supabase.storage.from('events').upload(fileName, file, { upsert: true })
+      if (!fallbackRes.error) {
+        const { data } = supabase.storage.from('events').getPublicUrl(fileName)
+        return { url: data.publicUrl }
+      }
+      return { error: 'Image upload failed: ' + uploadError.message }
+    }
+
+    const { data } = supabase.storage.from('product-images').getPublicUrl(fileName)
+    return { url: data.publicUrl }
   }
 
-  const supabase = await createClient()
-  const ext = file.name.split('.').pop()
-  const fileName = `${crypto.randomUUID()}.${ext}`
-
-  const { error: uploadError } = await supabase.storage
-    .from('product-images')
-    .upload(fileName, file, { upsert: false })
-
-  if (uploadError) {
-    return { error: 'Image upload failed: ' + uploadError.message }
+  if (urlInput) {
+    return { url: urlInput }
   }
 
-  const { data } = supabase.storage.from('product-images').getPublicUrl(fileName)
-  return { url: data.publicUrl }
+  return {}
 }
 
 export async function createProduct(formData: FormData) {

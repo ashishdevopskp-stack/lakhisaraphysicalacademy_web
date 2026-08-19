@@ -131,13 +131,20 @@ export async function createBlog(formData: FormData) {
   const supabase = await createClient()
 
   try {
-    const imageFile = formData.get('image') as File | null
+    const imageFile = (formData.get('thumbnail') || formData.get('image')) as File | null
+    const thumbnailUrlInput = (formData.get('thumbnailUrl') as string)?.trim() || null
     const pdfFile = formData.get('pdfFile') as File | null
     const pdfUrlField = (formData.get('pdfUrl') as string)?.trim() || null
 
-    const image_url = imageFile && imageFile.size > 0
-      ? await uploadFile(supabase, imageFile, { bucket: 'blogs', maxBytes: MAX_IMAGE_BYTES, allowedTypes: ALLOWED_IMAGE_TYPES })
-      : null
+    let image_url: string | null = thumbnailUrlInput
+    if (imageFile && imageFile.size > 0) {
+      try {
+        image_url = await uploadFile(supabase, imageFile, { bucket: 'blogs', maxBytes: MAX_IMAGE_BYTES, allowedTypes: ALLOWED_IMAGE_TYPES })
+      } catch {
+        // Fallback to 'events' bucket if 'blogs' bucket is missing in Supabase
+        image_url = await uploadFile(supabase, imageFile, { bucket: 'events', maxBytes: MAX_IMAGE_BYTES, allowedTypes: ALLOWED_IMAGE_TYPES })
+      }
+    }
 
     const pdfUploadUrl = pdfFile && pdfFile.size > 0
       ? await uploadFile(supabase, pdfFile, { bucket: 'blog-pdfs', maxBytes: MAX_PDF_BYTES, allowedTypes: ['application/pdf'] })
@@ -157,6 +164,7 @@ export async function createBlog(formData: FormData) {
 
   revalidatePath('/admin/blogs')
   revalidatePath('/blogs/articles')
+  revalidatePath('/blogs')
   redirect('/admin/blogs')
 }
 
@@ -167,15 +175,22 @@ export async function updateBlog(id: string, formData: FormData) {
   try {
     const existing = await getBlog(id)
 
-    const imageFile = formData.get('image') as File | null
+    const imageFile = (formData.get('thumbnail') || formData.get('image')) as File | null
+    const thumbnailUrlInput = (formData.get('thumbnailUrl') as string)?.trim() || null
     const pdfFile = formData.get('pdfFile') as File | null
     const pdfUrlField = (formData.get('pdfUrl') as string)?.trim() || null
 
-    let image_url: string | undefined
+    let image_url: string | undefined = thumbnailUrlInput || undefined
     if (imageFile && imageFile.size > 0) {
-      image_url = (await uploadFile(supabase, imageFile, {
-        bucket: 'blogs', maxBytes: MAX_IMAGE_BYTES, allowedTypes: ALLOWED_IMAGE_TYPES,
-      })) ?? undefined
+      try {
+        image_url = (await uploadFile(supabase, imageFile, {
+          bucket: 'blogs', maxBytes: MAX_IMAGE_BYTES, allowedTypes: ALLOWED_IMAGE_TYPES,
+        })) ?? undefined
+      } catch {
+        image_url = (await uploadFile(supabase, imageFile, {
+          bucket: 'events', maxBytes: MAX_IMAGE_BYTES, allowedTypes: ALLOWED_IMAGE_TYPES,
+        })) ?? undefined
+      }
       if (image_url) await deleteFileByUrl(supabase, 'blogs', existing?.image_url ?? null)
     }
 
@@ -192,9 +207,12 @@ export async function updateBlog(id: string, formData: FormData) {
       redirect(`/admin/blogs/${id}/edit?error=Title, author, and category are required`)
     }
 
+    const updateData: Record<string, unknown> = { ...fields }
+    if (image_url !== undefined) updateData.image_url = image_url
+
     const { error } = await supabase
       .from('blogs')
-      .update({ ...fields, ...(image_url ? { image_url } : {}) })
+      .update(updateData)
       .eq('id', id)
     if (error) throw new Error(error.message)
   } catch (err) {
@@ -204,6 +222,7 @@ export async function updateBlog(id: string, formData: FormData) {
 
   revalidatePath('/admin/blogs')
   revalidatePath('/blogs/articles')
+  revalidatePath('/blogs')
   redirect('/admin/blogs')
 }
 

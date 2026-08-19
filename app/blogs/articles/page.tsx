@@ -36,7 +36,23 @@ export default async function ArticlesPage() {
   let blogsError = false;
 
   try {
-    blogs = (await getBlogs()) as unknown as BlogPost[];
+    const dbBlogs = await getBlogs();
+    blogs = dbBlogs.map((b) => ({
+      id: b.id,
+      title: b.title,
+      subtitle: b.subtitle,
+      content: b.content,
+      author: b.author,
+      publishDate: b.publish_date,
+      category: b.category,
+      readingTime: b.reading_time,
+      views: b.views,
+      hasVideo: b.has_video,
+      hasPdf: b.has_pdf,
+      videoUrl: b.video_url,
+      pdfUrl: b.pdf_url,
+      imageUrl: b.image_url,
+    }));
   } catch (err) {
     console.error("Failed to load blog posts:", err);
     blogsError = true;

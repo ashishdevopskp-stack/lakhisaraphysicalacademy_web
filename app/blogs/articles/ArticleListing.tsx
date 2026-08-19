@@ -79,12 +79,16 @@ export default function ArticleListing({
         >
           {filtered.map((blog) => (
             <StaggerItem key={blog.id} className="card-flat flex flex-col p-6">
-              <div className="flex aspect-[16/9] items-center justify-center overflow-hidden rounded-lg border border-line-strong bg-bg">
-                {blog.imageUrl ? (
+              <div className="flex aspect-[16/9] items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 relative group-hover:shadow-md transition-all">
+                {blog.imageUrl || (blog as unknown as { image_url?: string }).image_url ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={blog.imageUrl} alt={blog.title} className="h-full w-full object-cover" />
+                  <img
+                    src={blog.imageUrl || (blog as unknown as { image_url?: string }).image_url!}
+                    alt={blog.title}
+                    className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+                  />
                 ) : (
-                  <Newspaper size={26} className="text-text-muted" />
+                  <Newspaper size={28} className="text-slate-400" />
                 )}
               </div>
 

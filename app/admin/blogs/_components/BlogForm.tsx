@@ -179,34 +179,8 @@ export function BlogForm({
       <ThumbnailRatioSelector
         defaultThumbnailUrl={initialData?.image_url}
         defaultAspectRatio={initialData?.aspect_ratio || "16:9"}
-        label="Blog Cover / Thumbnail Image & Ratio"
+        label="Blog Cover / Thumbnail Image & Aspect Ratio"
       />
-
-      {/* Cover Image Upload Zone */}
-      <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-3">
-        <label htmlFor="image" className="block text-xs font-black uppercase tracking-wider text-slate-800">
-          {initialData ? 'Replace Cover Image (Optional)' : 'Blog Cover Image'}
-        </label>
-        <input
-          ref={imageInputRef}
-          id="image"
-          name="image"
-          type="file"
-          accept="image/*,.jpg,.jpeg,.png,.webp,.gif,.bmp,.heic"
-          onChange={handleImageChange}
-          className="w-full text-xs text-slate-500 file:mr-3 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:bg-slate-100 file:text-xs file:font-black file:text-slate-700 hover:file:bg-slate-200 file:cursor-pointer cursor-pointer"
-        />
-        {fileError && <p className="text-xs font-bold text-red-600">{fileError}</p>}
-        {isCompressing && <p className="text-xs font-bold text-slate-500">⚡ Converting cover image to WebP…</p>}
-        {!isCompressing && compressedInfo && (
-          <p className="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-200 inline-block">
-            {compressedInfo}
-          </p>
-        )}
-        <p className="text-[11px] text-slate-400">
-          All image formats supported. Images are auto-compressed to WebP format in KB to keep loading instant.
-        </p>
-      </div>
 
       {/* Title & Subtitle */}
       <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-4">

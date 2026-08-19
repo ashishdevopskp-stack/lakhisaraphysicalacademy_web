@@ -199,6 +199,7 @@ export function ProductForm({
             defaultThumbnailUrl={initialData?.image_url}
             defaultAspectRatio={"4:3"}
             label="Product Photo & Aspect Ratio"
+            onImageChange={(url) => setPreviewUrl(url)}
           />
 
           {/* Section 2: Basic Product Info */}

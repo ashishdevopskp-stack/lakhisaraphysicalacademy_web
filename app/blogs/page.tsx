@@ -1,6 +1,6 @@
 // app/blogs/page.tsx
 
-import { MessageCircle, Newspaper, ArrowRight, GraduationCap, Flame, Bell, Video } from "lucide-react";
+import { MessageCircle, Newspaper, ArrowRight, GraduationCap, Flame, Bell, Video, Dumbbell, Sparkles } from "lucide-react";
 import Container from "../components/Container";
 import Button from "../components/Button";
 import { whatsappHref } from "../lib/constants";
@@ -17,24 +17,48 @@ const EXPLORE_CARDS = [
   {
     href: "/blogs/categories",
     icon: GraduationCap,
-    title: "Categories",
-    desc: "Browse articles by exam, fitness topic, or recruitment stream.",
+    title: "Categories & Exam Streams",
+    tag: "16+ Categories",
+    badgeColor: "bg-amber-100 text-amber-800 border-amber-300",
+    iconGradient: "from-amber-500 to-orange-600 shadow-orange-500/25",
+    cardBorder: "hover:border-orange-400 hover:shadow-orange-500/10",
+    desc: "Browse articles by exam (Army, Bihar Police, SSC GD, Railway), physical fitness & recruitment streams.",
+    actionText: "Explore Categories",
   },
   {
     href: "/blogs/articles",
     icon: Newspaper,
-    title: "Latest Articles",
-    desc: "Search and filter every post from the academy, newest first.",
+    title: "Latest Articles & Guides",
+    tag: "Updated Daily",
+    badgeColor: "bg-emerald-100 text-emerald-800 border-emerald-300",
+    iconGradient: "from-emerald-500 to-teal-600 shadow-teal-500/25",
+    cardBorder: "hover:border-emerald-400 hover:shadow-emerald-500/10",
+    desc: "Search and filter every post from academy experts, newest first with running, workout & written exam tips.",
+    actionText: "Browse Articles",
   },
   {
     href: "/blogs/topics",
     icon: Flame,
-    title: "Popular Topics",
-    desc: "Quick-jump tags readers come back to most.",
+    title: "Popular Topics & Tags",
+    tag: "Trending Now",
+    badgeColor: "bg-rose-100 text-rose-800 border-rose-300",
+    iconGradient: "from-rose-500 to-red-600 shadow-red-500/25",
+    cardBorder: "hover:border-rose-400 hover:shadow-red-500/10",
+    desc: "Quick-jump tags & high-demand guides that defence & police aspirants come back to most.",
+    actionText: "View Popular Topics",
+  },
+  {
+    href: "/blogs/categories?category=Physical%20Training",
+    icon: Dumbbell,
+    title: "Physical & Fitness Drills",
+    tag: "1600m & High Jump",
+    badgeColor: "bg-blue-100 text-blue-800 border-blue-300",
+    iconGradient: "from-blue-500 to-indigo-600 shadow-indigo-500/25",
+    cardBorder: "hover:border-blue-400 hover:shadow-indigo-500/10",
+    desc: "Proven drills for 1600m running timing, High Jump technique, chest growth & medical fitness.",
+    actionText: "Read Fitness Drills",
   },
 ];
-
-const ICON_TINTS = ["text-signal-strong", "text-accent-strong", "text-teal", "text-pink"];
 
 function BlogHero() {
   return (
@@ -57,12 +81,10 @@ function BlogHero() {
           </p>
 
           <div className="mt-8">
-            {/* was current="/blog" (singular) — corrected to match BLOG_NAV's "/blogs" href */}
             <BlogSubNav current="/blogs" />
           </div>
 
           <div className="mt-9 flex flex-wrap items-center gap-3">
-            {/* was href="/blog/articles" (singular) — dead link, corrected to "/blogs/articles" */}
             <Button href="/blogs/articles" variant="primary" icon={Newspaper}>
               Read Latest Blogs
             </Button>
@@ -78,38 +100,61 @@ function BlogHero() {
 
 function ExploreGrid() {
   return (
-    <section className="relative overflow-hidden py-16 sm:py-24">
+    <section className="relative overflow-hidden py-16 sm:py-24 bg-slate-50/70 border-y border-slate-200/80">
       <SectionGlow variant={2} />
       <Container>
-        <ScrollFadeUp>
-          <p className="font-mono text-[13px] font-semibold uppercase tracking-[0.2em] text-signal">
-            Explore
-          </p>
-        </ScrollFadeUp>
-        <ScrollFadeUp delay={0.05}>
-          <h2 className="font-display mt-4 max-w-[28ch] text-[28px] font-bold sm:text-[36px]">
-            Find what you're looking for
-          </h2>
-        </ScrollFadeUp>
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <ScrollFadeUp>
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-orange-100/80 border border-orange-200 text-[#ea580c] font-black text-xs uppercase tracking-wider">
+              <Sparkles size={14} />
+              Explore Directory
+            </span>
+            <h2 className="font-display mt-3 text-2xl sm:text-4xl font-black text-slate-900">
+              Find What You&apos;re Looking For
+            </h2>
+            <p className="mt-2 text-xs sm:text-sm font-semibold text-slate-500 max-w-xl">
+              Categorized articles, recruitment notifications, running tips, and physical training strategies tailored for army &amp; police exams.
+            </p>
+          </ScrollFadeUp>
+        </div>
 
         <StaggerList
-          className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4"
-          staggerDelay={0.05}
+          className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4"
+          staggerDelay={0.06}
         >
-          {EXPLORE_CARDS.map(({ href, icon: Icon, title, desc }, i) => (
+          {EXPLORE_CARDS.map(({ href, icon: Icon, title, tag, badgeColor, iconGradient, cardBorder, desc, actionText }) => (
             <StaggerItem key={href} hover>
-              <a href={href} className="card-flat group flex h-full flex-col p-6">
-                <Icon size={22} className={ICON_TINTS[i % ICON_TINTS.length]} />
-                <h3 className="font-display mt-4 text-[16px] font-semibold text-text">
-                  {title}
-                </h3>
-                <p className="font-body mt-2 text-[13.5px] leading-relaxed text-text-muted">
-                  {desc}
-                </p>
-                <span className="font-body mt-5 flex items-center gap-1.5 text-[13px] font-medium text-signal-strong">
-                  Explore
-                  <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
-                </span>
+              <a
+                href={href}
+                className={`group relative flex flex-col justify-between h-full p-6 bg-white rounded-3xl border-2 border-slate-200/90 shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-1.5 ${cardBorder}`}
+              >
+                <div>
+                  <div className="flex items-center justify-between">
+                    <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${iconGradient} flex items-center justify-center text-white shadow-lg transition-transform duration-300 group-hover:scale-110`}>
+                      <Icon size={24} />
+                    </div>
+                    <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border ${badgeColor}`}>
+                      {tag}
+                    </span>
+                  </div>
+
+                  <h3 className="font-display mt-5 text-lg font-black text-slate-900 group-hover:text-[#ea580c] transition-colors leading-snug">
+                    {title}
+                  </h3>
+
+                  <p className="font-body mt-2 text-xs font-semibold text-slate-600 leading-relaxed">
+                    {desc}
+                  </p>
+                </div>
+
+                <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+                  <span className="text-xs font-black text-[#ea580c] group-hover:underline">
+                    {actionText}
+                  </span>
+                  <div className="w-8 h-8 rounded-full bg-orange-50 group-hover:bg-[#ea580c] text-[#ea580c] group-hover:text-white flex items-center justify-center transition-all duration-300">
+                    <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" />
+                  </div>
+                </div>
               </a>
             </StaggerItem>
           ))}

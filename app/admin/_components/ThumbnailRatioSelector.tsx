@@ -30,10 +30,12 @@ export default function ThumbnailRatioSelector({
   defaultThumbnailUrl,
   defaultAspectRatio = "16:9",
   label = "Thumbnail Image & Aspect Ratio",
+  onImageChange,
 }: {
   defaultThumbnailUrl?: string | null;
   defaultAspectRatio?: string | null;
   label?: string;
+  onImageChange?: (url: string | null) => void;
 }) {
   const [aspectRatio, setAspectRatio] = useState<string>(defaultAspectRatio || "16:9");
   const [previewUrl, setPreviewUrl] = useState<string | null>(defaultThumbnailUrl || null);
@@ -44,15 +46,20 @@ export default function ThumbnailRatioSelector({
     if (file) {
       const url = URL.createObjectURL(file);
       setPreviewUrl(url);
+      onImageChange?.(url);
+    } else {
+      const fallback = urlInput.trim() || defaultThumbnailUrl || null;
+      setPreviewUrl(fallback);
+      onImageChange?.(fallback);
     }
   };
 
   const handleUrlInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
     setUrlInput(val);
-    if (val.trim()) {
-      setPreviewUrl(val.trim());
-    }
+    const nextUrl = val.trim() || null;
+    setPreviewUrl(nextUrl || defaultThumbnailUrl || null);
+    onImageChange?.(nextUrl);
   };
 
   const currentRatioClass = getAspectRatioClass(aspectRatio);
