@@ -21,6 +21,8 @@ import { whatsappHref } from "@/app/lib/constants";
 // reflects immediately.
 export const dynamic = "force-dynamic";
 
+import { getSiteUrl } from "@/app/lib/site-url";
+
 export async function generateMetadata({
   params,
 }: {
@@ -32,6 +34,8 @@ export async function generateMetadata({
     return { title: "Student Not Found | Lakhisarai Physical Academy" };
   }
   const student = mapDbResultToStudentItem(dbResult);
+  const siteUrl = getSiteUrl();
+
   return {
     title: `${student.name} — ${student.post} | Lakhisarai Physical Academy`,
     description:
@@ -39,6 +43,15 @@ export async function generateMetadata({
         0,
         160
       ),
+    alternates: {
+      canonical: `${siteUrl}/result/${id}`,
+    },
+    openGraph: {
+      title: `${student.name} — ${student.post} | Lakhisarai Physical Academy`,
+      description: `${student.name} was selected as ${student.post} (${student.exam}).`,
+      url: `${siteUrl}/result/${id}`,
+      images: student.photoUrl ? [{ url: student.photoUrl }] : [],
+    },
   };
 }
 

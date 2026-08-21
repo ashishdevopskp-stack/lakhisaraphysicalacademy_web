@@ -424,6 +424,7 @@ function SuccessStoryVideos({ students }: { students: StudentItem[] }) {
 
           <a
             href="/admin/results"
+            rel="nofollow"
             className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-black transition-all flex items-center gap-1.5 w-fit"
           >
             <span>Add / Edit Videos in Admin</span>
@@ -441,6 +442,7 @@ function SuccessStoryVideos({ students }: { students: StudentItem[] }) {
             <div className="pt-2">
               <a
                 href="/admin/results/new"
+                rel="nofollow"
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white font-black text-xs transition-all shadow-md"
               >
                 <span>Add Student Result &amp; Video URL</span>
@@ -537,6 +539,7 @@ function Testimonials({ students }: { students: StudentItem[] }) {
 
           <a
             href="/admin/results"
+            rel="nofollow"
             className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-amber-100 text-slate-800 border border-slate-300 text-xs font-black transition-all flex items-center gap-1.5 w-fit"
           >
             <span>Manage Reviews in Admin</span>

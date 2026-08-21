@@ -14,6 +14,8 @@ import Badge from "../../components/Badge";
 import RichContentRenderer from "../../components/RichContentRenderer";
 import { BlogSubNav } from "../_shared";
 
+import { getSiteUrl } from "@/app/lib/site-url";
+
 type BlogDetailParams = { params: Promise<{ id: string }> };
 
 export async function generateMetadata({ params }: BlogDetailParams) {
@@ -22,13 +24,18 @@ export async function generateMetadata({ params }: BlogDetailParams) {
   if (!blog) return { title: "Article Not Found | Academy Blog" };
 
   const description = (blog.subtitle ?? blog.content ?? "").slice(0, 155);
+  const siteUrl = getSiteUrl();
 
   return {
     title: `${blog.title} | Academy Blog`,
     description,
+    alternates: {
+      canonical: `${siteUrl}/blogs/${id}`,
+    },
     openGraph: {
       title: `${blog.title} | Lakhisarai Physical Academy`,
       description,
+      url: `${siteUrl}/blogs/${id}`,
       images: blog.image_url ? [{ url: blog.image_url }] : [],
     },
   };

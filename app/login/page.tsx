@@ -45,7 +45,7 @@ export default async function LoginPage({
 
         <p className="text-xs text-center text-gray-500 mt-4">
           Admin?{' '}
-          <a href="/admin/login" className="underline hover:text-black">
+          <a href="/admin/login" rel="nofollow" className="underline hover:text-black">
             Sign in here
           </a>
         </p>
