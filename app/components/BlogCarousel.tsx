@@ -37,7 +37,7 @@ export default function BlogCarousel({ blogs }: { blogs: DbBlog[] }) {
 
           <div className="flex items-center gap-2">
             <Link
-              href="/blogs"
+              href="/blogs/articles"
               className="inline-flex items-center gap-1.5 text-xs font-black text-[#ea580c] bg-orange-50 px-3.5 py-2 rounded-full border border-orange-200 hover:bg-orange-100 transition-colors mr-2"
             >
               <span>View All Blogs</span>

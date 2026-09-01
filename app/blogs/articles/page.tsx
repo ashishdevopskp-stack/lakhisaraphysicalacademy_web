@@ -7,6 +7,8 @@ import { BlogSubNav } from "../_shared";
 import ArticleListing from "./ArticleListing";
 import type { BlogPost } from "@/app/lib/blogs-data";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Latest Articles | Academy Blog",
   description:

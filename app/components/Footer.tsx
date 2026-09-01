@@ -70,7 +70,7 @@ const EXPLORE_LINKS = [
   { label: "Events & Trial", href: "/events" },
   { label: "Job Alerts", href: "/jobs" },
   { label: "Academy Store", href: "/store" },
-  { label: "Blog & Guides", href: "/blogs" },
+  { label: "Blog & Guides", href: "/blogs/articles" },
   { label: "YouTube Videos", href: "/youtube-video" },
   { label: "Resources & Notes", href: "/resources" },
   { label: "Hostel Facility", href: "/hostel" },

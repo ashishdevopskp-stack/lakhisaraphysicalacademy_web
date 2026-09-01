@@ -30,7 +30,7 @@ import {
 const NAV_ITEMS_WITH_ICONS = [
   { label: "Home", href: "/", icon: Home, color: "bg-orange-500/10 text-[#ea580c] border-orange-500/20" },
   { label: "Hostel", href: "/hostel", icon: Building2, color: "bg-emerald-500/10 text-[#138808] border-emerald-500/20" },
-  { label: "Blog", href: "/blogs", icon: BookOpen, color: "bg-blue-500/10 text-blue-700 border-blue-500/20" },
+  { label: "Blog", href: "/blogs/articles", icon: BookOpen, color: "bg-blue-500/10 text-blue-700 border-blue-500/20" },
   { label: "YouTube Videos", href: "/youtube-video", icon: Video, color: "bg-red-500/10 text-red-600 border-red-500/20" },
   { label: "Store", href: "/store", icon: ShoppingBag, color: "bg-amber-500/10 text-amber-700 border-amber-500/20" },
   { label: "About Us", href: "/about", icon: ShieldAlert, color: "bg-[#2b4c2b]/15 text-[#2b4c2b] border-[#2b4c2b]/20" },
@@ -233,11 +233,11 @@ export default function Navbar() {
                 },
                 {
                   label: "Blogs & Tips",
-                  href: "/blogs",
+                  href: "/blogs/articles",
                   icon: BookOpen,
                   color: "bg-blue-500/10 text-blue-700 border-blue-500/20",
                   badge: "Fitness Guides",
-                  subs: [{ name: "1600m Running", href: "/blogs" }, { name: "High Jump Drills", href: "/blogs" }, { name: "Diet Chart", href: "/blogs" }],
+                  subs: [{ name: "1600m Running", href: "/blogs/articles?category=Running%20Tips" }, { name: "High Jump Drills", href: "/blogs/articles?category=Physical%20Training" }, { name: "Diet Chart", href: "/blogs/articles?category=Diet%20%26%20Nutrition" }],
                 },
                 {
                   label: "YouTube Videos",

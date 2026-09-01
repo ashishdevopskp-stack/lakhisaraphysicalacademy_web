@@ -8,7 +8,7 @@ export const nav = [
   { label: "About", href: "/about" },
   { label: "Courses", href: "/courses" },
   { label: "Hostel", href: "/hostel" },
-  { label: "Blog", href: "/blogs" },
+  { label: "Blog", href: "/blogs/articles" },
   { label: "Events", href: "/events" },
   { label: "Results", href: "/result" },
   { label: "Store", href: "/store" },
@@ -51,9 +51,9 @@ export const NOTIFICATIONS_NAV = [
 
 
 export const BLOG_NAV = [
-  { href: "/blogs", label: "Overview" },
-  { href: "/blogs/categories", label: "Categories" },
   { href: "/blogs/articles", label: "Latest Articles" },
+  { href: "/blogs/overview", label: "Overview" },
+  { href: "/blogs/categories", label: "Categories" },
   { href: "/blogs/topics", label: "Popular Topics" },
 ];
 

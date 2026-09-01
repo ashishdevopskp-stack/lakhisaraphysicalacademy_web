@@ -1,9 +1,9 @@
 // app/blogs/_shared.tsx
 
 export const BLOG_NAV = [
-  { href: "/blogs", label: "Blog Overview" },
-  { href: "/blogs/categories", label: "Blog Categories" },
   { href: "/blogs/articles", label: "Latest Articles" },
+  { href: "/blogs/overview", label: "Blog Overview" },
+  { href: "/blogs/categories", label: "Blog Categories" },
   { href: "/blogs/topics", label: "Popular Topics" },
 ];
 
