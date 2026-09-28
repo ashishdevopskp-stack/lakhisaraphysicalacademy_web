@@ -393,12 +393,12 @@ export default function Footer() {
               <span className="flex items-center gap-1.5 text-slate-300">
                 Made with <Heart size={13} className="text-red-500 fill-red-500 animate-pulse shrink-0" /> by{" "}
                 <a
-                  href="https://www.sabkasaathidigitalservices.com/"
+                  href="https://thegenesislab.in"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-white hover:text-[#ea580c] font-black underline underline-offset-4 decoration-orange-500/60 hover:decoration-orange-500 transition-colors inline-flex items-center gap-1"
                 >
-                  <span>Sabka Saathi Digital Services</span>
+                  <span>thegenesislabs.in</span>
                   <ExternalLink size={12} className="text-orange-400 shrink-0" />
                 </a>
               </span>
