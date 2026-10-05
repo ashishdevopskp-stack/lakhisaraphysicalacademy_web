@@ -393,7 +393,7 @@ export default function Footer() {
               <span className="flex items-center gap-1.5 text-slate-300">
                 Made with <Heart size={13} className="text-red-500 fill-red-500 animate-pulse shrink-0" /> by{" "}
                 <a
-                  href="https://www.lakhisaraiphysicalacademy.com/"
+                  href="https://www.sabkasaathidigitalservices.com/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-white hover:text-[#ea580c] font-black underline underline-offset-4 decoration-orange-500/60 hover:decoration-orange-500 transition-colors inline-flex items-center gap-1"
